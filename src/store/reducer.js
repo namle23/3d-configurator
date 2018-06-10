@@ -8,6 +8,7 @@ const initState = {
   obj_names: [],
   obj_obj_names: [],
   obj_obj_insts: [],
+  obj_obj_insts_default: [],
 
   uploadedJSONconfigurator: null,
   uploadedJSON3D: [],

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import * as THREE from 'three'
+import { connect } from 'react-redux'
 
 let OrbitControls = require('three-orbit-controls')(THREE)
 
-export default class DefaultModel extends Component {
+class DefaultModel extends Component {
   componentDidMount() {
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(
@@ -79,10 +80,26 @@ export default class DefaultModel extends Component {
     render()
 
     // this.refs.webgl.appendChild(renderer.domElement)
-    document.getElementById('webgl').appendChild(renderer.domElement)
+    document.getElementById('default-product').appendChild(renderer.domElement)
   }
 
   render() {
-    return <div id="webgl" />
+    return <div id="default-product" />
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    obj: state.obj,
+    obj_codes: state.obj_codes,
+    obj_names: state.obj_names,
+    obj_obj_names: state.obj_obj_names,
+    obj_obj_insts: state.obj_obj_insts
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {}
+}
+
+export default connect(mapStateToProps)(DefaultModel)

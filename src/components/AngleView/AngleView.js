@@ -1,10 +1,10 @@
 import React from 'react'
 
-import classes from './AngleView.css'
+import style from './AngleView.css'
 
 const angleView = props => {
   return (
-    <div className={classes.circle}>
+    <div className={style.circle}>
       <button className="btn btn-default" onClick={props.topclick}>
         Top
       </button>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import DefaultModel from './components/DefaultModel/DefaultModel'
+import DefaultModel from './containers/DefaultModel/DefaultModel'
 
 class App extends Component {
   render() {

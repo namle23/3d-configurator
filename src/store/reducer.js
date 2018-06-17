@@ -1,6 +1,8 @@
 import axios from 'axios'
 import * as THREE from 'three'
 
+import * as actionTypes from './actions'
+
 const initState = {
   imageroot: '',
   obj: [],
@@ -21,7 +23,9 @@ const initState = {
   hideStep2: true,
   hideStep3: true,
   showBtnReady: false,
-  showUpload: true
+  showUpload: true,
+
+  loading: false
 }
 
 const reducer = (state = initState, action) => {
@@ -55,7 +59,7 @@ const reducer = (state = initState, action) => {
 
           const ambientLight = new THREE.AmbientLight(0x383838)
           state.scenes[i].add(ambientLight)
-          let spotLight = new THREE.SpotLight(0xffffff)
+          const spotLight = new THREE.SpotLight(0xffffff)
           spotLight.position.set(300, 300, 300)
           spotLight.intensity = 1
           state.scenes[i].add(spotLight)
@@ -72,6 +76,13 @@ const reducer = (state = initState, action) => {
       )
     }
   })
+
+  if (action.type === actionTypes.ACTIONLOADING) {
+    return {
+      ...state,
+      loading: true
+    }
+  }
 
   return state
 }

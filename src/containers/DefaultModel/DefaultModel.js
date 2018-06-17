@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import { connect } from 'react-redux'
 
-import AngleView from '../AngleView/AngleView'
+import AngleView from '../../components/AngleView/AngleView'
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+
+import * as actionTypes from '../../store/actions'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 let scene, camera, renderer
@@ -198,6 +201,7 @@ class DefaultModel extends Component {
   }
 
   componentDidMount() {
+    this.props.onLoadingSpinner()
     this.create3d()
   }
 
@@ -210,6 +214,7 @@ class DefaultModel extends Component {
           bottomclick={this.angleBottom}
           leftclick={this.angleLeft}
         />
+        {this.props.loading ? <LoadingSpinner /> : <i>Nam</i>}
         <div id="default-product" />
       </div>
     )
@@ -222,12 +227,19 @@ const mapStateToProps = state => {
     obj_codes: state.obj_codes,
     obj_names: state.obj_names,
     obj_obj_names: state.obj_obj_names,
-    obj_obj_insts: state.obj_obj_insts
+    obj_obj_insts: state.obj_obj_insts,
+
+    loading: state.loading
   }
 }
 
-// const mapDispatchToProps = dispatch => {
-//   return {}
-// }
+const mapDispatchToProps = dispatch => {
+  return {
+    onLoadingSpinner: () => dispatch({ type: actionTypes.ACTIONLOADING })
+  }
+}
 
-export default connect(mapStateToProps)(DefaultModel)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DefaultModel)

@@ -1,1 +1,1 @@
-
+export const ACTIONLOADING = 'ACTIONLOADING'

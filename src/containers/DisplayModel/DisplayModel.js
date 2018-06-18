@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import AngleView from '../../components/AngleView/AngleView'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
-import * as actionTypes from '../../store/actions'
+import * as actionTypes from '../../store/actionTypes'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 let scene, camera, renderer
@@ -18,7 +18,7 @@ let plane,
 
 let coal, cap, inner, outter, pipe, ring, smoke
 
-class DefaultModel extends Component {
+class DisplayModel extends Component {
   create3d() {
     scene = new THREE.Scene()
     camera = new THREE.PerspectiveCamera(
@@ -110,7 +110,6 @@ class DefaultModel extends Component {
 
     render()
 
-    // this.refs.webgl.appendChild(renderer.domElement)
     document.getElementById('default-product').appendChild(renderer.domElement)
 
     document.addEventListener('mousemove', event => {
@@ -201,7 +200,7 @@ class DefaultModel extends Component {
   }
 
   componentDidMount() {
-    this.props.onLoadingSpinner()
+    this.props.onLoading()
     this.create3d()
   }
 
@@ -235,11 +234,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onLoadingSpinner: () => dispatch({ type: actionTypes.ACTIONLOADING })
+    onLoading: () => dispatch({ type: actionTypes.ACTIONLOADING })
   }
 }
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DefaultModel)
+)(DisplayModel)

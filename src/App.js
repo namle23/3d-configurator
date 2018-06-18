@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 
-import DefaultModel from './containers/DefaultModel/DefaultModel'
+import DisplayModel from './containers/DisplayModel/DisplayModel'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <DefaultModel />
+        <DisplayModel />
       </div>
     )
   }

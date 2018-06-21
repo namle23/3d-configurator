@@ -1,0 +1,1 @@
+export { initConfigurator } from './configuratorAction'

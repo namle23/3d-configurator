@@ -3,7 +3,7 @@ import React from 'react'
 import style from './LoadingSpinner.css'
 
 const loadingSpinner = () => (
-  <div className={style.loader}>
+  <div className={style.Loader}>
     <i>Loading...</i>
   </div>
 )

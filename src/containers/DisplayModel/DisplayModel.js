@@ -2,19 +2,23 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import { connect } from 'react-redux'
 
-import AngleView from '../../components/AngleView/AngleView'
+import AngleControl from '../../containers/FooterContainer/AngleControl/AngleControl'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
-import * as actionTypes from '../../store/actionTypes'
+import * as configuratorAction from '../../store/actions/configuratorAction'
+
+import customEvent from '../../components/SeparateObject/SeparateObject'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
-let scene, camera, renderer
-
-let plane,
+let scene,
+  camera,
+  renderer,
+  plane,
   selectedObject,
   offset = new THREE.Vector3(),
   objects = [],
-  orbitControls
+  orbitControls,
+  rotation = false
 
 let coal, cap, inner, outter, pipe, ring, smoke
 
@@ -27,6 +31,7 @@ class DisplayModel extends Component {
       0.1,
       1000
     )
+    camera.position.set(70, 70, 70)
 
     renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setClearColor(new THREE.Color(0x000, 1.0))
@@ -40,6 +45,8 @@ class DisplayModel extends Component {
         transparent: true
       })
     )
+
+    orbitControls = new OrbitControls(camera, renderer.domElement)
 
     const ambientLight = new THREE.AmbientLight(0x383838)
     scene.add(ambientLight)
@@ -97,123 +104,48 @@ class DisplayModel extends Component {
       scene.add(smoke)
     })
 
-    camera.position.set(70, 70, 70)
-
-    orbitControls = new OrbitControls(camera, renderer.domElement)
-
     const render = () => {
       renderer.autoClear = false
+      orbitControls.update()
       requestAnimationFrame(render)
       renderer.render(scene, camera)
-      orbitControls.update()
     }
 
     render()
 
     document.getElementById('default-product').appendChild(renderer.domElement)
 
-    document.addEventListener('mousemove', event => {
-      event.preventDefault()
-
-      let vector = new THREE.Vector3(
-        (event.clientX / window.innerWidth) * 2 - 1,
-        -(event.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
-
-      vector.unproject(camera)
-
-      let raycaster = new THREE.Raycaster(
-        camera.position,
-        vector.sub(camera.position).normalize()
-      )
-
-      if (selectedObject) {
-        let intersects = raycaster.intersectObject(plane)
-
-        try {
-          selectedObject.position.copy(intersects[0].point.sub(offset))
-        } catch (error) {
-          console.log('mousemove error')
-        }
-      } else {
-        let intersects = raycaster.intersectObjects(objects)
-
-        if (intersects.length > 0) {
-          plane.position.copy(intersects[0].object.position)
-          plane.lookAt(camera.position)
-        }
-      }
-    })
-
-    document.addEventListener('mousedown', event => {
-      let vector = new THREE.Vector3(
-        (event.clientX / window.innerWidth) * 2 - 1,
-        -(event.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
-
-      vector.unproject(camera)
-
-      let raycaster = new THREE.Raycaster(
-        camera.position,
-        vector.sub(camera.position).normalize()
-      )
-
-      let intersects = raycaster.intersectObjects(objects)
-
-      if (intersects.length > 0) {
-        orbitControls.enabled = false
-
-        selectedObject = intersects[0].object
-
-        intersects = raycaster.intersectObject(plane)
-
-        try {
-          offset.copy(intersects[0].point).sub(plane.position)
-        } catch (error) {
-          console.log('mousedown error')
-        }
-      }
-    })
-
-    document.addEventListener('mouseup', event => {
-      orbitControls.enabled = true
-      selectedObject = null
-    })
-  }
-
-  angleTop() {
-    camera.position.set(0, 90, 90)
-  }
-
-  angleRight() {
-    camera.position.set(0, 0, 90)
-  }
-
-  angleBottom() {
-    camera.position.set(0, -90, 90)
-  }
-
-  angleLeft() {
-    camera.position.set(0, 0, -90)
+    customEvent(
+      THREE,
+      camera,
+      selectedObject,
+      plane,
+      offset,
+      objects,
+      orbitControls
+    )
   }
 
   componentDidMount() {
-    this.props.onLoading()
+    this.props.onInitConfigurator()
     this.create3d()
+
+    window.addEventListener(
+      'resize',
+      function() {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+      },
+      false
+    )
   }
 
   render() {
     return (
       <div>
-        <AngleView
-          topclick={this.angleTop}
-          rightclick={this.angleRight}
-          bottomclick={this.angleBottom}
-          leftclick={this.angleLeft}
-        />
-        {this.props.loading ? <LoadingSpinner /> : <i>Nam</i>}
+        <AngleControl camera={camera} rotation={rotation} />
+        {this.props.loading ? <LoadingSpinner /> : <i>{this.props.obj}</i>}
         <div id="default-product" />
       </div>
     )
@@ -222,19 +154,19 @@ class DisplayModel extends Component {
 
 const mapStateToProps = state => {
   return {
-    obj: state.obj,
-    obj_codes: state.obj_codes,
-    obj_names: state.obj_names,
-    obj_obj_names: state.obj_obj_names,
-    obj_obj_insts: state.obj_obj_insts,
+    obj: state.conf.obj,
+    obj_codes: state.conf.obj_codes,
+    obj_names: state.conf.obj_names,
+    obj_obj_names: state.conf.obj_obj_names,
+    obj_obj_insts: state.conf.obj_obj_insts,
 
-    loading: state.loading
+    loading: state.conf.loading
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onLoading: () => dispatch({ type: actionTypes.ACTIONLOADING })
+    onInitConfigurator: () => dispatch(configuratorAction.initConfigurator())
   }
 }
 

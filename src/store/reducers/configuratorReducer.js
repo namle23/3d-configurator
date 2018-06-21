@@ -1,6 +1,4 @@
-import * as actionTypes from './actionTypes'
-
-import loadData from './actions'
+import * as actionTypes from '../actionTypes'
 
 const initState = {
   imageroot: '',
@@ -21,11 +19,9 @@ const initState = {
   loading: false
 }
 
-const reducer = (state = initState, action) => {
-  loadData(state)
-
+const reducerConfigurator = (state = initState, action) => {
   switch (action.type) {
-    case actionTypes.ACTIONLOADING:
+    case actionTypes.LOADING:
       return {
         ...state,
         loading: true
@@ -37,4 +33,4 @@ const reducer = (state = initState, action) => {
   return state
 }
 
-export default reducer
+export default reducerConfigurator

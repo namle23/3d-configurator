@@ -4,19 +4,39 @@ import style from './AngleControl.css'
 
 class AngleControl extends Component {
   angleTop(camera) {
-    camera.position.set(0, 90, 90)
+    try {
+      camera.position.set(0, 90, 90)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   angleRight(camera) {
-    camera.position.set(0, 0, 90)
+    try {
+      camera.position.set(0, 0, 90)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   angleBottom(camera) {
-    camera.position.set(0, -90, 90)
+    try {
+      camera.position.set(0, -90, 90)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   angleLeft(camera) {
-    camera.position.set(0, 0, -90)
+    try {
+      camera.position.set(0, 0, -90)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  angleRotation(rotation) {
+    rotation = !rotation
   }
 
   render() {
@@ -34,7 +54,12 @@ class AngleControl extends Component {
         >
           Right
         </button>
-        <button className="btn btn-default btn-circle btn-lg">Rotation</button>
+        <button
+          className="btn btn-default btn-circle btn-lg"
+          onClick={() => this.angleRotation(this.props.rotation)}
+        >
+          Rotation
+        </button>
         <button
           className="btn btn-default btn-circle btn-lg"
           onClick={() => this.angleBottom(this.props.camera)}

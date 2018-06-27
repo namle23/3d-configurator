@@ -24,7 +24,7 @@
             },
             {
               "default": 0,
-              "code": "PLS231",
+              "code": "PLS232",
               "name": "Pohja 2000",
               "json3d": "Pohja2000.json",
               "scale_x": 15,

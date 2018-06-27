@@ -3,9 +3,9 @@ import * as THREE from 'three'
 import { connect } from 'react-redux'
 
 import AngleControl from '../../containers/FooterContainer/AngleControl/AngleControl'
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import Spinner from '../../components/Spinner/Spinner'
 
-import * as configuratorAction from '../../store/actions/configuratorAction'
+import * as configuratorAction from '../../store/actions/index'
 
 import customEvent from '../../components/SeparateObject/SeparateObject'
 
@@ -105,6 +105,20 @@ class DisplayModel extends Component {
     })
 
     const render = () => {
+      if (rotation) {
+        try {
+          coal.rotation.y += 0.001
+          cap.rotation.y += 0.001
+          outter.rotation.y += 0.001
+          pipe.rotation.y += 0.001
+          ring.rotation.y += 0.001
+          smoke.rotation.y += 0.001
+          inner.rotation.y += 0.001
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
       renderer.autoClear = false
       orbitControls.update()
       requestAnimationFrame(render)
@@ -142,10 +156,16 @@ class DisplayModel extends Component {
   }
 
   render() {
+    let spinner = this.props.loading ? (
+      <Spinner />
+    ) : (
+      <p>{this.props.obj_prices}</p>
+    )
+
     return (
       <div>
         <AngleControl camera={camera} rotation={rotation} />
-        {this.props.loading ? <LoadingSpinner /> : <i>{this.props.obj}</i>}
+        {spinner}
         <div id="default-product" />
       </div>
     )
@@ -154,11 +174,22 @@ class DisplayModel extends Component {
 
 const mapStateToProps = state => {
   return {
-    obj: state.conf.obj,
+    imageroot: state.conf.imageroot,
     obj_codes: state.conf.obj_codes,
     obj_names: state.conf.obj_names,
+    obj_prices: state.conf.obj_prices,
+
     obj_obj_names: state.conf.obj_obj_names,
-    obj_obj_insts: state.conf.obj_obj_insts,
+
+    default: state.conf.obj_obj_insts_default,
+    code: state.conf.obj_obj_insts_code,
+    name: state.conf.obj_obj_insts_name,
+    price: state.conf.obj_obj_insts_price,
+
+    json3dlinks: state.conf.json3dlinks,
+    sortedJson3dlinks: state.conf.sortedJson3dlinks,
+    scenes: state.conf.scenes,
+    arrayObj_obj_length: state.conf.arrayObj_obj_length,
 
     loading: state.conf.loading
   }

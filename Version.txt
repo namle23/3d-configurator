@@ -6,7 +6,11 @@ Requirements:
 -Swap the model
 -Show the options (list all options) of the selected object (in 3D)
 -Update the model based on the chosen options
--Angle views (top, bottom, left, right)
+
 -Show price
 -Enable engineering (modify, select the point/area where user enable 
 to open new table to edit kets/values)
+
+
+DONE:
+-Angle views (top, bottom, left, right)

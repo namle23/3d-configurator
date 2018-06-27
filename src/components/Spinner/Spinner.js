@@ -1,6 +1,6 @@
 import React from 'react'
 
-import style from './LoadingSpinner.css'
+import style from './Spinner.css'
 
 const loadingSpinner = () => (
   <div className={style.Loader}>

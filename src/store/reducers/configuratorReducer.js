@@ -18,11 +18,9 @@ const initState = {
   json3dlinks: [], //hold temporary 3D file information
   sortedJson3dlinks: [], //hold array of array of 3d links
   scenes: [],
-  arrayObj_obj_length: [], //hold number of obj_obj
 
   loading: true,
-  error: false,
-  json: []
+  error: false
 }
 
 const reducerConfigurator = (state = initState, action) => {
@@ -79,12 +77,6 @@ const reducerConfigurator = (state = initState, action) => {
             )
           )
         ),
-
-        arrayObj_obj_length: action.data.objects.map(objects => {
-          state.arrayObj_obj_length.push(objects.objects.length)
-
-          return state.arrayObj_obj_length
-        }),
 
         sortedJson3dlinks: action.sorted.map(sorted => sorted),
 

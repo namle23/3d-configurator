@@ -138,10 +138,11 @@ class DisplayModel extends Component {
       objects,
       orbitControls
     )
+
+    console.log(this.props.sortedJson3dlinks)
   }
 
   componentDidMount() {
-    this.props.onInitConfigurator()
     this.create3d()
 
     window.addEventListener(
@@ -189,7 +190,6 @@ const mapStateToProps = state => {
     json3dlinks: state.conf.json3dlinks,
     sortedJson3dlinks: state.conf.sortedJson3dlinks,
     scenes: state.conf.scenes,
-    arrayObj_obj_length: state.conf.arrayObj_obj_length,
 
     loading: state.conf.loading
   }

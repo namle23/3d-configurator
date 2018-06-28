@@ -1,15 +1,39 @@
 import React, { Component } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 
-import DisplayModel from './containers/DisplayModel/DisplayModel'
+import Modal from './containers/Modal'
+
+import { connect } from 'react-redux'
+
+import * as configuratorAction from './store/actions/index'
 
 class App extends Component {
+  componentDidMount() {
+    this.props.onInitConfigurator()
+  }
+
   render() {
     return (
-      <div className="App">
-        <DisplayModel />
-      </div>
+      <BrowserRouter>
+        <div className="App">
+          <Modal />
+        </div>
+      </BrowserRouter>
     )
   }
 }
 
-export default App
+const mapStateToProps = state => {
+  return {}
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onInitConfigurator: () => dispatch(configuratorAction.initConfigurator())
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)

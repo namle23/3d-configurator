@@ -32,13 +32,13 @@ export const initConfigurator = () => {
           )
         )
 
-        let arr_length = []
+        let arr_length = [] //hold number of obj_obj
 
         for (let i = 0; i < res.data.objects.length; i++) {
           arr_length.push(res.data.objects[i].objects.length)
         }
 
-        let sorted = []
+        let sorted = [] //sort the obj to its model
 
         for (let i = 1; i < arr_length.length; i++) {
           sorted[i] = json.splice(0, arr_length[i])

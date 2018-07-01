@@ -18,6 +18,7 @@ let scene,
   offset = new THREE.Vector3(),
   objects = [],
   orbitControls,
+  obj3d,
   rotation = false
 
 let coal, cap, inner, outter, pipe, ring, smoke
@@ -104,6 +105,19 @@ class DisplayModel extends Component {
       scene.add(smoke)
     })
 
+    for (let i = 0; i < this.props.json3dlinks.length; i++) {
+      for (let j = 0; j < this.props.json3dlinks[i].length; j++) {
+        loader.load(this.props.json3dlinks[i][j], (geo, mat) => {
+          obj3d = new THREE.Mesh(geo, mat)
+          obj3d.scale.set(15, 15, 15)
+          this.props.scenes[i].add(obj3d)
+        })
+      }
+      this.props.json3dlinks.splice(0, this.props.json3dlinks[i])
+    }
+
+    scene = this.props.scenes[0]
+
     const render = () => {
       if (rotation) {
         try {
@@ -138,8 +152,6 @@ class DisplayModel extends Component {
       objects,
       orbitControls
     )
-
-    console.log(this.props.sortedJson3dlinks)
   }
 
   componentDidMount() {

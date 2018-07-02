@@ -9,21 +9,14 @@ class Modal extends Component {
       <div>
         <header>
           <nav>
-            <ul>
-              <li>
-                <Link
-                  to={{
-                    pathname: '/display'
-                  }}
-                >
-                  New Post
-                </Link>
-              </li>
-            </ul>
+            <li>
+              <Link to="/display">Start</Link>
+            </li>
           </nav>
         </header>
 
         <Route path="/display" exact component={DisplayModel} />
+        {/* <Redirect from="/" to="/display" /> */}
       </div>
     )
   }

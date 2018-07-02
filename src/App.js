@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { BrowserRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import Modal from './containers/Modal'
-
-import { connect } from 'react-redux'
 
 import * as configuratorAction from './store/actions/index'
 

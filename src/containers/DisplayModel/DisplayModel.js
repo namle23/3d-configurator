@@ -16,12 +16,10 @@ let scene,
   plane,
   selectedObject,
   offset = new THREE.Vector3(),
-  objects = [],
+  objects = [], //hold object model for separation
   orbitControls,
   obj3d,
   rotation = false
-
-let coal, cap, inner, outter, pipe, ring, smoke
 
 class DisplayModel extends Component {
   create3d() {
@@ -61,77 +59,30 @@ class DisplayModel extends Component {
     renderer.gammaOutput = true
 
     const loader = new THREE.JSONLoader()
-
-    loader.load('assets/default/coal.js', (geo, mat) => {
-      coal = new THREE.Mesh(geo, mat[0])
-      coal.scale.set(10, 10, 10)
-      objects.push(coal)
-      scene.add(coal)
-    })
-    loader.load('assets/default/cap.js', (geo, mat) => {
-      cap = new THREE.Mesh(geo, mat[0])
-      cap.scale.set(10, 10, 10)
-      objects.push(cap)
-      scene.add(cap)
-    })
-    loader.load('assets/default/inner.js', (geo, mat) => {
-      inner = new THREE.Mesh(geo, mat[0])
-      inner.scale.set(10, 10, 10)
-      objects.push(inner)
-      scene.add(inner)
-    })
-    loader.load('assets/default/outter.js', (geo, mat) => {
-      outter = new THREE.Mesh(geo, mat[0])
-      outter.scale.set(10, 10, 10)
-      objects.push(outter)
-      scene.add(outter)
-    })
-    loader.load('assets/default/pipe.js', (geo, mat) => {
-      pipe = new THREE.Mesh(geo, mat[0])
-      pipe.scale.set(10, 10, 10)
-      objects.push(pipe)
-      scene.add(pipe)
-    })
-    loader.load('assets/default/ring.js', (geo, mat) => {
-      ring = new THREE.Mesh(geo, mat[0])
-      ring.scale.set(10, 10, 10)
-      objects.push(ring)
-      scene.add(ring)
-    })
-    loader.load('assets/default/smoke.js', (geo, mat) => {
-      smoke = new THREE.Mesh(geo, mat[0])
-      smoke.scale.set(10, 10, 10)
-      objects.push(smoke)
-      scene.add(smoke)
-    })
-
+    //load model to THREE
     for (let i = 0; i < this.props.json3dlinks.length; i++) {
       for (let j = 0; j < this.props.json3dlinks[i].length; j++) {
-        loader.load(this.props.json3dlinks[i][j], (geo, mat) => {
+        loader.load(this.props.json3dlinks[i][j][0], (geo, mat) => {
           obj3d = new THREE.Mesh(geo, mat)
           obj3d.scale.set(15, 15, 15)
+          objects.push(obj3d)
           this.props.scenes[i].add(obj3d)
         })
       }
       this.props.json3dlinks.splice(0, this.props.json3dlinks[i])
     }
 
+    //default scene assigned to scene 0
     scene = this.props.scenes[0]
 
     const render = () => {
-      if (rotation) {
-        try {
-          coal.rotation.y += 0.001
-          cap.rotation.y += 0.001
-          outter.rotation.y += 0.001
-          pipe.rotation.y += 0.001
-          ring.rotation.y += 0.001
-          smoke.rotation.y += 0.001
-          inner.rotation.y += 0.001
-        } catch (error) {
-          console.log(error)
-        }
-      }
+      // if (true) {
+      //   try {
+      //     obj3d.rotation.y += 0.001
+      //   } catch (error) {
+      //     console.log(error)
+      //   }
+      // }
 
       renderer.autoClear = false
       orbitControls.update()
@@ -152,6 +103,10 @@ class DisplayModel extends Component {
       objects,
       orbitControls
     )
+  }
+
+  selectScene(index) {
+    scene = this.props.scenes[index]
   }
 
   componentDidMount() {
@@ -175,11 +130,26 @@ class DisplayModel extends Component {
       <p>{this.props.obj_prices}</p>
     )
 
+    let btnSelectScene = (
+      <div>
+        {this.props.obj_names.map((obj_name, index) => (
+          <button
+            className="btn btn-default"
+            key={index}
+            onClick={() => this.selectScene(index)}
+          >
+            {obj_name}
+          </button>
+        ))}
+      </div>
+    )
+
     return (
       <div>
         <AngleControl camera={camera} rotation={rotation} />
         {spinner}
         <div id="default-product" />
+        {btnSelectScene}
       </div>
     )
   }

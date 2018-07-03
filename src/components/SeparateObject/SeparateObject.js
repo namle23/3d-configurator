@@ -1,4 +1,4 @@
-const customEvent = (
+const separateObject = (
   THREE,
   camera,
   selectedObject,
@@ -78,4 +78,4 @@ const customEvent = (
   })
 }
 
-export default customEvent
+export default separateObject

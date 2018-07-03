@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import { connect } from 'react-redux'
 
-import AngleControl from '../../containers/FooterContainer/AngleControl/AngleControl'
-import Spinner from '../../components/Spinner/Spinner'
+import Footer from '../../containers/FooterContainer/Footer/Footer'
 
 import * as configuratorAction from '../../store/actions/index'
 
@@ -19,7 +18,8 @@ let scene,
   objects = [], //hold object model for separation
   orbitControls,
   obj3d,
-  rotation = false
+  rotation = false,
+  modelIndex = 0
 
 class DisplayModel extends Component {
   create3d() {
@@ -76,13 +76,13 @@ class DisplayModel extends Component {
     scene = this.props.scenes[0]
 
     const render = () => {
-      // if (true) {
-      //   try {
-      //     obj3d.rotation.y += 0.001
-      //   } catch (error) {
-      //     console.log(error)
-      //   }
-      // }
+      if (rotation) {
+        try {
+          obj3d.rotation.y += 0.001
+        } catch (error) {
+          console.log(error)
+        }
+      }
 
       renderer.autoClear = false
       orbitControls.update()
@@ -105,8 +105,24 @@ class DisplayModel extends Component {
     )
   }
 
-  selectScene(index) {
-    scene = this.props.scenes[index]
+  nextScene(obj_names_length) {
+    ++modelIndex
+    if (modelIndex >= obj_names_length) {
+      modelIndex = 0
+      scene = this.props.scenes[0]
+    } else {
+      scene = this.props.scenes[modelIndex]
+    }
+  }
+
+  prevScene(obj_names_length) {
+    --modelIndex
+    if (modelIndex <= 0) {
+      modelIndex = obj_names_length
+      scene = this.props.scenes[0]
+    } else {
+      scene = this.props.scenes[modelIndex]
+    }
   }
 
   componentDidMount() {
@@ -124,32 +140,25 @@ class DisplayModel extends Component {
   }
 
   render() {
-    let spinner = this.props.loading ? (
-      <Spinner />
-    ) : (
-      <p>{this.props.obj_prices}</p>
-    )
-
-    let btnSelectScene = (
-      <div>
-        {this.props.obj_names.map((obj_name, index) => (
-          <button
-            className="btn btn-default"
-            key={index}
-            onClick={() => this.selectScene(index)}
-          >
-            {obj_name}
-          </button>
-        ))}
-      </div>
-    )
-
     return (
       <div>
-        <AngleControl camera={camera} rotation={rotation} />
-        {spinner}
-        <div id="default-product" />
-        {btnSelectScene}
+        <div id="default-product">
+          <button
+            className="btn btn-default"
+            onClick={() => this.prevScene(this.props.obj_names.length)}
+          >
+            Prev
+          </button>
+          <button
+            className="btn btn-default"
+            onClick={() => this.nextScene(this.props.obj_names.length)}
+          >
+            Next
+          </button>
+          <div id="footer">
+            <Footer />
+          </div>
+        </div>
       </div>
     )
   }
@@ -160,14 +169,12 @@ const mapStateToProps = state => {
     imageroot: state.conf.imageroot,
     obj_codes: state.conf.obj_codes,
     obj_names: state.conf.obj_names,
-    obj_prices: state.conf.obj_prices,
 
     obj_obj_names: state.conf.obj_obj_names,
 
     default: state.conf.obj_obj_insts_default,
     code: state.conf.obj_obj_insts_code,
     name: state.conf.obj_obj_insts_name,
-    price: state.conf.obj_obj_insts_price,
 
     json3dlinks: state.conf.json3dlinks,
     sortedJson3dlinks: state.conf.sortedJson3dlinks,

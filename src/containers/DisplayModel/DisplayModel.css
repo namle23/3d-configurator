@@ -80,3 +80,13 @@
     transform: rotate(360deg);
   }
 }
+
+/*Something makes sense*/
+#footer {
+  background-color: black;
+  position: absolute;
+  z-index: 1;
+  text-align: center;
+  bottom: 50px;
+  width: 100%;
+}

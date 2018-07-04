@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import Modal from './containers/Modal'
+import Modal from './containers/Modal/Modal'
 
 import * as configuratorAction from './store/actions/index'
 

@@ -5,8 +5,9 @@ import { connect } from 'react-redux'
 import Footer from '../../containers/FooterContainer/Footer/Footer'
 
 import * as configuratorAction from '../../store/actions/index'
-
 import customEvent from '../../components/SeparateObject/SeparateObject'
+
+import style from './DisplayModel.css'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 let scene,
@@ -143,18 +144,14 @@ class DisplayModel extends Component {
     return (
       <div>
         <div id="default-product">
-          <button
-            className="btn btn-default"
+          <i
+            className="prev"
             onClick={() => this.prevScene(this.props.obj_names.length)}
-          >
-            Prev
-          </button>
-          <button
-            className="btn btn-default"
+          />
+          <i
+            className="next"
             onClick={() => this.nextScene(this.props.obj_names.length)}
-          >
-            Next
-          </button>
+          />
           <div id="footer">
             <Footer />
           </div>

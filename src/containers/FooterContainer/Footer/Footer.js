@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import AngleControl from '../AngleControl/AngleControl'
 import Spinner from '../../../components/Spinner/Spinner'
 
+import style from './Footer.css'
+
 class Footer extends Component {
   render() {
     let spinner = this.props.loading ? (
@@ -14,8 +16,9 @@ class Footer extends Component {
 
     return (
       <div>
-        {spinner}
-        <AngleControl />
+        <div className="spinner">{spinner}</div>
+
+        <AngleControl className="angle-control" />
       </div>
     )
   }

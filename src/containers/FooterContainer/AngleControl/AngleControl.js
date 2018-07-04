@@ -41,7 +41,7 @@ class AngleControl extends Component {
 
   render() {
     return (
-      <div className={style.circle}>
+      <div className="circle">
         <button
           className="btn btn-default btn-circle btn-lg"
           onClick={() => this.angleTop(this.props.camera)}

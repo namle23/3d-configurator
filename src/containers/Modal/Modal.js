@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Route, Link } from 'react-router-dom'
 
-import DisplayModel from './DisplayModel/DisplayModel'
+import DisplayModel from '../DisplayModel/DisplayModel'
+import Footer from '../FooterContainer/Footer/Footer'
 
 class Modal extends Component {
   render() {
@@ -14,7 +15,7 @@ class Modal extends Component {
             </li>
           </nav>
         </header>
-
+        <Footer />
         <Route path="/display" exact component={DisplayModel} />
         {/* <Redirect from="/" to="/display" /> */}
       </div>

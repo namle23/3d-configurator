@@ -1,0 +1,13 @@
+button#prev {
+  position: absolute;
+  top: 45%;
+  left: 10px;
+  background-color: aqua;
+}
+
+button#next {
+  position: absolute;
+  top: 45%;
+  right: 10px;
+  background-color: red;
+}

@@ -59,8 +59,17 @@ class DisplayModel extends Component {
     renderer.gammaInput = true
     renderer.gammaOutput = true
 
-    const loader = new THREE.JSONLoader()
-    //load model to THREE
+    const loadingManager = new THREE.LoadingManager(() => {
+      const loadingScreen = document.getElementById('loading-screen')
+
+      loadingScreen.classList.add('fade-out')
+
+      loadingScreen.addEventListener('transitionend', () => {
+        document.getElementById('loading-screen').remove()
+      })
+    })
+
+    const loader = new THREE.JSONLoader(loadingManager)
     for (let i = 0; i < this.props.json3dlinks.length; i++) {
       for (let j = 0; j < this.props.json3dlinks[i].length; j++) {
         loader.load(this.props.json3dlinks[i][j][0], (geo, mat) => {
@@ -73,7 +82,6 @@ class DisplayModel extends Component {
       this.props.json3dlinks.splice(0, this.props.json3dlinks[i])
     }
 
-    //default scene assigned to scene 0
     scene = this.props.scenes[0]
 
     const render = () => {
@@ -93,7 +101,7 @@ class DisplayModel extends Component {
 
     render()
 
-    document.getElementById('default-product').appendChild(renderer.domElement)
+    document.getElementById('display').appendChild(renderer.domElement)
 
     customEvent(
       THREE,
@@ -143,18 +151,20 @@ class DisplayModel extends Component {
   render() {
     return (
       <div>
-        <div id="default-product">
-          <i
-            className="prev"
-            onClick={() => this.prevScene(this.props.obj_names.length)}
-          />
-          <i
-            className="next"
-            onClick={() => this.nextScene(this.props.obj_names.length)}
-          />
-          <div id="footer">
-            <Footer />
-          </div>
+        <div id="loading-screen">
+          <div id="loader" />
+        </div>
+        <div id="display" />
+        <i
+          className="prev"
+          onClick={() => this.prevScene(this.props.obj_names.length)}
+        />
+        <i
+          className="next"
+          onClick={() => this.nextScene(this.props.obj_names.length)}
+        />
+        <div id="footer">
+          <Footer />
         </div>
       </div>
     )

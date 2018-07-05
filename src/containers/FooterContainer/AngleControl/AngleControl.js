@@ -42,36 +42,28 @@ class AngleControl extends Component {
   render() {
     return (
       <div className="circle">
-        <button
-          className="btn btn-default btn-circle btn-lg"
-          onClick={() => this.angleTop(this.props.camera)}
-        >
-          Top
-        </button>
-        <button
-          className="btn btn-default btn-circle btn-lg"
-          onClick={() => this.angleRight(this.props.camera)}
-        >
-          Right
-        </button>
-        <button
-          className="btn btn-default btn-circle btn-lg"
-          onClick={() => this.angleRotation(this.props.rotation)}
-        >
-          Rotation
-        </button>
-        <button
-          className="btn btn-default btn-circle btn-lg"
-          onClick={() => this.angleBottom(this.props.camera)}
-        >
-          Bottom
-        </button>
-        <button
-          className="btn btn-default btn-circle btn-lg"
-          onClick={() => this.angleLeft(this.props.camera)}
-        >
-          Left
-        </button>
+        <div className="wrap">
+          <i
+            className="quart"
+            onClick={() => this.angleTop(this.props.camera)}
+          />
+          <i
+            className="quart"
+            onClick={() => this.angleRight(this.props.camera)}
+          />
+          <i
+            className="quart"
+            onClick={() => this.angleBottom(this.props.camera)}
+          />
+          <i
+            className="quart"
+            onClick={() => this.angleLeft(this.props.camera)}
+          />
+          <i
+            className="center"
+            onClick={() => this.angleRotation(this.props.rotation)}
+          />
+        </div>
       </div>
     )
   }

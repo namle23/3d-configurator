@@ -15,7 +15,7 @@ class Footer extends Component {
     )
 
     return (
-      <div>
+      <div className="footer-wrap">
         <div className="spinner">{spinner}</div>
 
         <AngleControl className="angle-control" />

@@ -5,18 +5,25 @@
   top: 45%;
   border-right: 10px solid;
   border-bottom: 10px solid;
-  height: 30px;
-  width: 30px;
+  height: 50px;
+  width: 50px;
+  z-index: 2;
+  transition: all 0.2s;
 }
 
 .prev {
-  left: 10px;
+  left: 20px;
   transform: rotate(130deg);
 }
 
 .next {
-  right: 10px;
+  right: 20px;
   transform: rotate(-45deg);
+}
+
+.prev,
+.next:hoover {
+  background: dimgray;
 }
 
 /* screen loader */
@@ -27,7 +34,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000000;
+  background-color: black;
   opacity: 1;
   transition: 1s opacity;
 }
@@ -106,8 +113,9 @@
 /* footer */
 #footer {
   position: absolute;
-  z-index: 1;
-  text-align: center;
-  bottom: 0px;
+  z-index: 2;
+  text-align: right;
+  bottom: 10px;
+  padding-right: 10px;
   width: 100%;
 }

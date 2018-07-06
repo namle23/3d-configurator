@@ -3,7 +3,7 @@ import { Route, Link } from 'react-router-dom'
 
 import DisplayModel from '../DisplayModel/DisplayModel'
 
-import style from './Modal.css'
+import './Modal.css'
 
 class Modal extends Component {
   state = {
@@ -36,7 +36,7 @@ class Modal extends Component {
                       className="btn btn-default"
                       onClick={this.toggleShowModal}
                     >
-                      <Link to="/display">Start</Link>
+                      <Link to="/display">OK</Link>
                     </button>
                   </slot>
                 </div>

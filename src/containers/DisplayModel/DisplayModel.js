@@ -7,7 +7,7 @@ import Footer from '../../containers/FooterContainer/Footer/Footer'
 import * as configuratorAction from '../../store/actions/index'
 import customEvent from '../../components/SeparateObject/SeparateObject'
 
-import style from './DisplayModel.css'
+import './DisplayModel.css'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 let scene,
@@ -21,6 +21,8 @@ let scene,
   obj3d,
   rotation = false,
   modelIndex = 0
+
+const path = window.location.protocol + '//' + window.location.host + '/'
 
 class DisplayModel extends Component {
   create3d() {
@@ -72,7 +74,7 @@ class DisplayModel extends Component {
     const loader = new THREE.JSONLoader(loadingManager)
     for (let i = 0; i < this.props.json3dlinks.length; i++) {
       for (let j = 0; j < this.props.json3dlinks[i].length; j++) {
-        loader.load(this.props.json3dlinks[i][j][0], (geo, mat) => {
+        loader.load(path + this.props.json3dlinks[i][j][0], (geo, mat) => {
           obj3d = new THREE.Mesh(geo, mat)
           obj3d.scale.set(15, 15, 15)
           objects.push(obj3d)

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import style from './AngleControl.css'
+import './AngleControl.css'
 
 class AngleControl extends Component {
   angleTop(camera) {

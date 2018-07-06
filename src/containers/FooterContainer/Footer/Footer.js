@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import AngleControl from '../AngleControl/AngleControl'
 import Spinner from '../../../components/Spinner/Spinner'
 
-import style from './Footer.css'
+import './Footer.css'
 
 class Footer extends Component {
   render() {

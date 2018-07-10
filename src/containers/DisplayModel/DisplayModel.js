@@ -19,7 +19,7 @@ let scene,
   objects = [], //hold object model for separation
   orbitControls,
   obj3d,
-  modelIndex = 0
+  index
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -106,37 +106,43 @@ class DisplayModel extends Component {
     )
   }
 
-  getIndex(index) {
-    console.log('index ' + index)
+  getNextIndex = (index = 1, obj_names_length, direction) => {
+    switch (direction) {
+      case 'next':
+        scene = this.props.scenes[index]
+        camera.position.set(70, 70, 70)
+
+        let nextNodePrice = document.createTextNode(
+          this.props.price_total[index]
+        )
+        let nextPrice = document.getElementById('price')
+        nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
+
+        let nextNodeName = document.createTextNode(this.props.obj_names[index])
+        let nextName = document.getElementById('name')
+        nextName.replaceChild(nextNodeName, nextName.childNodes[0])
+
+        return (index + 1) % obj_names_length
+      case 'prev':
+        scene = this.props.scenes[index]
+        camera.position.set(70, 70, 70)
+
+        let prevNodePrice = document.createTextNode(this.props.obj_names[index])
+        let prevPrice = document.getElementById('price')
+        prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
+
+        let prevNodeName = document.createTextNode(this.props.obj_names[index])
+        let prevName = document.getElementById('name')
+        prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+
+        return (index === 0 && obj_names_length - 1) || index - 1
+      default:
+        return index
+    }
   }
 
-  nextScene(obj_names_length) {
-    ++modelIndex
-    console.log(modelIndex)
-    this.getIndex(modelIndex)
-
-    if (modelIndex >= obj_names_length) {
-      modelIndex = 0
-      scene = this.props.scenes[0]
-    } else {
-      scene = this.props.scenes[modelIndex]
-    }
-
-    camera.position.set(70, 70, 70)
-  }
-
-  prevScene(obj_names_length) {
-    --modelIndex
-    console.log(modelIndex)
-
-    if (modelIndex <= 0) {
-      modelIndex = obj_names_length
-      scene = this.props.scenes[0]
-    } else {
-      scene = this.props.scenes[modelIndex]
-    }
-
-    camera.position.set(70, 70, 70)
+  getNewIndex = (direction, obj_names_length) => {
+    index = this.getNextIndex(index, obj_names_length, direction)
   }
 
   componentDidMount() {
@@ -162,13 +168,16 @@ class DisplayModel extends Component {
         <div id="display" />
         <i
           className="prev"
-          onClick={() => this.prevScene(this.props.obj_names.length)}
+          onClick={() => this.getNewIndex('prev', this.props.obj_names.length)}
         />
         <i
           className="next"
-          onClick={() => this.nextScene(this.props.obj_names.length)}
+          onClick={() => this.getNewIndex('next', this.props.obj_names.length)}
         />
         <div id="footer">
+          <h3>Price</h3>
+          <h3 id="price">{this.props.price_total[0]}</h3>
+          <h3 id="name">{this.props.obj_names[0]}</h3>
           <Footer camera={camera} />
         </div>
       </div>
@@ -187,9 +196,10 @@ const mapStateToProps = state => {
     default: state.conf.obj_obj_insts_default,
     code: state.conf.obj_obj_insts_code,
     name: state.conf.obj_obj_insts_name,
+    price: state.conf.obj_obj_insts_price,
+    price_total: state.conf.obj_obj_insts_price_total,
 
     json3dlinks: state.conf.json3dlinks,
-    sortedJson3dlinks: state.conf.sortedJson3dlinks,
     scenes: state.conf.scenes,
 
     loading: state.conf.loading

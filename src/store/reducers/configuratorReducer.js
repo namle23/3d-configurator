@@ -14,6 +14,7 @@ const initState = {
   obj_obj_insts_code: [],
   obj_obj_insts_name: [],
   obj_obj_insts_price: [],
+  totalPrice: null,
 
   json3dlinks: [], //hold temporary 3D file information
   sortedJson3dlinks: [], //hold array of array of 3d links
@@ -56,18 +57,32 @@ const reducerConfigurator = (state = initState, action) => {
           )
         ),
         obj_obj_insts_name: action.data.objects.map(objects =>
-          objects.objects.map(objects_objects =>
-            objects_objects.instances.map(
-              objects_objects_instances => objects_objects_instances.name
-            )
+          objects.objects.map(
+            objects_objects =>
+              objects_objects.instances.map(
+                objects_objects_instances => objects_objects_instances.name
+              )[0]
           )
         ),
+
         obj_obj_insts_price: action.data.objects.map(objects =>
-          objects.objects.map(objects_objects =>
-            objects_objects.instances.map(
-              objects_objects_instances => objects_objects_instances.price
-            )
+          objects.objects.map(
+            objects_objects =>
+              objects_objects.instances.map(
+                objects_objects_instances => objects_objects_instances.price
+              )[0]
           )
+        ),
+
+        obj_obj_insts_price_total: action.data.objects.map(objects =>
+          objects.objects
+            .map(
+              objects_objects =>
+                objects_objects.instances.map(
+                  objects_objects_instances => objects_objects_instances.price
+                )[0]
+            )
+            .reduce((total, num) => total + num)
         ),
 
         json3dlinks: action.data.objects.map(objects =>
@@ -77,8 +92,6 @@ const reducerConfigurator = (state = initState, action) => {
             )
           )
         ),
-
-        sortedJson3dlinks: action.sorted.map(sorted => sorted),
 
         scenes: action.data.objects.map(() => {
           state.scenes = new THREE.Scene()

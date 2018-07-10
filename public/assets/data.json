@@ -17,9 +17,6 @@
               "code": "PLS231",
               "name": "Pohja 1800",
               "json3d": "assets/json/Pohja1800.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 550
             }
           ]
@@ -33,9 +30,6 @@
               "code": "PLS251B",
               "name": "Musta Kansi",
               "json3d": "assets/json/MustaKansi.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 199
             }
           ]
@@ -49,9 +43,6 @@
               "code": "PLS601I",
               "name": "30 kW",
               "json3d": "assets/json/30kW.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 699
             }
           ]
@@ -65,9 +56,6 @@
               "code": "PLS613E",
               "name": "Piippupaketti",
               "json3d": "assets/json/Piippupaketti.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 50
             }
           ]
@@ -81,9 +69,6 @@
               "code": "PLS614E",
               "name": "Sisainen",
               "json3d": "assets/json/Sisainen.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 300
             }
           ]
@@ -97,9 +82,6 @@
               "code": "PLS615E",
               "name": "Ulompi",
               "json3d": "assets/json/Ulompi.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 120
             }
           ]
@@ -113,9 +95,6 @@
               "code": "PLS616E",
               "name": "Kostea",
               "json3d": "assets/json/Kostea.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 95
             }
           ]
@@ -136,9 +115,6 @@
               "code": "ABB02-0",
               "name": "Base",
               "json3d": "assets/json/base.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -152,9 +128,6 @@
               "code": "ABB02-1",
               "name": "Link1",
               "json3d": "assets/json/link1.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -168,9 +141,6 @@
               "code": "ABB02-2",
               "name": "Link2",
               "json3d": "assets/json/link2.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -184,9 +154,6 @@
               "code": "ABB02-3",
               "name": "Link3",
               "json3d": "assets/json/link3.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -200,9 +167,6 @@
               "code": "ABB02-4",
               "name": "Link4",
               "json3d": "assets/json/link4.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -216,9 +180,6 @@
               "code": "ABB02-5",
               "name": "Link5",
               "json3d": "assets/json/link5.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -232,10 +193,92 @@
               "code": "ABB02-6",
               "name": "Link6",
               "json3d": "assets/json/link6.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "PLS1021",
+      "name": "PW-Spa Classic",
+      "price": 1950,
+      "objects": [
+        {
+          "type": "object",
+          "name": "Kylpytynnyrin pohjaosa/bottom",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Kylpytynnyrin Kansi/cap",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS251B",
+              "name": "Musta Kansi",
+              "json3d": "assets/json/MustaKansi.json",
+              "price": 199
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Kamiina/power",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS601I",
+              "name": "30 kW",
+              "json3d": "assets/json/30kW.json",
+              "price": 699
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Sisainen/inner",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS614E",
+              "name": "Sisainen",
+              "json3d": "assets/json/Sisainen.json",
+              "price": 300
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Ulompi/outer",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS615E",
+              "name": "Ulompi",
+              "json3d": "assets/json/Ulompi.json",
+              "price": 120
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Kostea/humid",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS616E",
+              "name": "Kostea",
+              "json3d": "assets/json/Kostea.json",
+              "price": 95
             }
           ]
         }

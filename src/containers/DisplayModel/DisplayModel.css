@@ -12,12 +12,12 @@
 }
 
 .prev {
-  left: 20px;
+  left: 1%;
   transform: rotate(130deg);
 }
 
 .next {
-  right: 20px;
+  right: 1%;
   transform: rotate(-45deg);
 }
 
@@ -114,8 +114,6 @@
 #footer {
   position: absolute;
   z-index: 2;
-  text-align: right;
-  bottom: 10px;
-  padding-right: 10px;
+  bottom: 5px;
   width: 100%;
 }

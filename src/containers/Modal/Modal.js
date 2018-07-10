@@ -26,17 +26,20 @@ class Modal extends Component {
               <div className="modal-container">
                 <div className="modal-body">
                   <slot name="body">
-                    <h4>Start browse products</h4>
+                    <h4>Click to start</h4>
                   </slot>
                 </div>
 
                 <div className="modal-footer">
                   <slot name="footer">
-                    <button
-                      className="btn btn-default"
-                      onClick={this.toggleShowModal}
-                    >
-                      <Link to="/display">OK</Link>
+                    <button className="btn btn-default">
+                      <Link
+                        to="/display"
+                        className="btn btn-default"
+                        onClick={this.toggleShowModal}
+                      >
+                        OK
+                      </Link>
                     </button>
                   </slot>
                 </div>

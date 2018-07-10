@@ -19,20 +19,20 @@ let scene,
   objects = [], //hold object model for separation
   orbitControls,
   obj3d,
-  rotation = false,
   modelIndex = 0
+
+scene = new THREE.Scene()
+camera = new THREE.PerspectiveCamera(
+  45,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+)
 
 const path = window.location.protocol + '//' + window.location.host + '/'
 
 class DisplayModel extends Component {
   create3d() {
-    scene = new THREE.Scene()
-    camera = new THREE.PerspectiveCamera(
-      45,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    )
     camera.position.set(70, 70, 70)
 
     renderer = new THREE.WebGLRenderer({ alpha: true })
@@ -63,9 +63,7 @@ class DisplayModel extends Component {
 
     const loadingManager = new THREE.LoadingManager(() => {
       const loadingScreen = document.getElementById('loading-screen')
-
       loadingScreen.classList.add('fade-out')
-
       loadingScreen.addEventListener('transitionend', () => {
         document.getElementById('loading-screen').remove()
       })
@@ -74,27 +72,19 @@ class DisplayModel extends Component {
     const loader = new THREE.JSONLoader(loadingManager)
     for (let i = 0; i < this.props.json3dlinks.length; i++) {
       for (let j = 0; j < this.props.json3dlinks[i].length; j++) {
-        loader.load(path + this.props.json3dlinks[i][j][0], (geo, mat) => {
+        // eslint-disable-next-line
+        loader.load(path + '' + this.props.json3dlinks[i][j], (geo, mat) => {
           obj3d = new THREE.Mesh(geo, mat)
           obj3d.scale.set(15, 15, 15)
           objects.push(obj3d)
           this.props.scenes[i].add(obj3d)
         })
       }
-      this.props.json3dlinks.splice(0, this.props.json3dlinks[i])
     }
 
     scene = this.props.scenes[0]
 
     const render = () => {
-      if (rotation) {
-        try {
-          obj3d.rotation.y += 0.001
-        } catch (error) {
-          console.log(error)
-        }
-      }
-
       renderer.autoClear = false
       orbitControls.update()
       requestAnimationFrame(render)
@@ -116,24 +106,37 @@ class DisplayModel extends Component {
     )
   }
 
+  getIndex(index) {
+    console.log('index ' + index)
+  }
+
   nextScene(obj_names_length) {
     ++modelIndex
+    console.log(modelIndex)
+    this.getIndex(modelIndex)
+
     if (modelIndex >= obj_names_length) {
       modelIndex = 0
       scene = this.props.scenes[0]
     } else {
       scene = this.props.scenes[modelIndex]
     }
+
+    camera.position.set(70, 70, 70)
   }
 
   prevScene(obj_names_length) {
     --modelIndex
+    console.log(modelIndex)
+
     if (modelIndex <= 0) {
       modelIndex = obj_names_length
       scene = this.props.scenes[0]
     } else {
       scene = this.props.scenes[modelIndex]
     }
+
+    camera.position.set(70, 70, 70)
   }
 
   componentDidMount() {
@@ -166,7 +169,7 @@ class DisplayModel extends Component {
           onClick={() => this.nextScene(this.props.obj_names.length)}
         />
         <div id="footer">
-          <Footer />
+          <Footer camera={camera} />
         </div>
       </div>
     )

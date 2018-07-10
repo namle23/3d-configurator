@@ -1,9 +1,9 @@
 Ver1.
 Requirements:
 -Default component of the product
--Enable changing background image (nice to have 3D image)
+
 -Selecting/hovering separate object (blur the rest)
--Swap the model
+
 -Show the options (list all options) of the selected object (in 3D)
 -Update the model based on the chosen options
 
@@ -13,4 +13,6 @@ to open new table to edit kets/values)
 
 
 DONE:
--Angle views (top, bottom, left, right)
+-Angle views (top, bottom, left, right, rotation)
+-Swap the model
+-Enable changing background image (nice to have 3D image)

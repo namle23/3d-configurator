@@ -2,12 +2,11 @@ import axios from 'axios'
 
 import * as actionTypes from '../actionTypes'
 
-export const setConfigurator = (data, loading, sorted) => {
+export const setConfigurator = (data, loading) => {
   return {
     type: actionTypes.SET_CONFIGURATOR,
     data: data,
-    loading: loading,
-    sorted: sorted
+    loading: loading
   }
 }
 
@@ -23,28 +22,17 @@ export const initConfigurator = () => {
       .get('assets/data.json')
       .then(res => {
         let loading = true
-
-        let json = res.data.objects.map(objects =>
-          objects.objects.map(objects_objects =>
-            objects_objects.instances.map(
-              objects_objects_instances => objects_objects_instances.json3d
-            )
-          )
-        )
-
         let arr_length = [] //hold number of obj_obj
 
         for (let i = 0; i < res.data.objects.length; i++) {
           arr_length.push(res.data.objects[i].objects.length)
         }
 
-        let sorted = [] //sort the obj to its model
+        // for (let i = 0; i < arr_length.length; i++) {
+        //   sorted[i] = prices.splice(0, arr_length[i])
+        // }
 
-        for (let i = 1; i < arr_length.length; i++) {
-          sorted[i] = json.splice(0, arr_length[i])
-        }
-
-        dispatch(setConfigurator(res.data, loading, sorted))
+        dispatch(setConfigurator(res.data, loading))
       })
       .catch(error => {
         console.log(error)

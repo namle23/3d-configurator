@@ -113,6 +113,8 @@
 /* footer */
 #footer {
   position: absolute;
+  text-align: right;
+  right: 10px;
   z-index: 2;
   bottom: 5px;
   width: 100%;

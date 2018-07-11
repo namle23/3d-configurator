@@ -113,7 +113,7 @@ class DisplayModel extends Component {
         camera.position.set(70, 70, 70)
 
         let nextNodePrice = document.createTextNode(
-          this.props.price_total[index]
+          this.props.price_total[index] + '€'
         )
         let nextPrice = document.getElementById('price')
         nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
@@ -127,7 +127,9 @@ class DisplayModel extends Component {
         scene = this.props.scenes[index]
         camera.position.set(70, 70, 70)
 
-        let prevNodePrice = document.createTextNode(this.props.obj_names[index])
+        let prevNodePrice = document.createTextNode(
+          this.props.price_total[index] + '€'
+        )
         let prevPrice = document.getElementById('price')
         prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
 
@@ -175,9 +177,6 @@ class DisplayModel extends Component {
           onClick={() => this.getNewIndex('next', this.props.obj_names.length)}
         />
         <div id="footer">
-          <h3>Price</h3>
-          <h3 id="price">{this.props.price_total[0]}</h3>
-          <h3 id="name">{this.props.obj_names[0]}</h3>
           <Footer camera={camera} />
         </div>
       </div>

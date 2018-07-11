@@ -17,9 +17,6 @@
               "code": "PLS231",
               "name": "Pohja 1800",
               "json3d": "http://localhost:3000/assets/json/Pohja1800.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 550
             },
             {
@@ -27,9 +24,6 @@
               "code": "PLS232",
               "name": "Pohja 2000",
               "json3d": "http://localhost:3000/assets/json/Pohja2000.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 600,
               "engineering": [
                 {
@@ -59,9 +53,6 @@
               "code": "PLS251B",
               "name": "Musta Kansi",
               "json3d": "http://localhost:3000/assets/json/MustaKansi.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 199
             }
           ]
@@ -75,9 +66,6 @@
               "code": "PLS601I",
               "name": "30 kW",
               "json3d": "http://localhost:3000/assets/json/30kW.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 699
             }
           ]
@@ -91,9 +79,6 @@
               "code": "PLS613E",
               "name": "Piippupaketti",
               "json3d": "http://localhost:3000/assets/json/Piippupaketti.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 50
             }
           ]
@@ -107,9 +92,6 @@
               "code": "PLS614E",
               "name": "Sisainen",
               "json3d": "http://localhost:3000/assets/json/Sisainen.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 300
             }
           ]
@@ -123,9 +105,6 @@
               "code": "PLS615E",
               "name": "Ulompi",
               "json3d": "http://localhost:3000/assets/json/Ulompi.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 120
             }
           ]
@@ -139,9 +118,6 @@
               "code": "PLS616E",
               "name": "Kostea",
               "json3d": "http://localhost:3000/assets/json/Kostea.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 95
             }
           ]
@@ -162,9 +138,6 @@
               "code": "ABB02-0",
               "name": "Base",
               "json3d": "http://localhost:3000/assets/json/base.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -178,9 +151,6 @@
               "code": "ABB02-1",
               "name": "Link1",
               "json3d": "http://localhost:3000/assets/json/link1.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -194,9 +164,6 @@
               "code": "ABB02-2",
               "name": "Link2",
               "json3d": "http://localhost:3000/assets/json/link2.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -210,9 +177,6 @@
               "code": "ABB02-3",
               "name": "Link3",
               "json3d": "http://localhost:3000/assets/json/link3.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -226,9 +190,6 @@
               "code": "ABB02-4",
               "name": "Link4",
               "json3d": "http://localhost:3000/assets/json/link4.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -242,9 +203,6 @@
               "code": "ABB02-5",
               "name": "Link5",
               "json3d": "http://localhost:3000/assets/json/link5.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]
@@ -258,9 +216,6 @@
               "code": "ABB02-6",
               "name": "Link6",
               "json3d": "http://localhost:3000/assets/json/link6.json",
-              "scale_x": 15,
-              "scale_y": 15,
-              "scale_z": 15,
               "price": 100000
             }
           ]

@@ -18,6 +18,13 @@
               "name": "Pohja 1800",
               "json3d": "assets/json/Pohja1800.json",
               "price": 550
+            },
+            {
+              "default": 0,
+              "code": "PLS232",
+              "name": "Pohja 2000",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 600
             }
           ]
         },

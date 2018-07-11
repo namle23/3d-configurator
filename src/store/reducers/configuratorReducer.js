@@ -43,10 +43,11 @@ const reducerConfigurator = (state = initState, action) => {
         ),
 
         obj_obj_insts_default: action.data.objects.map(objects =>
-          objects.objects.map(objects_objects =>
-            objects_objects.instances.map(
-              objects_objects_instances => objects_objects_instances.default
-            )
+          objects.objects.map(
+            objects_objects =>
+              objects_objects.instances.map(
+                objects_objects_instances => objects_objects_instances.default
+              )[0]
           )
         ),
         obj_obj_insts_code: action.data.objects.map(objects =>

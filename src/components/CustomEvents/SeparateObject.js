@@ -56,12 +56,14 @@ const separateObject = (
       vector.sub(camera.position).normalize()
     )
     let intersects = raycaster.intersectObjects(objects)
+
     if (intersects.length > 0) {
       orbitControls.enabled = false
       selectedObject = intersects[0].object
       intersects = raycaster.intersectObject(plane)
       try {
         offset.copy(intersects[0].point).sub(plane.position)
+        console.log(objects)
       } catch (error) {
         console.log('mousedown error')
       }

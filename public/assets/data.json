@@ -6,7 +6,7 @@
     {
       "code": "PLS1021",
       "name": "PW-Spa Classic",
-      "price": 1950,
+      "price": 2013,
       "objects": [
         {
           "type": "object",
@@ -153,7 +153,7 @@
     {
       "code": "ABB02",
       "name": "Robot-02",
-      "price": 100000,
+      "price": 70000,
       "objects": [
         {
           "type": "object",
@@ -300,7 +300,7 @@
     {
       "code": "PLS1021",
       "name": "PW-Spa Simple",
-      "price": 1950,
+      "price": 1963,
       "objects": [
         {
           "type": "object",

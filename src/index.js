@@ -7,7 +7,6 @@ import registerServiceWorker from './registerServiceWorker'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-
 import configuratorReducer from './store/reducers/configuratorReducer'
 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'

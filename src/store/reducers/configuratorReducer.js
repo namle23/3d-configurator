@@ -34,6 +34,7 @@ const reducerConfigurator = (state = initState, action) => {
         obj_names: action.data.objects.map(objects => objects.name),
         obj_prices: action.data.objects.map(objects => objects.price),
 
+        //objects_objects array
         obj_obj_names: action.data.objects.map(objects =>
           objects.objects.map(objects_objects =>
             objects_objects.instances.map(
@@ -43,20 +44,22 @@ const reducerConfigurator = (state = initState, action) => {
         ),
 
         obj_obj_insts_default: action.data.objects.map(objects =>
-          objects.objects.map(
-            objects_objects =>
-              objects_objects.instances.map(
-                objects_objects_instances => objects_objects_instances.default
-              )[0]
-          )
-        ),
-        obj_obj_insts_code: action.data.objects.map(objects =>
           objects.objects.map(objects_objects =>
             objects_objects.instances.map(
-              objects_objects_instances => objects_objects_instances.code
+              objects_objects_instances => objects_objects_instances.default
             )
           )
         ),
+
+        obj_obj_insts_code: action.data.objects.map(objects =>
+          objects.objects.map(
+            objects_objects =>
+              objects_objects.instances.map(
+                objects_objects_instances => objects_objects_instances.code
+              )[0]
+          )
+        ),
+
         obj_obj_insts_name: action.data.objects.map(objects =>
           objects.objects.map(
             objects_objects =>

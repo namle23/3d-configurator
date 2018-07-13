@@ -21,10 +21,10 @@
             },
             {
               "default": 0,
-              "code": "PLS232",
-              "name": "Pohja 2000",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 600
+              "code": "PLS251B",
+              "name": "Musta Kansi",
+              "json3d": "assets/json/MustaKansi.json",
+              "price": 199
             }
           ]
         },
@@ -38,6 +38,13 @@
               "name": "Musta Kansi",
               "json3d": "assets/json/MustaKansi.json",
               "price": 199
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -51,6 +58,13 @@
               "name": "30 kW",
               "json3d": "assets/json/30kW.json",
               "price": 699
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -64,6 +78,13 @@
               "name": "Piippupaketti",
               "json3d": "assets/json/Piippupaketti.json",
               "price": 50
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -77,6 +98,13 @@
               "name": "Sisainen",
               "json3d": "assets/json/Sisainen.json",
               "price": 300
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -90,6 +118,13 @@
               "name": "Ulompi",
               "json3d": "assets/json/Ulompi.json",
               "price": 120
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -103,6 +138,13 @@
               "name": "Kostea",
               "json3d": "assets/json/Kostea.json",
               "price": 95
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         }
@@ -123,6 +165,13 @@
               "name": "Base",
               "json3d": "assets/json/base.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -136,6 +185,13 @@
               "name": "Link1",
               "json3d": "assets/json/link1.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -149,6 +205,13 @@
               "name": "Link2",
               "json3d": "assets/json/link2.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -162,6 +225,13 @@
               "name": "Link3",
               "json3d": "assets/json/link3.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -175,6 +245,13 @@
               "name": "Link4",
               "json3d": "assets/json/link4.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -188,6 +265,13 @@
               "name": "Link5",
               "json3d": "assets/json/link5.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -201,6 +285,13 @@
               "name": "Link6",
               "json3d": "assets/json/link6.json",
               "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         }
@@ -234,6 +325,13 @@
               "name": "Musta Kansi",
               "json3d": "assets/json/MustaKansi.json",
               "price": 199
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -247,6 +345,13 @@
               "name": "30 kW",
               "json3d": "assets/json/30kW.json",
               "price": 699
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -260,6 +365,13 @@
               "name": "Sisainen",
               "json3d": "assets/json/Sisainen.json",
               "price": 300
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -273,6 +385,13 @@
               "name": "Ulompi",
               "json3d": "assets/json/Ulompi.json",
               "price": 120
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         },
@@ -286,6 +405,13 @@
               "name": "Kostea",
               "json3d": "assets/json/Kostea.json",
               "price": 95
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
             }
           ]
         }

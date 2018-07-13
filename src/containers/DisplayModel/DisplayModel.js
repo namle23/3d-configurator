@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import Footer from '../../containers/FooterContainer/Footer/Footer'
 
 import * as configuratorAction from '../../store/actions/index'
-import customEvent from '../../components/SeparateObject/SeparateObject'
+import separateObject from '../../components/CustomEvents/SeparateObject'
+import objectHightlight from '../../components/CustomEvents/ObjectHighlight'
 
 import './DisplayModel.css'
 
@@ -73,7 +74,7 @@ class DisplayModel extends Component {
     for (let i = 0; i < this.props.json3dlinks.length; i++) {
       for (let j = 0; j < this.props.json3dlinks[i].length; j++) {
         // eslint-disable-next-line
-        loader.load(path + '' + this.props.json3dlinks[i][j], (geo, mat) => {
+        loader.load(path + this.props.json3dlinks[i][j][0], (geo, mat) => {
           obj3d = new THREE.Mesh(geo, mat)
           obj3d.scale.set(15, 15, 15)
           objects.push(obj3d)
@@ -81,6 +82,15 @@ class DisplayModel extends Component {
         })
       }
     }
+
+    // for (let i = 0; i < this.props.default.length; i++) {
+    //   for (let j = 0; j < this.props.default[i].length; j++) {
+    //     // eslint-disable-next-line
+    //     for (let k = 0; k < this.props.default[i][j].length; k++) {
+    //       const element = this.props.default[i][j][k]
+    //     }
+    //   }
+    // }
 
     scene = this.props.scenes[0]
 
@@ -95,7 +105,7 @@ class DisplayModel extends Component {
 
     document.getElementById('display').appendChild(renderer.domElement)
 
-    customEvent(
+    separateObject(
       THREE,
       camera,
       selectedObject,
@@ -104,6 +114,8 @@ class DisplayModel extends Component {
       objects,
       orbitControls
     )
+
+    objectHightlight(THREE, camera, selectedObject, objects)
   }
 
   getNextIndex = (index = 1, obj_names_length, direction) => {
@@ -113,7 +125,7 @@ class DisplayModel extends Component {
         camera.position.set(70, 70, 70)
 
         let nextNodePrice = document.createTextNode(
-          this.props.price_total[index] + '€'
+          this.props.price_total[index]
         )
         let nextPrice = document.getElementById('price')
         nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
@@ -122,13 +134,15 @@ class DisplayModel extends Component {
         let nextName = document.getElementById('name')
         nextName.replaceChild(nextNodeName, nextName.childNodes[0])
 
+        objects = []
+
         return (index + 1) % obj_names_length
       case 'prev':
         scene = this.props.scenes[index]
         camera.position.set(70, 70, 70)
 
         let prevNodePrice = document.createTextNode(
-          this.props.price_total[index] + '€'
+          this.props.price_total[index]
         )
         let prevPrice = document.getElementById('price')
         prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -136,6 +150,8 @@ class DisplayModel extends Component {
         let prevNodeName = document.createTextNode(this.props.obj_names[index])
         let prevName = document.getElementById('name')
         prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+
+        objects = []
 
         return (index === 0 && obj_names_length - 1) || index - 1
       default:

@@ -416,6 +416,113 @@
           ]
         }
       ]
+    },
+    {
+      "code": "ABB02",
+      "name": "Robot-02",
+      "price": 50000,
+      "objects": [
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "ABB02-0",
+              "name": "Base",
+              "json3d": "assets/json/base.json",
+              "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "ABB02-1",
+              "name": "Link1",
+              "json3d": "assets/json/link1.json",
+              "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "ABB02-2",
+              "name": "Link2",
+              "json3d": "assets/json/link2.json",
+              "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "ABB02-3",
+              "name": "Link3",
+              "json3d": "assets/json/link3.json",
+              "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "ABB02-6",
+              "name": "Link6",
+              "json3d": "assets/json/link6.json",
+              "price": 100000
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,4 @@
-const objectHightlight = (THREE, camera, selectedObject, objects) => {
+const objectHighlight = (THREE, camera, selectedObject, objects) => {
   document.addEventListener('mousemove', event => {
     let vector = new THREE.Vector3(
       (event.clientX / window.innerWidth) * 2 - 1,
@@ -37,4 +37,4 @@ const objectHightlight = (THREE, camera, selectedObject, objects) => {
   })
 }
 
-export default objectHightlight
+export default objectHighlight

@@ -6,7 +6,7 @@ import Footer from '../../containers/FooterContainer/Footer/Footer'
 
 import * as configuratorAction from '../../store/actions/index'
 import separateObject from '../../components/CustomEvents/SeparateObject'
-import objectHightlight from '../../components/CustomEvents/ObjectHighlight'
+import objectHighlight from '../../components/CustomEvents/ObjectHighlight'
 
 import './DisplayModel.css'
 
@@ -20,7 +20,9 @@ let scene,
   objects = [], //hold object model for separation
   orbitControls,
   obj3d,
-  index
+  index = 0,
+  objIndex = [],
+  instIndex = []
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -79,12 +81,21 @@ class DisplayModel extends Component {
             loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
               obj3d = new THREE.Mesh(geo, mat)
               obj3d.scale.set(15, 15, 15)
-              objects.push(obj3d)
               this.props.scenes[i].add(obj3d)
+              obj3d.name = i + 'X' + j
+
+              objects.sort((a, b) => {
+                let x = a.name.toLowerCase()
+                let y = b.name.toLowerCase()
+                return x < y ? -1 : x > y ? 1 : 0
+              })
+              objects.push(obj3d)
             })
           }
         }
+        instIndex.push(j)
       }
+      objIndex.push(i)
     }
 
     scene = this.props.scenes[0]
@@ -107,51 +118,70 @@ class DisplayModel extends Component {
       plane,
       offset,
       objects,
-      orbitControls
+      orbitControls,
+      objIndex,
+      instIndex
     )
 
-    objectHightlight(THREE, camera, selectedObject, objects)
+    objectHighlight(THREE, camera, selectedObject, objects, orbitControls)
   }
 
-  getNextIndex = (index = 1, obj_names_length, direction) => {
-    switch (direction) {
-      case 'next':
-        scene = this.props.scenes[index]
-        camera.position.set(70, 70, 70)
+  nextScene(obj_names_length) {
+    index++
+    if (index >= obj_names_length) {
+      index = 0
+      scene = this.props.scenes[0]
+      camera.position.set(70, 70, 70)
 
-        let nextNodePrice = document.createTextNode(
-          this.props.obj_prices[index]
-        )
-        let nextPrice = document.getElementById('price')
-        nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
+      let nextNodePrice = document.createTextNode(this.props.obj_prices[index])
+      let nextPrice = document.getElementById('price')
+      nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
 
-        let nextNodeName = document.createTextNode(this.props.obj_names[index])
-        let nextName = document.getElementById('name')
-        nextName.replaceChild(nextNodeName, nextName.childNodes[0])
+      let nextNodeName = document.createTextNode(this.props.obj_names[index])
+      let nextName = document.getElementById('name')
+      nextName.replaceChild(nextNodeName, nextName.childNodes[0])
+    } else {
+      scene = this.props.scenes[index]
+      camera.position.set(70, 70, 70)
 
-        return (index + 1) % obj_names_length
-      case 'prev':
-        scene = this.props.scenes[index]
-        camera.position.set(70, 70, 70)
+      let nextNodePrice = document.createTextNode(this.props.obj_prices[index])
+      let nextPrice = document.getElementById('price')
+      nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
 
-        let prevNodePrice = document.createTextNode(
-          this.props.obj_prices[index]
-        )
-        let prevPrice = document.getElementById('price')
-        prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
-
-        let prevNodeName = document.createTextNode(this.props.obj_names[index])
-        let prevName = document.getElementById('name')
-        prevName.replaceChild(prevNodeName, prevName.childNodes[0])
-
-        return (index === 0 && obj_names_length - 1) || index - 1
-      default:
-        return index
+      let nextNodeName = document.createTextNode(this.props.obj_names[index])
+      let nextName = document.getElementById('name')
+      nextName.replaceChild(nextNodeName, nextName.childNodes[0])
     }
+
+    return index
   }
 
-  getNewIndex = (direction, obj_names_length) => {
-    index = this.getNextIndex(index, obj_names_length, direction)
+  prevScene(obj_names_length) {
+    index--
+    if (index <= 0) {
+      index = obj_names_length
+      scene = this.props.scenes[0]
+      camera.position.set(70, 70, 70)
+
+      let prevNodePrice = document.createTextNode(this.props.obj_prices[0])
+      let prevPrice = document.getElementById('price')
+      prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
+
+      let prevNodeName = document.createTextNode(this.props.obj_names[0])
+      let prevName = document.getElementById('name')
+      prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+    } else {
+      scene = this.props.scenes[index]
+      camera.position.set(70, 70, 70)
+
+      let prevNodePrice = document.createTextNode(this.props.obj_prices[index])
+      let prevPrice = document.getElementById('price')
+      prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
+
+      let prevNodeName = document.createTextNode(this.props.obj_names[index])
+      let prevName = document.getElementById('name')
+      prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+    }
   }
 
   componentDidMount() {
@@ -175,14 +205,16 @@ class DisplayModel extends Component {
           <div id="loader" />
         </div>
         <div id="display" />
+
         <i
           className="prev"
-          onClick={() => this.getNewIndex('prev', this.props.obj_names.length)}
+          onClick={() => this.prevScene(this.props.obj_names.length)}
         />
         <i
           className="next"
-          onClick={() => this.getNewIndex('next', this.props.obj_names.length)}
+          onClick={() => this.nextScene(this.props.obj_names.length)}
         />
+
         <div id="footer">
           <Footer camera={camera} />
         </div>
@@ -199,6 +231,7 @@ const mapStateToProps = state => {
     obj_prices: state.conf.obj_prices,
 
     obj_obj_names: state.conf.obj_obj_names,
+    obj_obj_insts: state.conf.obj_obj_instances,
 
     default: state.conf.obj_obj_insts_default,
     code: state.conf.obj_obj_insts_code,
@@ -207,9 +240,7 @@ const mapStateToProps = state => {
     price_total: state.conf.obj_obj_insts_price_total,
 
     json3dlinks: state.conf.json3dlinks,
-    scenes: state.conf.scenes,
-
-    loading: state.conf.loading
+    scenes: state.conf.scenes
   }
 }
 

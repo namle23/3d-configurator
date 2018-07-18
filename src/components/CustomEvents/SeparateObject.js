@@ -5,10 +5,14 @@ const separateObject = (
   plane,
   offset,
   objects,
-  orbitControls
+  orbitControls,
+  objIndex,
+  instIndex
 ) => {
+  console.log(objIndex)
+  console.log(instIndex)
+
   document.addEventListener('mousemove', event => {
-    event.preventDefault()
     let vector = new THREE.Vector3(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1,
@@ -19,8 +23,6 @@ const separateObject = (
       camera.position,
       vector.sub(camera.position).normalize()
     )
-
-    // let intersects = raycaster.intersectObject(plane)
 
     if (selectedObject) {
       let intersects = raycaster.intersectObject(plane)
@@ -56,6 +58,7 @@ const separateObject = (
       vector.sub(camera.position).normalize()
     )
     let intersects = raycaster.intersectObjects(objects)
+    let obj_obj_index, obj_obj_inst_index
 
     if (intersects.length > 0) {
       orbitControls.enabled = false
@@ -63,7 +66,21 @@ const separateObject = (
       intersects = raycaster.intersectObject(plane)
       try {
         offset.copy(intersects[0].point).sub(plane.position)
-        console.log(objects)
+        console.log(selectedObject.name)
+
+        obj_obj_index = selectedObject.name.slice(
+          0,
+          selectedObject.name.indexOf('X')
+        )
+        obj_obj_inst_index = selectedObject.name.slice(
+          selectedObject.name.indexOf('X') + 1
+        )
+
+        if (obj_obj_index === '0') {
+          if (obj_obj_inst_index === '1') {
+            console.log('Nam Le')
+          }
+        }
       } catch (error) {
         console.log('mousedown error')
       }

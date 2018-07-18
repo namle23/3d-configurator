@@ -30,7 +30,9 @@ class Footer extends Component {
 const mapStateToProps = state => {
   return {
     obj_names: state.conf.obj_names,
-    price_total: state.conf.obj_obj_insts_price_total
+    price_total: state.conf.obj_obj_insts_price_total,
+
+    loading: state.conf.loading
   }
 }
 

@@ -30,6 +30,8 @@ const reducerConfigurator = (state = initState, action) => {
     case actionTypes.SET_CONFIGURATOR:
       return {
         ...state,
+        objects: action.data.objects.map(objects => objects),
+
         imageroot: action.data.imageroot,
         obj_codes: action.data.objects.map(objects => objects.code),
         obj_names: action.data.objects.map(objects => objects.name),

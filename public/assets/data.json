@@ -45,6 +45,13 @@
               "name": "Pohja 1800",
               "json3d": "assets/json/Pohja1800.json",
               "price": 550
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja3",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 650
             }
           ]
         },
@@ -298,7 +305,7 @@
       ]
     },
     {
-      "code": "PLS1021",
+      "code": "PLS1111",
       "name": "PW-Spa Simple",
       "price": 1963,
       "objects": [

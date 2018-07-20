@@ -5,8 +5,9 @@ import { connect } from 'react-redux'
 import Footer from '../../containers/FooterContainer/Footer/Footer'
 
 import * as configuratorAction from '../../store/actions/index'
-import separateObject from '../../components/CustomEvents/SeparateObject'
-import objectHighlight from '../../components/CustomEvents/ObjectHighlight'
+// import separateObject from '../../components/CustomEvents/SeparateObject'
+
+import CustomEvents from '../../components/CustomEvents/CustomEvents'
 
 import './DisplayModel.css'
 
@@ -20,9 +21,10 @@ let scene,
   objects = [], //hold object model for separation
   orbitControls,
   obj3d,
-  index = 0,
-  objIndex = [],
-  instIndex = []
+  index = 0, //index of object in object array for navigation
+  objIndex = [], //hold index if object sliced from selectedObject (part before X)
+  instIndex = [], //hold index of instance in obj_obj from sliced (part after X)
+  instIndex_index = [] //hold index of selected instance of instances
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -74,8 +76,12 @@ class DisplayModel extends Component {
 
     const loader = new THREE.JSONLoader(loadingManager)
     for (let i = 0; i < this.props.default.length; i++) {
+      objIndex.push(i)
       for (let j = 0; j < this.props.default[i].length; j++) {
+        instIndex.push(j)
         for (let k = 0; k < this.props.default[i][j].length; k++) {
+          instIndex_index.push(k)
+
           if (this.props.default[i][j][k] === 1) {
             // eslint-disable-next-line
             loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
@@ -93,9 +99,7 @@ class DisplayModel extends Component {
             })
           }
         }
-        instIndex.push(j)
       }
-      objIndex.push(i)
     }
 
     scene = this.props.scenes[0]
@@ -109,37 +113,192 @@ class DisplayModel extends Component {
 
     render()
 
-    document.getElementById('display').appendChild(renderer.domElement)
+    document.getElementById('display').appendChild(renderer.domElement) //append THREE model to screen
 
-    separateObject(
+    const customEvents = new CustomEvents() //declare instance for CustomEvents
+
+    //map array of objects and instances
+    let arr_instIndex = customEvents.mappingCenter(instIndex)
+    let arr_instIndex_index = customEvents.mappingCenter(instIndex_index)
+
+    //mouse events
+    document.addEventListener('mousemove', event => {
+      let vector = new THREE.Vector3(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
+      )
+      vector.unproject(camera)
+      let raycaster = new THREE.Raycaster(
+        camera.position,
+        vector.sub(camera.position).normalize()
+      )
+
+      if (selectedObject) {
+        let intersects = raycaster.intersectObject(plane)
+
+        try {
+          selectedObject.position.copy(intersects[0].point.sub(offset))
+        } catch (error) {
+          console.log('mousemove ' + error)
+        }
+      } else {
+        let intersects = raycaster.intersectObjects(objects)
+
+        try {
+          if (intersects.length > 0) {
+            plane.position.copy(intersects[0].object.position)
+            plane.lookAt(camera.position)
+          }
+        } catch (error) {
+          console.log('mousemove else ' + error)
+        }
+      }
+    })
+
+    document.addEventListener('mousedown', event => {
+      let vector = new THREE.Vector3(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
+      )
+      vector.unproject(camera)
+      let raycaster = new THREE.Raycaster(
+        camera.position,
+        vector.sub(camera.position).normalize()
+      )
+      let intersects = raycaster.intersectObjects(objects)
+      let obj_obj_index, obj_obj_inst_index
+
+      if (intersects.length > 0) {
+        orbitControls.enabled = false
+        selectedObject = intersects[0].object
+        intersects = raycaster.intersectObject(plane)
+        try {
+          offset.copy(intersects[0].point).sub(plane.position)
+          console.log(selectedObject.name)
+
+          obj_obj_index = parseInt(
+            selectedObject.name.slice(0, selectedObject.name.indexOf('X')),
+            10
+          )
+          obj_obj_inst_index = parseInt(
+            selectedObject.name.slice(selectedObject.name.indexOf('X') + 1),
+            10
+          )
+
+          this.confirmIndex(
+            objIndex,
+            obj_obj_index,
+            obj_obj_inst_index,
+            arr_instIndex,
+            arr_instIndex_index
+          )
+        } catch (error) {
+          console.log('mousedown error')
+        }
+      }
+    })
+
+    document.addEventListener('mouseup', event => {
+      orbitControls.enabled = true
+      selectedObject = null
+    })
+
+    customEvents.objectHighlight(
       THREE,
       camera,
       selectedObject,
-      plane,
-      offset,
       objects,
-      orbitControls,
-      objIndex,
-      instIndex
+      orbitControls
     )
+  }
 
-    objectHighlight(THREE, camera, selectedObject, objects, orbitControls)
+  confirmIndex = (
+    objIndex,
+    obj_obj_index,
+    obj_obj_inst_index,
+    arr_instIndex,
+    arr_instIndex_index
+  ) => {
+    if (objIndex.indexOf(obj_obj_index) !== -1) {
+      if (
+        arr_instIndex[objIndex.indexOf(obj_obj_index)].indexOf(
+          obj_obj_inst_index
+        ) !== -1
+      ) {
+        // let popup = document.createElement('div')
+        // popup.className = 'popup'
+        // popup.id = 'test'
+        // let cancel = document.createElement('div')
+        // cancel.className = 'cancel'
+        // cancel.innerHTML = 'X'
+        // cancel.onclick = function(event) {
+        //   popup.parentNode.removeChild(popup)
+        // }
+        // let innerBlue = document.createElement('input')
+        // innerBlue.type = 'button'
+        // innerBlue.id = 'innerBlueCSS'
+        // innerBlue.onclick = function() {}
+        // let innerBlack = document.createElement('input')
+        // innerBlack.type = 'button'
+        // innerBlack.id = 'innerBlackCSS'
+        // innerBlack.onclick = function() {}
+        // let innerGray = document.createElement('input')
+        // innerGray.type = 'button'
+        // innerGray.id = 'innerGrayCSS'
+        // innerGray.onclick = function() {}
+        // popup.appendChild(innerBlue)
+        // popup.appendChild(innerBlack)
+        // popup.appendChild(innerGray)
+        // popup.appendChild(cancel)
+        // document.getElementById('display').appendChild(popup)
+        // console.log(
+        //   this.props.objects[objIndex.indexOf(obj_obj_index)].objects[
+        //     arr_instIndex[objIndex.indexOf(obj_obj_index)].indexOf(
+        //       obj_obj_inst_index
+        //     )
+        //   ]
+        // )
+      }
+    }
   }
 
   nextScene(obj_names_length) {
+    if (index >= obj_names_length) {
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
+    } else {
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = false
+        }
+      })
+    }
+
     index++
+
     if (index >= obj_names_length) {
       index = 0
       scene = this.props.scenes[0]
       camera.position.set(70, 70, 70)
 
-      let nextNodePrice = document.createTextNode(this.props.obj_prices[index])
+      let nextNodePrice = document.createTextNode(this.props.obj_prices[0])
       let nextPrice = document.getElementById('price')
       nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
 
-      let nextNodeName = document.createTextNode(this.props.obj_names[index])
+      let nextNodeName = document.createTextNode(this.props.obj_names[0])
       let nextName = document.getElementById('name')
       nextName.replaceChild(nextNodeName, nextName.childNodes[0])
+
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
     } else {
       scene = this.props.scenes[index]
       camera.position.set(70, 70, 70)
@@ -151,15 +310,36 @@ class DisplayModel extends Component {
       let nextNodeName = document.createTextNode(this.props.obj_names[index])
       let nextName = document.getElementById('name')
       nextName.replaceChild(nextNodeName, nextName.childNodes[0])
-    }
 
-    return index
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
+    }
   }
 
   prevScene(obj_names_length) {
+    if (index <= 0) {
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
+    } else {
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = false
+        }
+      })
+    }
+
     index--
+
     if (index <= 0) {
       index = obj_names_length
+      console.log(index)
+
       scene = this.props.scenes[0]
       camera.position.set(70, 70, 70)
 
@@ -170,6 +350,12 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[0])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+
+      this.props.scenes[0].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
     } else {
       scene = this.props.scenes[index]
       camera.position.set(70, 70, 70)
@@ -181,6 +367,12 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[index])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
     }
   }
 
@@ -225,6 +417,8 @@ class DisplayModel extends Component {
 
 const mapStateToProps = state => {
   return {
+    objects: state.conf.objects,
+
     imageroot: state.conf.imageroot,
     obj_codes: state.conf.obj_codes,
     obj_names: state.conf.obj_names,

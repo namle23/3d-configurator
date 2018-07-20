@@ -1,4 +1,4 @@
-const separateObject = (
+separateObject = (
   THREE,
   camera,
   selectedObject,
@@ -93,4 +93,4 @@ const separateObject = (
   })
 }
 
-export default separateObject
+export default eparateObject

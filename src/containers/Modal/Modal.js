@@ -25,13 +25,13 @@ class Modal extends Component {
             <div className="modal-wrapper">
               <div className="modal-container">
                 <div className="modal-body">
-                  <slot name="body">
+                  <div name="body">
                     <h4>Click to start</h4>
-                  </slot>
+                  </div>
                 </div>
 
                 <div className="modal-footer">
-                  <slot name="footer">
+                  <div name="footer">
                     <button className="btn btn-default">
                       <Link
                         to="/display"
@@ -41,7 +41,7 @@ class Modal extends Component {
                         OK
                       </Link>
                     </button>
-                  </slot>
+                  </div>
                 </div>
               </div>
             </div>

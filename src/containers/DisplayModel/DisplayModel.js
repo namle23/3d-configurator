@@ -78,6 +78,15 @@ class DisplayModel extends Component {
       loadingScreen.addEventListener('transitionend', () => {
         document.getElementById('loading-screen').remove()
       })
+
+      //set visibility of not default instances to false (by default)
+      for (let i = 0; i < this.props.scenes.length; i++) {
+        for (let j = 0; j < this.props.scenes[i].children.length; j++) {
+          if (this.props.scenes[i].children[j].name.indexOf('Y') > -1) {
+            this.props.scenes[i].children[j].visible = false
+          }
+        }
+      }
     })
 
     const loader = new THREE.JSONLoader(loadingManager)
@@ -105,28 +114,27 @@ class DisplayModel extends Component {
             })
           }
 
-          // if (this.props.default[i][j][k] === 0) {
-          //   // eslint-disable-next-line
-          //   loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
-          //     obj3dNotDefault = new THREE.Mesh(geo, mat)
-          //     obj3dNotDefault.scale.set(15, 15, 15)
-          //     this.props.scenes[i].add(obj3dNotDefault)
-          //     obj3dNotDefault.name = i + 'Y' + j
+          if (this.props.default[i][j][k] === 0) {
+            // eslint-disable-next-line
+            loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
+              obj3dNotDefault = new THREE.Mesh(geo, mat)
+              obj3dNotDefault.scale.set(15, 15, 15)
+              this.props.scenes[i].add(obj3dNotDefault)
+              obj3dNotDefault.name = i + 'Y' + j
 
-          //     objectsNotDefault.sort((a, b) => {
-          //       let x = a.name.toLowerCase()
-          //       let y = b.name.toLowerCase()
-          //       return x < y ? -1 : x > y ? 1 : 0
-          //     })
-
-          //     objectsNotDefault.push(obj3dNotDefault)
-          //   })
-          // }
+              objectsNotDefault.sort((a, b) => {
+                let x = a.name.toLowerCase()
+                let y = b.name.toLowerCase()
+                return x < y ? -1 : x > y ? 1 : 0
+              })
+            })
+          }
         }
       }
     }
 
     scene = this.props.scenes[0]
+    camera.lookAt(scene.position)
 
     const render = () => {
       renderer.autoClear = false
@@ -200,13 +208,16 @@ class DisplayModel extends Component {
         intersects = raycaster.intersectObject(plane)
         try {
           offset.copy(intersects[0].point).sub(plane.position)
-          obj_obj_index = parseInt(
-            selectedObject.name.slice(0, selectedObject.name.indexOf('X')),
-            10
+
+          //get index accordingly
+          obj_obj_index = customEvents.getNameIndex(
+            selectedObject.name,
+            0,
+            selectedObject.name.indexOf('X')
           )
-          obj_obj_inst_index = parseInt(
-            selectedObject.name.slice(selectedObject.name.indexOf('X') + 1),
-            10
+          obj_obj_inst_index = customEvents.getNameIndex(
+            selectedObject.name,
+            selectedObject.name.indexOf('X') + 1
           )
 
           this.confirmIndex(
@@ -267,8 +278,6 @@ class DisplayModel extends Component {
           </button>
         ))
 
-        console.log(scene.children)
-
         this.setState({
           popup: (
             <div>
@@ -300,27 +309,29 @@ class DisplayModel extends Component {
         })
 
         let ins1
-        let scene1 = new THREE.Scene()
-        let camera1 = new THREE.PerspectiveCamera(
+        let sceneInstance = new THREE.Scene()
+        let cameraInstance = new THREE.PerspectiveCamera(
           75,
           window.innerWidth / window.innerHeight,
           0.1,
           1000
         )
 
-        let renderer1 = new THREE.WebGLRenderer({ alpha: true })
-        renderer1.setSize(300, 300)
-        document.getElementById('instance').appendChild(renderer1.domElement)
+        const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
+        rendererInstance.setSize(300, 300)
+        document
+          .getElementById('instance')
+          .appendChild(rendererInstance.domElement)
 
         const ambientLight1 = new THREE.AmbientLight(0x383838)
-        scene1.add(ambientLight1)
+        sceneInstance.add(ambientLight1)
 
         const spotLight1 = new THREE.SpotLight(0xffffff)
         spotLight1.position.set(300, 300, 300)
         spotLight1.intensity = 1
-        scene1.add(spotLight1)
+        sceneInstance.add(spotLight1)
 
-        let loader1 = new THREE.JSONLoader()
+        const loaderInstance = new THREE.JSONLoader()
 
         for (
           let i = 0;
@@ -329,24 +340,25 @@ class DisplayModel extends Component {
             .instances.length;
           i++
         ) {
-          loader1.load(
+          loaderInstance.load(
             path +
               this.props.objects[obj_obj_index].objects[obj_obj_inst_index]
                 .instances[i].json3d,
             // eslint-disable-next-line
             (geo, mat) => {
               ins1 = new THREE.Mesh(geo, mat)
-              ins1.scale.set(40, 40, 40)
-              scene1.add(ins1)
+              ins1.scale.set(15, 15, 15)
+              sceneInstance.add(ins1)
             }
           )
         }
 
-        camera1.position.set(60, 70, 70)
+        cameraInstance.position.set(30, 35, 40)
+        cameraInstance.lookAt(sceneInstance.position)
 
-        let render = function() {
+        const render = () => {
           requestAnimationFrame(render)
-          renderer1.render(scene1, camera1)
+          rendererInstance.render(sceneInstance, cameraInstance)
         }
 
         render()

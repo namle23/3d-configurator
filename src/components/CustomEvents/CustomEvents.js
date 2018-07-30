@@ -56,6 +56,10 @@ class CustomEvents {
     }
     return result
   }
+
+  getNameIndex(target, first, second) {
+    return parseInt(target.slice(first, second), 10)
+  }
 }
 
 export default CustomEvents

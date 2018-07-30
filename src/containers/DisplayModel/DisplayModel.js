@@ -12,6 +12,7 @@ import CustomEvents from '../../components/CustomEvents/CustomEvents'
 import './DisplayModel.css'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
+const customEvents = new CustomEvents() //declare instance for CustomEvents
 let scene,
   camera,
   renderer,
@@ -79,14 +80,7 @@ class DisplayModel extends Component {
         document.getElementById('loading-screen').remove()
       })
 
-      //set visibility of not default instances to false (by default)
-      for (let i = 0; i < this.props.scenes.length; i++) {
-        for (let j = 0; j < this.props.scenes[i].children.length; j++) {
-          if (this.props.scenes[i].children[j].name.indexOf('Y') > -1) {
-            this.props.scenes[i].children[j].visible = false
-          }
-        }
-      }
+      this.setVisibility()
     })
 
     const loader = new THREE.JSONLoader(loadingManager)
@@ -112,15 +106,13 @@ class DisplayModel extends Component {
               })
               objects.push(obj3d)
             })
-          }
-
-          if (this.props.default[i][j][k] === 0) {
+          } else {
             // eslint-disable-next-line
             loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
               obj3dNotDefault = new THREE.Mesh(geo, mat)
               obj3dNotDefault.scale.set(15, 15, 15)
               this.props.scenes[i].add(obj3dNotDefault)
-              obj3dNotDefault.name = i + 'Y' + j
+              obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
 
               objectsNotDefault.sort((a, b) => {
                 let x = a.name.toLowerCase()
@@ -147,8 +139,6 @@ class DisplayModel extends Component {
 
     document.getElementById('display').appendChild(renderer.domElement) //append models to screen
 
-    const customEvents = new CustomEvents() //declare instance for CustomEvents
-
     //map array of objects and instances
     let arr_instIndex = customEvents.mappingCenter(instIndex)
     let arr_instIndex_index = customEvents.mappingCenter(instIndex_index)
@@ -168,7 +158,6 @@ class DisplayModel extends Component {
 
       if (selectedObject) {
         let intersects = raycaster.intersectObject(plane)
-
         try {
           selectedObject.position.copy(intersects[0].point.sub(offset))
         } catch (error) {
@@ -176,7 +165,6 @@ class DisplayModel extends Component {
         }
       } else {
         let intersects = raycaster.intersectObjects(objects)
-
         try {
           if (intersects.length > 0) {
             plane.position.copy(intersects[0].object.position)
@@ -263,20 +251,37 @@ class DisplayModel extends Component {
         ) !== -1
       ) {
         let childNames = scene.children.map(children => children.name)
+        //index of object in current scene
         let matchedIndex = childNames.findIndex(x => x === selectedObject.name)
+        let matchedChild = scene.children[matchedIndex]
 
         let mappedInstance = this.props.objects[obj_obj_index].objects[
           obj_obj_inst_index
-        ].instances.map((instance, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              scene.children[matchedIndex].visible = false
-            }}
-          >
-            {instance.json3d}
-          </button>
-        ))
+        ].instances.map((instance, inst_index) => {
+          return (
+            <button
+              key={inst_index}
+              onClick={() => {
+                //hide selected default object
+                matchedChild.visible = false
+
+                for (let i = 0; i < childNames.length; i++) {
+                  if (childNames[i].indexOf(matchedChild.name) > -1) {
+                    console.log(
+                      customEvents.getNameIndex(
+                        childNames[i],
+                        0,
+                        childNames[i].indexOf('Y')
+                      )
+                    )
+                  }
+                }
+              }}
+            >
+              {instance.json3d}
+            </button>
+          )
+        })
 
         this.setState({
           popup: (
@@ -318,7 +323,11 @@ class DisplayModel extends Component {
         )
 
         const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-        rendererInstance.setSize(300, 300)
+        rendererInstance.setSize(300, 200)
+
+        //empty div before append new child element
+        document.getElementById('instance').innerHTML = ''
+
         document
           .getElementById('instance')
           .appendChild(rendererInstance.domElement)
@@ -419,6 +428,8 @@ class DisplayModel extends Component {
         }
       })
     }
+
+    this.setVisibility()
   }
 
   prevScene(obj_names_length) {
@@ -474,6 +485,19 @@ class DisplayModel extends Component {
           object.visible = true
         }
       })
+    }
+
+    this.setVisibility()
+  }
+
+  //set visibility of not default instances to false (by default)
+  setVisibility() {
+    for (let i = 0; i < this.props.scenes.length; i++) {
+      for (let j = 0; j < this.props.scenes[i].children.length; j++) {
+        if (this.props.scenes[i].children[j].name.indexOf('Y') > -1) {
+          this.props.scenes[i].children[j].visible = false
+        }
+      }
     }
   }
 

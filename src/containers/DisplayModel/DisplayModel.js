@@ -19,7 +19,7 @@ let scene,
   plane,
   selectedObject,
   offset = new THREE.Vector3(),
-  objects = [], //hold object model for separation
+  objects = [], //hold object model for separation (default only)
   orbitControls,
   obj3d,
   index = 0, //index of object in object array for navigation
@@ -265,17 +265,30 @@ class DisplayModel extends Component {
                 //hide selected default object
                 matchedChild.visible = false
 
+                let arrMatchedChildName = [],
+                  indexOfY = [],
+                  slicedValue = []
+
                 for (let i = 0; i < childNames.length; i++) {
                   if (childNames[i].indexOf(matchedChild.name) > -1) {
-                    console.log(
-                      customEvents.getNameIndex(
-                        childNames[i],
-                        0,
-                        childNames[i].indexOf('Y')
-                      )
-                    )
+                    arrMatchedChildName.push(childNames[i])
+                    indexOfY.push(childNames[i].indexOf('Y'))
                   }
                 }
+
+                let splitArray = customEvents.splitArray(
+                  customEvents.mergeArray(arrMatchedChildName, indexOfY)
+                )
+
+                for (let i = 0; i < splitArray.length; i++) {
+                  slicedValue.push(splitArray[i][0].slice(splitArray[i][1] + 1))
+                }
+
+                console.log(selectedObject.name)
+
+                console.log(slicedValue)
+
+                console.log(inst_index)
               }}
             >
               {instance.json3d}
@@ -297,11 +310,6 @@ class DisplayModel extends Component {
                     >
                       &times;
                     </span>
-                    <div className="m-body">
-                      <slot name="body">
-                        <p>Choose instance</p>
-                      </slot>
-                    </div>
 
                     <ul>{mappedInstance}</ul>
 

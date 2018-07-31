@@ -32,7 +32,7 @@ class Modal extends Component {
 
                 <div className="modal-footer">
                   <div name="footer">
-                    <button className="btn btn-default">
+                    <button className="btn btn-default" id="auto-click">
                       <Link
                         to="/display"
                         className="btn btn-default"

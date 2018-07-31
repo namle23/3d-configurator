@@ -60,6 +60,18 @@ class CustomEvents {
   getNameIndex(target, first, second) {
     return parseInt(target.slice(first, second), 10)
   }
+
+  mergeArray(arr1, arr2) {
+    return arr1.reduce((arr, v, i) => {
+      return arr.concat(v, arr2[i])
+    }, [])
+  }
+
+  splitArray(arr) {
+    let result = []
+    for (let i = 0; i < arr.length; i += 2) result.push(arr.slice(i, i + 2))
+    return result
+  }
 }
 
 export default CustomEvents

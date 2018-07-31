@@ -284,14 +284,27 @@ class DisplayModel extends Component {
                   slicedValue.push(splitArray[i][0].slice(splitArray[i][1] + 1))
                 }
 
-                console.log(selectedObject.name)
+                //change value of default (without Y) to 0 to match index
+                if (slicedValue.indexOf(selectedObject.name) > -1) {
+                  slicedValue[slicedValue.indexOf(selectedObject.name)] = '0'
+                }
 
-                console.log(slicedValue)
+                //convert string values to integer value
+                let intSlicedValue = slicedValue.map(x => parseInt(x, 10))
 
-                console.log(inst_index)
+                if (intSlicedValue.indexOf(inst_index) > -1) {
+                  for (let i = 0; i < scene.children.length; i++) {
+                    if (
+                      scene.children[i].name ===
+                      arrMatchedChildName[intSlicedValue.indexOf(inst_index)]
+                    ) {
+                      scene.children[i].visible = true
+                    }
+                  }
+                }
               }}
             >
-              {instance.json3d}
+              {instance.name}
             </button>
           )
         })
@@ -329,9 +342,12 @@ class DisplayModel extends Component {
           0.1,
           1000
         )
-
         const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
         rendererInstance.setSize(300, 200)
+        let oControl = new OrbitControls(
+          cameraInstance,
+          rendererInstance.domElement
+        )
 
         //empty div before append new child element
         document.getElementById('instance').innerHTML = ''
@@ -364,7 +380,7 @@ class DisplayModel extends Component {
             // eslint-disable-next-line
             (geo, mat) => {
               ins1 = new THREE.Mesh(geo, mat)
-              ins1.scale.set(15, 15, 15)
+              ins1.scale.set(20, 20, 20)
               sceneInstance.add(ins1)
             }
           )
@@ -375,6 +391,7 @@ class DisplayModel extends Component {
 
         const render = () => {
           requestAnimationFrame(render)
+          oControl.update()
           rendererInstance.render(sceneInstance, cameraInstance)
         }
 

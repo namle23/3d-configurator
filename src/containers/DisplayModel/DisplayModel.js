@@ -332,7 +332,7 @@ class DisplayModel extends Component {
 
                     <ul>{mappedInstance}</ul>
 
-                    <div id="instance" />
+                    <div id="instances" />
                   </div>
                 </div>
               </div>
@@ -341,6 +341,16 @@ class DisplayModel extends Component {
         })
 
         let ins1
+        let tempInstances = this.props.objects[obj_obj_index].objects[
+          obj_obj_inst_index
+        ].instances
+
+        for (let i = 0; i < tempInstances.length; i++) {
+          let newDiv = document.createElement('div')
+          newDiv.id = 'instance' + i
+          document.getElementById('instances').appendChild(newDiv)
+        }
+
         let sceneInstance = new THREE.Scene()
         let cameraInstance = new THREE.PerspectiveCamera(
           75,
@@ -356,11 +366,10 @@ class DisplayModel extends Component {
         )
 
         //empty div before append new child element
-        document.getElementById('instance').innerHTML = ''
-
-        document
-          .getElementById('instance')
-          .appendChild(rendererInstance.domElement)
+        // document.getElementById('instance').innerHTML = ''
+        // document
+        //   .getElementById('instance')
+        //   .appendChild(rendererInstance.domElement)
 
         const ambientLight1 = new THREE.AmbientLight(0x383838)
         sceneInstance.add(ambientLight1)
@@ -372,22 +381,18 @@ class DisplayModel extends Component {
 
         const loaderInstance = new THREE.JSONLoader()
 
-        for (
-          let i = 0;
-          i <
-          this.props.objects[obj_obj_index].objects[obj_obj_inst_index]
-            .instances.length;
-          i++
-        ) {
+        for (let i = 0; i < tempInstances.length; i++) {
           loaderInstance.load(
-            path +
-              this.props.objects[obj_obj_index].objects[obj_obj_inst_index]
-                .instances[i].json3d,
+            path + tempInstances[i].json3d,
             // eslint-disable-next-line
             (geo, mat) => {
               ins1 = new THREE.Mesh(geo, mat)
-              ins1.scale.set(20, 20, 20)
+              ins1.scale.set(18, 18, 18)
               sceneInstance.add(ins1)
+
+              document
+                .getElementById('instance' + i)
+                .appendChild(rendererInstance.domElement)
             }
           )
         }

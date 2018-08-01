@@ -37,7 +37,12 @@ camera = new THREE.PerspectiveCamera(
   1000
 )
 
-const path = window.location.protocol + '//' + window.location.host + '/'
+const path =
+  window.location.protocol +
+  '//' +
+  window.location.host +
+  '/' +
+  window.location.pathname
 
 class DisplayModel extends Component {
   state = {
@@ -261,6 +266,7 @@ class DisplayModel extends Component {
           return (
             <button
               key={inst_index}
+              className="btn btn-default"
               onClick={() => {
                 //hide selected default object
                 matchedChild.visible = false

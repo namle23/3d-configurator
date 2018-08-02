@@ -46,7 +46,8 @@ const path =
 
 class DisplayModel extends Component {
   state = {
-    popup: null
+    popup: null,
+    mevent: true
   }
 
   create3d() {
@@ -181,51 +182,53 @@ class DisplayModel extends Component {
       }
     })
 
-    document.addEventListener('mousedown', event => {
-      let vector = new THREE.Vector3(
-        (event.clientX / window.innerWidth) * 2 - 1,
-        -(event.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
-      vector.unproject(camera)
-      let raycaster = new THREE.Raycaster(
-        camera.position,
-        vector.sub(camera.position).normalize()
-      )
-      let intersects = raycaster.intersectObjects(objects)
-      let obj_obj_index, obj_obj_inst_index
+    if (this.state.mevent) {
+      document.addEventListener('mousedown', event => {
+        let vector = new THREE.Vector3(
+          (event.clientX / window.innerWidth) * 2 - 1,
+          -(event.clientY / window.innerHeight) * 2 + 1,
+          0.5
+        )
+        vector.unproject(camera)
+        let raycaster = new THREE.Raycaster(
+          camera.position,
+          vector.sub(camera.position).normalize()
+        )
+        let intersects = raycaster.intersectObjects(objects)
+        let obj_obj_index, obj_obj_inst_index
 
-      if (intersects.length > 0) {
-        orbitControls.enabled = false
-        selectedObject = intersects[0].object
-        intersects = raycaster.intersectObject(plane)
-        try {
-          offset.copy(intersects[0].point).sub(plane.position)
+        if (intersects.length > 0) {
+          orbitControls.enabled = false
+          selectedObject = intersects[0].object
+          intersects = raycaster.intersectObject(plane)
+          try {
+            offset.copy(intersects[0].point).sub(plane.position)
 
-          //get index accordingly
-          obj_obj_index = customEvents.getNameIndex(
-            selectedObject.name,
-            0,
-            selectedObject.name.indexOf('X')
-          )
-          obj_obj_inst_index = customEvents.getNameIndex(
-            selectedObject.name,
-            selectedObject.name.indexOf('X') + 1
-          )
+            //get index accordingly
+            obj_obj_index = customEvents.getNameIndex(
+              selectedObject.name,
+              0,
+              selectedObject.name.indexOf('X')
+            )
+            obj_obj_inst_index = customEvents.getNameIndex(
+              selectedObject.name,
+              selectedObject.name.indexOf('X') + 1
+            )
 
-          this.confirmIndex(
-            objIndex,
-            obj_obj_index,
-            obj_obj_inst_index,
-            arr_instIndex,
-            arr_instIndex_index,
-            selectedObject
-          )
-        } catch (error) {
-          console.log('mousedown error' + error)
+            this.confirmIndex(
+              objIndex,
+              obj_obj_index,
+              obj_obj_inst_index,
+              arr_instIndex,
+              arr_instIndex_index,
+              selectedObject
+            )
+          } catch (error) {
+            console.log('mousedown error' + error)
+          }
         }
-      }
-    })
+      })
+    }
 
     document.addEventListener('mouseup', event => {
       orbitControls.enabled = true
@@ -304,7 +307,7 @@ class DisplayModel extends Component {
                       scene.children[i].name ===
                       arrMatchedChildName[intSlicedValue.indexOf(inst_index)]
                     ) {
-                      scene.children[i].visible = true
+                      scene.children[i].visible = !scene.children[i].visible
                     }
                   }
                 }
@@ -325,6 +328,7 @@ class DisplayModel extends Component {
                       className="close"
                       onClick={() => {
                         this.setState({ popup: null })
+                        document.getElementById('instances').innerHTML = ''
                       }}
                     >
                       &times;
@@ -337,7 +341,9 @@ class DisplayModel extends Component {
                 </div>
               </div>
             </div>
-          )
+          ),
+
+          mevent: true
         })
 
         let ins1
@@ -350,6 +356,8 @@ class DisplayModel extends Component {
           newDiv.id = 'instance' + i
           document.getElementById('instances').appendChild(newDiv)
         }
+
+        console.log(document.getElementById('instances'))
 
         let sceneInstance = new THREE.Scene()
         let cameraInstance = new THREE.PerspectiveCamera(
@@ -407,6 +415,10 @@ class DisplayModel extends Component {
         }
 
         render()
+
+        this.setState({
+          mevent: false
+        })
       }
     }
   }
@@ -469,22 +481,22 @@ class DisplayModel extends Component {
   }
 
   prevScene(obj_names_length) {
-    if (index <= 0) {
-      this.props.scenes[index].traverse(object => {
+    index--
+
+    if (index < 0) {
+      this.props.scenes[index + 1].traverse(object => {
         if (object instanceof THREE.Mesh) {
           object.visible = false
         }
       })
     } else {
       //need help
-      this.props.scenes[index - 1].traverse(object => {
+      this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
           object.visible = true
         }
       })
     }
-
-    index--
 
     if (index <= 0) {
       index = obj_names_length
@@ -498,12 +510,6 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[0])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
-
-      this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
-      })
     } else {
       scene = this.props.scenes[index]
       camera.position.set(70, 70, 70)

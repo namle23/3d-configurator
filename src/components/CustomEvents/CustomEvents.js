@@ -72,6 +72,32 @@ class CustomEvents {
     for (let i = 0; i < arr.length; i += 2) result.push(arr.slice(i, i + 2))
     return result
   }
+
+  // delDuplicate(arrNode) {
+  //   let dup = []
+  //   let arr = arrNode.filter(el => {
+  //     if (dup.indexOf(el) === -1) {
+  //       dup.push(el)
+  //       return true
+  //     }
+
+  //     return false
+  //   })
+
+  //   for (
+  //     let i = 0;
+  //     i < document.getElementById('instances').childNodes.length;
+  //     i++
+  //   ) {
+  //     arrNode.push(document.getElementById('instances').childNodes[i].id)
+  //   }
+
+  //   customEvents.delDuplicate(arrNode)
+
+  //   console.log(
+  //     customEvents.delDuplicate(arrNode).slice(0, tempInstances.length)
+  //   )
+  // }
 }
 
 export default CustomEvents

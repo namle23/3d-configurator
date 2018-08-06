@@ -38,6 +38,105 @@ class CustomEvents {
     })
   }
 
+  mouseDown(
+    THREE,
+    event,
+    camera,
+    objects,
+    orbitControls,
+    selectedObject,
+    plane,
+    offset,
+    objIndex,
+    arr_instIndex,
+    arr_instIndex_index,
+    confirmIndex
+  ) {
+    let vector = new THREE.Vector3(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1,
+      0.5
+    )
+    vector.unproject(camera)
+    let raycaster = new THREE.Raycaster(
+      camera.position,
+      vector.sub(camera.position).normalize()
+    )
+    let intersects = raycaster.intersectObjects(objects)
+    let obj_obj_index, obj_obj_inst_index
+
+    if (intersects.length > 0) {
+      orbitControls.enabled = false
+      selectedObject = intersects[0].object
+      intersects = raycaster.intersectObject(plane)
+      try {
+        offset.copy(intersects[0].point).sub(plane.position)
+
+        //get index accordingly
+        obj_obj_index = this.getNameIndex(
+          selectedObject.name,
+          0,
+          selectedObject.name.indexOf('X')
+        )
+        obj_obj_inst_index = this.getNameIndex(
+          selectedObject.name,
+          selectedObject.name.indexOf('X') + 1
+        )
+
+        confirmIndex(
+          objIndex,
+          obj_obj_index,
+          obj_obj_inst_index,
+          arr_instIndex,
+          arr_instIndex_index,
+          selectedObject
+        )
+      } catch (error) {
+        console.log('mousedown error' + error)
+      }
+    }
+  }
+
+  mouseMove = (
+    THREE,
+    event,
+    camera,
+    selectedObject,
+    plane,
+    offset,
+    objects
+  ) => {
+    let vector = new THREE.Vector3(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1,
+      0.5
+    )
+    vector.unproject(camera)
+    let raycaster = new THREE.Raycaster(
+      camera.position,
+      vector.sub(camera.position).normalize()
+    )
+
+    if (selectedObject) {
+      let intersects = raycaster.intersectObject(plane)
+      try {
+        selectedObject.position.copy(intersects[0].point.sub(offset))
+      } catch (error) {
+        console.log('mousemove ' + error)
+      }
+    } else {
+      let intersects = raycaster.intersectObjects(objects)
+      try {
+        if (intersects.length > 0) {
+          plane.position.copy(intersects[0].object.position)
+          plane.lookAt(camera.position)
+        }
+      } catch (error) {
+        console.log('mousemove else ' + error)
+      }
+    }
+  }
+
   mappingCenter = object => {
     let events = [],
       result = [],

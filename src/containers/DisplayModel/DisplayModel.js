@@ -46,8 +46,7 @@ const path =
 
 class DisplayModel extends Component {
   state = {
-    popup: null,
-    mevent: true
+    popup: null
   }
 
   create3d() {
@@ -151,6 +150,18 @@ class DisplayModel extends Component {
 
     //mouse events
     document.addEventListener('mousemove', event => {
+      customEvents.mouseMove(
+        THREE,
+        event,
+        camera,
+        selectedObject,
+        plane,
+        offset,
+        objects
+      )
+    })
+
+    const eventMouse = event => {
       let vector = new THREE.Vector3(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
@@ -161,74 +172,45 @@ class DisplayModel extends Component {
         camera.position,
         vector.sub(camera.position).normalize()
       )
+      let intersects = raycaster.intersectObjects(objects)
+      let obj_obj_index, obj_obj_inst_index
 
-      if (selectedObject) {
-        let intersects = raycaster.intersectObject(plane)
+      if (intersects.length > 0) {
+        orbitControls.enabled = false
+        selectedObject = intersects[0].object
+        intersects = raycaster.intersectObject(plane)
         try {
-          selectedObject.position.copy(intersects[0].point.sub(offset))
+          offset.copy(intersects[0].point).sub(plane.position)
+
+          //get index accordingly
+          obj_obj_index = customEvents.getNameIndex(
+            selectedObject.name,
+            0,
+            selectedObject.name.indexOf('X')
+          )
+          obj_obj_inst_index = customEvents.getNameIndex(
+            selectedObject.name,
+            selectedObject.name.indexOf('X') + 1
+          )
+
+          this.confirmIndex(
+            objIndex,
+            obj_obj_index,
+            obj_obj_inst_index,
+            arr_instIndex,
+            arr_instIndex_index,
+            selectedObject,
+            eventMouse
+          )
         } catch (error) {
-          console.log('mousemove ' + error)
-        }
-      } else {
-        let intersects = raycaster.intersectObjects(objects)
-        try {
-          if (intersects.length > 0) {
-            plane.position.copy(intersects[0].object.position)
-            plane.lookAt(camera.position)
-          }
-        } catch (error) {
-          console.log('mousemove else ' + error)
+          console.log('mousedown error' + error)
         }
       }
-    })
 
-    if (this.state.mevent) {
-      document.addEventListener('mousedown', event => {
-        let vector = new THREE.Vector3(
-          (event.clientX / window.innerWidth) * 2 - 1,
-          -(event.clientY / window.innerHeight) * 2 + 1,
-          0.5
-        )
-        vector.unproject(camera)
-        let raycaster = new THREE.Raycaster(
-          camera.position,
-          vector.sub(camera.position).normalize()
-        )
-        let intersects = raycaster.intersectObjects(objects)
-        let obj_obj_index, obj_obj_inst_index
-
-        if (intersects.length > 0) {
-          orbitControls.enabled = false
-          selectedObject = intersects[0].object
-          intersects = raycaster.intersectObject(plane)
-          try {
-            offset.copy(intersects[0].point).sub(plane.position)
-
-            //get index accordingly
-            obj_obj_index = customEvents.getNameIndex(
-              selectedObject.name,
-              0,
-              selectedObject.name.indexOf('X')
-            )
-            obj_obj_inst_index = customEvents.getNameIndex(
-              selectedObject.name,
-              selectedObject.name.indexOf('X') + 1
-            )
-
-            this.confirmIndex(
-              objIndex,
-              obj_obj_index,
-              obj_obj_inst_index,
-              arr_instIndex,
-              arr_instIndex_index,
-              selectedObject
-            )
-          } catch (error) {
-            console.log('mousedown error' + error)
-          }
-        }
-      })
+      document.removeEventListener('mousedown', eventMouse)
     }
+
+    document.addEventListener('mousedown', eventMouse)
 
     document.addEventListener('mouseup', event => {
       orbitControls.enabled = true
@@ -250,7 +232,8 @@ class DisplayModel extends Component {
     obj_obj_inst_index, //index of current selected object of model (instance index)
     arr_instIndex,
     arr_instIndex_index,
-    selectedObject
+    selectedObject,
+    eventMouse
   ) => {
     if (objIndex.indexOf(obj_obj_index) !== -1) {
       if (
@@ -262,10 +245,12 @@ class DisplayModel extends Component {
         //index of object in current scene
         let matchedIndex = childNames.findIndex(x => x === selectedObject.name)
         let matchedChild = scene.children[matchedIndex]
-
-        let mappedInstance = this.props.objects[obj_obj_index].objects[
+        //store instances of object
+        let tempInstances = this.props.objects[obj_obj_index].objects[
           obj_obj_inst_index
-        ].instances.map((instance, inst_index) => {
+        ].instances
+
+        let mappedInstance = tempInstances.map((instance, inst_index) => {
           return (
             <button
               key={inst_index}
@@ -329,6 +314,10 @@ class DisplayModel extends Component {
                       onClick={() => {
                         this.setState({ popup: null })
                         document.getElementById('instances').innerHTML = ''
+                        //add mousedown event after press exit
+                        document
+                          .getElementById('display')
+                          .addEventListener('mousedown', eventMouse)
                       }}
                     >
                       &times;
@@ -341,23 +330,16 @@ class DisplayModel extends Component {
                 </div>
               </div>
             </div>
-          ),
-
-          mevent: true
+          )
         })
 
         let ins1
-        let tempInstances = this.props.objects[obj_obj_index].objects[
-          obj_obj_inst_index
-        ].instances
 
         for (let i = 0; i < tempInstances.length; i++) {
           let newDiv = document.createElement('div')
           newDiv.id = 'instance' + i
           document.getElementById('instances').appendChild(newDiv)
         }
-
-        console.log(document.getElementById('instances'))
 
         let sceneInstance = new THREE.Scene()
         let cameraInstance = new THREE.PerspectiveCamera(
@@ -373,21 +355,20 @@ class DisplayModel extends Component {
           rendererInstance.domElement
         )
 
-        //empty div before append new child element
-        // document.getElementById('instance').innerHTML = ''
-        // document
-        //   .getElementById('instance')
-        //   .appendChild(rendererInstance.domElement)
-
-        const ambientLight1 = new THREE.AmbientLight(0x383838)
-        sceneInstance.add(ambientLight1)
-
-        const spotLight1 = new THREE.SpotLight(0xffffff)
-        spotLight1.position.set(300, 300, 300)
-        spotLight1.intensity = 1
-        sceneInstance.add(spotLight1)
-
         const loaderInstance = new THREE.JSONLoader()
+
+        let sceneInstances = tempInstances.map(() => {
+          sceneInstances = new THREE.Scene()
+          const ambientLight = new THREE.AmbientLight(0x383838)
+          sceneInstances.add(ambientLight)
+
+          const spotLight = new THREE.SpotLight(0xffffff)
+          spotLight.position.set(300, 300, 300)
+          spotLight.intensity = 1
+          sceneInstances.add(spotLight)
+
+          return sceneInstances
+        })
 
         for (let i = 0; i < tempInstances.length; i++) {
           loaderInstance.load(
@@ -396,7 +377,18 @@ class DisplayModel extends Component {
             (geo, mat) => {
               ins1 = new THREE.Mesh(geo, mat)
               ins1.scale.set(18, 18, 18)
-              sceneInstance.add(ins1)
+              sceneInstances[i].add(ins1)
+
+              cameraInstance.position.set(30, 35, 40)
+              cameraInstance.lookAt(sceneInstances[i].position)
+
+              const render = () => {
+                requestAnimationFrame(render)
+                oControl.update()
+                rendererInstance.render(sceneInstances[i], cameraInstance)
+              }
+
+              render()
 
               document
                 .getElementById('instance' + i)
@@ -405,20 +397,18 @@ class DisplayModel extends Component {
           )
         }
 
-        cameraInstance.position.set(30, 35, 40)
-        cameraInstance.lookAt(sceneInstance.position)
+        console.log(document.getElementById('instances'))
 
-        const render = () => {
-          requestAnimationFrame(render)
-          oControl.update()
-          rendererInstance.render(sceneInstance, cameraInstance)
-        }
+        // cameraInstance.position.set(30, 35, 40)
+        // cameraInstance.lookAt(sceneInstances[1].position)
 
-        render()
+        // const render = () => {
+        //   requestAnimationFrame(render)
+        //   oControl.update()
+        //   rendererInstance.render(sceneInstances[1], cameraInstance)
+        // }
 
-        this.setState({
-          mevent: false
-        })
+        // render()
       }
     }
   }

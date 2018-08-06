@@ -333,15 +333,6 @@ class DisplayModel extends Component {
           )
         })
 
-        let ins1
-
-        for (let i = 0; i < tempInstances.length; i++) {
-          let newDiv = document.createElement('div')
-          newDiv.id = 'instance' + i
-          document.getElementById('instances').appendChild(newDiv)
-        }
-
-        let sceneInstance = new THREE.Scene()
         let cameraInstance = new THREE.PerspectiveCamera(
           75,
           window.innerWidth / window.innerHeight,
@@ -350,14 +341,14 @@ class DisplayModel extends Component {
         )
         const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
         rendererInstance.setSize(300, 200)
-        let oControl = new OrbitControls(
+        const oControl = new OrbitControls(
           cameraInstance,
           rendererInstance.domElement
         )
 
         const loaderInstance = new THREE.JSONLoader()
 
-        let sceneInstances = tempInstances.map(() => {
+        let sceneInstances = tempInstances.map((tempInstance, i) => {
           sceneInstances = new THREE.Scene()
           const ambientLight = new THREE.AmbientLight(0x383838)
           sceneInstances.add(ambientLight)
@@ -367,6 +358,10 @@ class DisplayModel extends Component {
           spotLight.intensity = 1
           sceneInstances.add(spotLight)
 
+          let newDiv = document.createElement('div')
+          newDiv.id = 'instance' + i
+          document.getElementById('instances').appendChild(newDiv)
+
           return sceneInstances
         })
 
@@ -375,7 +370,7 @@ class DisplayModel extends Component {
             path + tempInstances[i].json3d,
             // eslint-disable-next-line
             (geo, mat) => {
-              ins1 = new THREE.Mesh(geo, mat)
+              let ins1 = new THREE.Mesh(geo, mat)
               ins1.scale.set(18, 18, 18)
               sceneInstances[i].add(ins1)
 

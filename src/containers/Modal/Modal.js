@@ -15,6 +15,12 @@ class Modal extends Component {
     this.setState({ showModal: !doesShow })
   }
 
+  componentDidMount() {
+    setTimeout(() => {
+      document.getElementById('auto-click').click()
+    }, 50)
+  }
+
   render() {
     let modal = null
 
@@ -32,11 +38,12 @@ class Modal extends Component {
 
                 <div className="modal-footer">
                   <div name="footer">
-                    <button className="btn btn-default" id="auto-click">
+                    <button className="btn btn-default">
                       <Link
                         to="/display"
                         className="btn btn-default"
                         onClick={this.toggleShowModal}
+                        id="auto-click"
                       >
                         OK
                       </Link>

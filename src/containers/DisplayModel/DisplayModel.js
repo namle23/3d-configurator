@@ -333,22 +333,9 @@ class DisplayModel extends Component {
           )
         })
 
-        let cameraInstance = new THREE.PerspectiveCamera(
-          75,
-          window.innerWidth / window.innerHeight,
-          0.1,
-          1000
-        )
-        const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-        rendererInstance.setSize(window.innerWidth / 3, window.innerHeight / 3)
-        const oControl = new OrbitControls(
-          cameraInstance,
-          rendererInstance.domElement
-        )
-
         const loaderInstance = new THREE.JSONLoader()
 
-        let createSceneInstance = tempInstances.map((tempInstance, i) => {
+        for (let i = 0; i < tempInstances.length; i++) {
           let sceneInstance = new THREE.Scene()
           const ambientLight = new THREE.AmbientLight(0x383838)
           sceneInstance.add(ambientLight)
@@ -358,17 +345,30 @@ class DisplayModel extends Component {
           spotLight.intensity = 1
           sceneInstance.add(spotLight)
 
-          // let newDiv = document.createElement('div')
-          // newDiv.id = 'instance' + i
-          // document.getElementById('instances').appendChild(newDiv)
+          let cameraInstance = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          )
+
+          const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
+          rendererInstance.setSize(
+            window.innerWidth / 4,
+            window.innerHeight / 4
+          )
+          const oControl = new OrbitControls(
+            cameraInstance,
+            rendererInstance.domElement
+          )
 
           loaderInstance.load(
-            path + tempInstance.json3d,
+            path + tempInstances[i].json3d,
             // eslint-disable-next-line
             (geo, mat) => {
-              let ins1 = new THREE.Mesh(geo, mat)
-              ins1.scale.set(20, 20, 20)
-              sceneInstance.add(ins1)
+              let mesh = new THREE.Mesh(geo, mat)
+              mesh.scale.set(20, 20, 20)
+              sceneInstance.add(mesh)
 
               cameraInstance.position.set(30, 35, 40)
               cameraInstance.lookAt(sceneInstance.position)
@@ -380,18 +380,13 @@ class DisplayModel extends Component {
               }
 
               render()
+
+              document
+                .getElementById('instances')
+                .appendChild(rendererInstance.domElement)
             }
           )
-
-          return sceneInstance
-        })
-
-        document
-          .getElementById('instances')
-          .appendChild(rendererInstance.domElement)
-
-        console.log(createSceneInstance)
-        console.log(document.getElementById('instances'))
+        }
       }
     }
   }

@@ -340,7 +340,7 @@ class DisplayModel extends Component {
           1000
         )
         const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-        rendererInstance.setSize(300, 200)
+        rendererInstance.setSize(window.innerWidth / 3, window.innerHeight / 3)
         const oControl = new OrbitControls(
           cameraInstance,
           rendererInstance.domElement
@@ -348,62 +348,50 @@ class DisplayModel extends Component {
 
         const loaderInstance = new THREE.JSONLoader()
 
-        let sceneInstances = tempInstances.map((tempInstance, i) => {
-          sceneInstances = new THREE.Scene()
+        let createSceneInstance = tempInstances.map((tempInstance, i) => {
+          let sceneInstance = new THREE.Scene()
           const ambientLight = new THREE.AmbientLight(0x383838)
-          sceneInstances.add(ambientLight)
+          sceneInstance.add(ambientLight)
 
           const spotLight = new THREE.SpotLight(0xffffff)
           spotLight.position.set(300, 300, 300)
           spotLight.intensity = 1
-          sceneInstances.add(spotLight)
+          sceneInstance.add(spotLight)
 
-          let newDiv = document.createElement('div')
-          newDiv.id = 'instance' + i
-          document.getElementById('instances').appendChild(newDiv)
+          // let newDiv = document.createElement('div')
+          // newDiv.id = 'instance' + i
+          // document.getElementById('instances').appendChild(newDiv)
 
-          return sceneInstances
-        })
-
-        for (let i = 0; i < tempInstances.length; i++) {
           loaderInstance.load(
-            path + tempInstances[i].json3d,
+            path + tempInstance.json3d,
             // eslint-disable-next-line
             (geo, mat) => {
               let ins1 = new THREE.Mesh(geo, mat)
-              ins1.scale.set(18, 18, 18)
-              sceneInstances[i].add(ins1)
+              ins1.scale.set(20, 20, 20)
+              sceneInstance.add(ins1)
 
               cameraInstance.position.set(30, 35, 40)
-              cameraInstance.lookAt(sceneInstances[i].position)
+              cameraInstance.lookAt(sceneInstance.position)
 
               const render = () => {
                 requestAnimationFrame(render)
                 oControl.update()
-                rendererInstance.render(sceneInstances[i], cameraInstance)
+                rendererInstance.render(sceneInstance, cameraInstance)
               }
 
               render()
-
-              document
-                .getElementById('instance' + i)
-                .appendChild(rendererInstance.domElement)
             }
           )
-        }
 
+          return sceneInstance
+        })
+
+        document
+          .getElementById('instances')
+          .appendChild(rendererInstance.domElement)
+
+        console.log(createSceneInstance)
         console.log(document.getElementById('instances'))
-
-        // cameraInstance.position.set(30, 35, 40)
-        // cameraInstance.lookAt(sceneInstances[1].position)
-
-        // const render = () => {
-        //   requestAnimationFrame(render)
-        //   oControl.update()
-        //   rendererInstance.render(sceneInstances[1], cameraInstance)
-        // }
-
-        // render()
       }
     }
   }

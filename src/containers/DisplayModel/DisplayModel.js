@@ -54,7 +54,10 @@ class DisplayModel extends Component {
 
     renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setClearColor(new THREE.Color(0x000, 1.0))
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setSize(
+      window.innerWidth - window.innerWidth * 0.01,
+      window.innerHeight - window.innerHeight * 0.01
+    )
 
     plane = new THREE.Mesh(
       new THREE.PlaneGeometry(2000, 2000, 18, 18),
@@ -250,11 +253,65 @@ class DisplayModel extends Component {
           obj_obj_inst_index
         ].instances
 
-        let mappedInstance = tempInstances.map((instance, inst_index) => {
+        const loaderInstance = new THREE.JSONLoader()
+
+        let mappedInstance = tempInstances.map((tempInstance, inst_index) => {
+          let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
+          rendererInstance.setSize(
+            window.innerWidth / 4,
+            window.innerHeight / 4
+          )
+
+          let cameraInstance = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          )
+
+          const oControl = new OrbitControls(
+            cameraInstance,
+            rendererInstance.domElement
+          )
+
+          let sceneInstance = new THREE.Scene()
+          const ambientLight = new THREE.AmbientLight(0x383838)
+          sceneInstance.add(ambientLight)
+
+          const spotLight = new THREE.SpotLight(0xffffff)
+          spotLight.position.set(300, 300, 300)
+          spotLight.intensity = 1
+          sceneInstance.add(spotLight)
+
+          loaderInstance.load(
+            path + tempInstance.json3d,
+            // eslint-disable-next-line
+            (geo, mat) => {
+              let mesh = new THREE.Mesh(geo, mat)
+              mesh.scale.set(20, 20, 20)
+              sceneInstance.add(mesh)
+
+              cameraInstance.position.set(30, 35, 40)
+              cameraInstance.lookAt(sceneInstance.position)
+
+              const render = () => {
+                requestAnimationFrame(render)
+                oControl.update()
+                rendererInstance.render(sceneInstance, cameraInstance)
+              }
+
+              render()
+
+              document
+                .getElementById('instances')
+                .appendChild(rendererInstance.domElement)
+            }
+          )
+
           return (
             <button
               key={inst_index}
-              className="btn btn-default"
+              className="btn btn-default btn-xs"
               onClick={() => {
                 //hide selected default object
                 matchedChild.visible = false
@@ -298,10 +355,10 @@ class DisplayModel extends Component {
                 }
               }}
             >
-              {instance.name}
+              {tempInstance.name}
             </button>
           )
-        })
+        }) //end map
 
         this.setState({
           popup: (
@@ -323,72 +380,16 @@ class DisplayModel extends Component {
                       &times;
                     </span>
 
-                    <ul>{mappedInstance}</ul>
-
+                    <div className="map-instances">{mappedInstance}</div>
                     <div id="instances" />
                   </div>
                 </div>
               </div>
             </div>
           )
-        })
-
-        const loaderInstance = new THREE.JSONLoader()
-
-        for (let i = 0; i < tempInstances.length; i++) {
-          let sceneInstance = new THREE.Scene()
-          const ambientLight = new THREE.AmbientLight(0x383838)
-          sceneInstance.add(ambientLight)
-
-          const spotLight = new THREE.SpotLight(0xffffff)
-          spotLight.position.set(300, 300, 300)
-          spotLight.intensity = 1
-          sceneInstance.add(spotLight)
-
-          let cameraInstance = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-          )
-
-          const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-          rendererInstance.setSize(
-            window.innerWidth / 4,
-            window.innerHeight / 4
-          )
-          const oControl = new OrbitControls(
-            cameraInstance,
-            rendererInstance.domElement
-          )
-
-          loaderInstance.load(
-            path + tempInstances[i].json3d,
-            // eslint-disable-next-line
-            (geo, mat) => {
-              let mesh = new THREE.Mesh(geo, mat)
-              mesh.scale.set(20, 20, 20)
-              sceneInstance.add(mesh)
-
-              cameraInstance.position.set(30, 35, 40)
-              cameraInstance.lookAt(sceneInstance.position)
-
-              const render = () => {
-                requestAnimationFrame(render)
-                oControl.update()
-                rendererInstance.render(sceneInstance, cameraInstance)
-              }
-
-              render()
-
-              document
-                .getElementById('instances')
-                .appendChild(rendererInstance.domElement)
-            }
-          )
-        }
+        }) //end setState
       }
-    }
+    } //end first if condition
   }
 
   nextScene(obj_names_length) {
@@ -446,7 +447,7 @@ class DisplayModel extends Component {
     }
 
     this.setVisibility()
-  }
+  } //end nextScene
 
   prevScene(obj_names_length) {
     index--
@@ -498,7 +499,7 @@ class DisplayModel extends Component {
     }
 
     this.setVisibility()
-  }
+  } //end prevScene
 
   //set visibility of not default instances to false (by default)
   setVisibility() {
@@ -516,7 +517,7 @@ class DisplayModel extends Component {
 
     window.addEventListener(
       'resize',
-      function() {
+      () => {
         camera.aspect = window.innerWidth / window.innerHeight
         camera.updateProjectionMatrix()
         renderer.setSize(window.innerWidth, window.innerHeight)
@@ -531,6 +532,7 @@ class DisplayModel extends Component {
         <div id="loading-screen">
           <div id="loader" />
         </div>
+
         <div id="display" />
 
         <i

@@ -2,15 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import AngleControl from '../AngleControl/AngleControl'
-import Spinner from '../../../components/Spinner/Spinner'
 
 import './Footer.css'
 
 class Footer extends Component {
   render() {
-    let spinner = this.props.loading ? (
-      <Spinner />
-    ) : (
+    let price = (
       <div>
         <h3 id="price">{this.props.price_total[0]}€</h3>
         <h3 id="name">{this.props.obj_names[0]}</h3>
@@ -19,8 +16,7 @@ class Footer extends Component {
 
     return (
       <div className="footer-wrap">
-        <div className="spinner">{spinner}</div>
-        {this.props.arrayIndex}
+        <div>{price}</div>
         <AngleControl className="angle-control" camera={this.props.camera} />
       </div>
     )

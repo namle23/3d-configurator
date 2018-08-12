@@ -45,8 +45,22 @@ const path =
   window.location.pathname
 
 class DisplayModel extends Component {
-  state = {
-    popup: null
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      popup: null,
+      enableEdit: false
+    }
+
+    this.enableEditState = this.enableEditState.bind(this)
+  }
+
+  enableEditState(val) {
+    this.setState({
+      enableEdit: val
+    })
+    console.log(this.state.enableEdit)
   }
 
   create3d() {
@@ -210,10 +224,12 @@ class DisplayModel extends Component {
         }
       }
 
-      document.removeEventListener('mousedown', eventMouse)
+      document
+        .getElementById('display')
+        .removeEventListener('mousedown', eventMouse)
     }
 
-    document.addEventListener('mousedown', eventMouse)
+    document.getElementById('display').addEventListener('mousedown', eventMouse)
 
     document.addEventListener('mouseup', event => {
       orbitControls.enabled = true
@@ -547,7 +563,7 @@ class DisplayModel extends Component {
         <div>{this.state.popup}</div>
 
         <div id="footer">
-          <Footer camera={camera} />
+          <Footer camera={camera} update={this.enableEditState} />
         </div>
       </div>
     )

@@ -1,6 +1,6 @@
 .wrap {
-  height: 100px;
-  width: 100px;
+  height: 120px;
+  width: 120px;
   border-radius: 50%;
   position: relative;
   overflow: hidden;
@@ -31,14 +31,14 @@
   left: 50%;
 }
 .center {
-  height: 80%;
-  width: 80%;
+  height: 60%;
+  width: 60%;
+  padding: 20%;
   position: absolute;
-  top: 10%;
-  left: 10%;
+  top: 20%;
+  left: 20%;
   background: lightgray;
   border-radius: 50%;
-  line-height: 160px;
 }
 .quart:hover {
   background: dimgray;

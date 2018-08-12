@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import './AngleControl.css'
+let enableEdit = false
 
 class AngleControl extends Component {
   angleTop(camera) {
@@ -37,6 +38,8 @@ class AngleControl extends Component {
 
   angleRotation(rotation) {
     rotation = !rotation
+    enableEdit = !enableEdit
+    this.props.update(enableEdit)
   }
 
   render() {
@@ -59,10 +62,12 @@ class AngleControl extends Component {
             className="quart"
             onClick={() => this.angleLeft(this.props.camera)}
           />
-          <i
+          <p
             className="center"
             onClick={() => this.angleRotation(this.props.rotation)}
-          />
+          >
+            Edit
+          </p>
         </div>
       </div>
     )

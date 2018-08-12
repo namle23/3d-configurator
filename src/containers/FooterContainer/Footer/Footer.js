@@ -17,7 +17,12 @@ class Footer extends Component {
     return (
       <div className="footer-wrap">
         <div>{price}</div>
-        <AngleControl className="angle-control" camera={this.props.camera} />
+
+        <AngleControl
+          className="angle-control"
+          camera={this.props.camera}
+          update={this.props.update}
+        />
       </div>
     )
   }
@@ -26,9 +31,7 @@ class Footer extends Component {
 const mapStateToProps = state => {
   return {
     obj_names: state.conf.obj_names,
-    price_total: state.conf.obj_obj_insts_price_total,
-
-    loading: state.conf.loading
+    price_total: state.conf.obj_obj_insts_price_total
   }
 }
 

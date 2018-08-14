@@ -27,7 +27,9 @@ let scene,
   instIndex = [], //hold index of instance in obj_obj from sliced (part after X)
   instIndex_index = [], //hold index of selected instance of instances,
   obj3dNotDefault,
-  objectsNotDefault = []
+  objectsNotDefault = [],
+  isShiftDown = false,
+  isCtrlDown = false
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -178,7 +180,7 @@ class DisplayModel extends Component {
       )
     })
 
-    const eventMouse = event => {
+    const onMouseDown = event => {
       let vector = new THREE.Vector3(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
@@ -217,7 +219,7 @@ class DisplayModel extends Component {
             arr_instIndex,
             arr_instIndex_index,
             selectedObject,
-            eventMouse
+            onMouseDown
           )
         } catch (error) {
           console.log('mousedown error' + error)
@@ -226,15 +228,58 @@ class DisplayModel extends Component {
 
       document
         .getElementById('display')
-        .removeEventListener('mousedown', eventMouse)
+        .removeEventListener('mousedown', onMouseDown, false)
     }
 
-    document.getElementById('display').addEventListener('mousedown', eventMouse)
+    const onKeyDown = event => {
+      if (event.shiftKey) {
+        isShiftDown = true
 
-    document.addEventListener('mouseup', event => {
-      orbitControls.enabled = true
-      selectedObject = null
-    })
+        document
+          .getElementById('display')
+          .removeEventListener('mousedown', onMouseDown, false)
+
+          
+      } else if (event.ctrlKey) {
+        isCtrlDown = true
+
+        document
+          .getElementById('display')
+          .removeEventListener('mousedown', onMouseDown, false)
+      }
+    }
+
+    const onKeyUp = event => {
+      if (!event.shiftKey) {
+        isShiftDown = false
+
+        document
+          .getElementById('display')
+          .addEventListener('mousedown', onMouseDown, false)
+      } else if (!event.ctrlKey) {
+        isCtrlDown = false
+
+        document
+          .getElementById('display')
+          .addEventListener('mousedown', onMouseDown, false)
+      }
+    }
+
+    document
+      .getElementById('display')
+      .addEventListener('mousedown', onMouseDown, false)
+
+    document.addEventListener('keydown', onKeyDown, false)
+    document.addEventListener('keyup', onKeyUp, false)
+
+    document.addEventListener(
+      'mouseup',
+      event => {
+        orbitControls.enabled = true
+        selectedObject = null
+      },
+      false
+    )
 
     customEvents.objectHighlight(
       THREE,
@@ -243,7 +288,7 @@ class DisplayModel extends Component {
       objects,
       orbitControls
     )
-  }
+  } //end create3d()
 
   confirmIndex = (
     objIndex, //[0,1,2,3...], depends on the amount of models
@@ -252,7 +297,7 @@ class DisplayModel extends Component {
     arr_instIndex,
     arr_instIndex_index,
     selectedObject,
-    eventMouse
+    onMouseDown
   ) => {
     if (objIndex.indexOf(obj_obj_index) !== -1) {
       if (
@@ -390,7 +435,7 @@ class DisplayModel extends Component {
                         //add mousedown event after press exit
                         document
                           .getElementById('display')
-                          .addEventListener('mousedown', eventMouse)
+                          .addEventListener('mousedown', onMouseDown, false)
                       }}
                     >
                       &times;
@@ -537,6 +582,8 @@ class DisplayModel extends Component {
         camera.aspect = window.innerWidth / window.innerHeight
         camera.updateProjectionMatrix()
         renderer.setSize(window.innerWidth, window.innerHeight)
+
+        console.log(isShiftDown + isCtrlDown)
       },
       false
     )
@@ -547,6 +594,12 @@ class DisplayModel extends Component {
       <div>
         <div id="loading-screen">
           <div id="loader" />
+        </div>
+
+        <div id="info">
+          <strong>click</strong>: show instances,
+          <strong>shift + click</strong>: add spot,
+          <strong>ctrl + click</strong>: remove spot
         </div>
 
         <div id="display" />

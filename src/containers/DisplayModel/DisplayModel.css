@@ -188,3 +188,14 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+/* info */
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 5px;
+  font-family: monospace;
+  font-size: 13px;
+  text-align: center;
+}

@@ -29,7 +29,9 @@ let scene,
   obj3dNotDefault,
   objectsNotDefault = [],
   isShiftDown = false,
-  isCtrlDown = false
+  isCtrlDown = false,
+  cubeGeo = new THREE.BoxGeometry( 1, 1, 1 ),
+  cubeMat = new THREE.MeshBasicMaterial( {color: 0x000000} )
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -52,7 +54,7 @@ class DisplayModel extends Component {
 
     this.state = {
       popup: null,
-      enableEdit: false
+      enableRotation: false
     }
 
     this.enableEditState = this.enableEditState.bind(this)
@@ -60,9 +62,9 @@ class DisplayModel extends Component {
 
   enableEditState(val) {
     this.setState({
-      enableEdit: val
+      enableRotation: val
     })
-    console.log(this.state.enableEdit)
+    console.log(this.state.enableRotation)
   }
 
   create3d() {
@@ -155,6 +157,13 @@ class DisplayModel extends Component {
     const render = () => {
       renderer.autoClear = false
       orbitControls.update()
+
+      // if (this.state.enableRotation) {
+      //   for (let i = 3; i < scene.length; i++) {
+      //     scene.children[i].rotation.y += 0.001
+      //   }
+      // }
+
       requestAnimationFrame(render)
       renderer.render(scene, camera)
     }
@@ -181,48 +190,80 @@ class DisplayModel extends Component {
     })
 
     const onMouseDown = event => {
-      let vector = new THREE.Vector3(
-        (event.clientX / window.innerWidth) * 2 - 1,
-        -(event.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
-      vector.unproject(camera)
-      let raycaster = new THREE.Raycaster(
-        camera.position,
-        vector.sub(camera.position).normalize()
-      )
-      let intersects = raycaster.intersectObjects(objects)
-      let obj_obj_index, obj_obj_inst_index
+      if (event.shiftKey) {
+        let vector = new THREE.Vector3(
+          (event.clientX / window.innerWidth) * 2 - 1,
+          -(event.clientY / window.innerHeight) * 2 + 1,
+          0.5
+        )
+        vector.unproject(camera)
+        let raycaster = new THREE.Raycaster(
+          camera.position,
+          vector.sub(camera.position).normalize()
+        )
+        let intersects = raycaster.intersectObjects(objects)
 
-      if (intersects.length > 0) {
-        orbitControls.enabled = false
-        selectedObject = intersects[0].object
-        intersects = raycaster.intersectObject(plane)
-        try {
-          offset.copy(intersects[0].point).sub(plane.position)
+        if (intersects.length > 0) {
+          let intersect=intersects[0]
 
-          //get index accordingly
-          obj_obj_index = customEvents.getNameIndex(
-            selectedObject.name,
-            0,
-            selectedObject.name.indexOf('X')
-          )
-          obj_obj_inst_index = customEvents.getNameIndex(
-            selectedObject.name,
-            selectedObject.name.indexOf('X') + 1
-          )
+          let voxel=new THREE.Mesh(cubeGeo, cubeMat)
+          voxel.position.copy(intersect.point).add(intersect.face.normal)
+          voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
+          scene.add(voxel)
 
-          this.confirmIndex(
-            objIndex,
-            obj_obj_index,
-            obj_obj_inst_index,
-            arr_instIndex,
-            arr_instIndex_index,
-            selectedObject,
-            onMouseDown
-          )
-        } catch (error) {
-          console.log('mousedown error' + error)
+          objects.push(voxel)
+
+          render()
+        }
+        console.log('shift');
+        
+      } else if(event.ctrlKey) {
+        console.log('ctrl');
+        
+      } else {
+        let vector = new THREE.Vector3(
+          (event.clientX / window.innerWidth) * 2 - 1,
+          -(event.clientY / window.innerHeight) * 2 + 1,
+          0.5
+        )
+        vector.unproject(camera)
+        let raycaster = new THREE.Raycaster(
+          camera.position,
+          vector.sub(camera.position).normalize()
+        )
+        let intersects = raycaster.intersectObjects(objects)
+        let obj_obj_index, obj_obj_inst_index
+  
+        if (intersects.length > 0) {
+          orbitControls.enabled = false
+          selectedObject = intersects[0].object
+          intersects = raycaster.intersectObject(plane)
+          try {
+            offset.copy(intersects[0].point).sub(plane.position)
+  
+            //get index accordingly
+            obj_obj_index = customEvents.getNameIndex(
+              selectedObject.name,
+              0,
+              selectedObject.name.indexOf('X')
+            )
+            obj_obj_inst_index = customEvents.getNameIndex(
+              selectedObject.name,
+              selectedObject.name.indexOf('X') + 1
+            )
+  
+            this.confirmIndex(
+              objIndex,
+              obj_obj_index,
+              obj_obj_inst_index,
+              arr_instIndex,
+              arr_instIndex_index,
+              selectedObject,
+              onMouseDown
+            )
+          } catch (error) {
+            console.log('mousedown error' + error)
+          }
         }
       }
 
@@ -231,54 +272,24 @@ class DisplayModel extends Component {
         .removeEventListener('mousedown', onMouseDown, false)
     }
 
-    const onKeyDown = event => {
-      if (event.shiftKey) {
-        isShiftDown = true
-
-        document
-          .getElementById('display')
-          .removeEventListener('mousedown', onMouseDown, false)
-
-          
-      } else if (event.ctrlKey) {
-        isCtrlDown = true
-
-        document
-          .getElementById('display')
-          .removeEventListener('mousedown', onMouseDown, false)
-      }
-    }
-
     const onKeyUp = event => {
       if (!event.shiftKey) {
-        isShiftDown = false
-
         document
           .getElementById('display')
           .addEventListener('mousedown', onMouseDown, false)
       } else if (!event.ctrlKey) {
-        isCtrlDown = false
-
         document
           .getElementById('display')
           .addEventListener('mousedown', onMouseDown, false)
       }
     }
 
-    document
-      .getElementById('display')
-      .addEventListener('mousedown', onMouseDown, false)
-
-    document.addEventListener('keydown', onKeyDown, false)
     document.addEventListener('keyup', onKeyUp, false)
-
-    document.addEventListener(
-      'mouseup',
-      event => {
+    document.getElementById('display').addEventListener('mousedown', onMouseDown, false)
+    document.addEventListener('mouseup',event => {
         orbitControls.enabled = true
         selectedObject = null
-      },
-      false
+      },false
     )
 
     customEvents.objectHighlight(
@@ -448,7 +459,7 @@ class DisplayModel extends Component {
               </div>
             </div>
           )
-        }) //end setState
+        }) //end setState to add popup
       }
     } //end first if condition
   }
@@ -582,8 +593,6 @@ class DisplayModel extends Component {
         camera.aspect = window.innerWidth / window.innerHeight
         camera.updateProjectionMatrix()
         renderer.setSize(window.innerWidth, window.innerHeight)
-
-        console.log(isShiftDown + isCtrlDown)
       },
       false
     )

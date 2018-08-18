@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import './AngleControl.css'
-let enableEdit = false
+let enableRotation = false
 
 class AngleControl extends Component {
   angleTop(camera) {
@@ -38,8 +38,8 @@ class AngleControl extends Component {
 
   angleRotation(rotation) {
     rotation = !rotation
-    enableEdit = !enableEdit
-    this.props.update(enableEdit)
+    enableRotation = !enableRotation
+    this.props.update(enableRotation)
   }
 
   render() {

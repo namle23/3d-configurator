@@ -65,9 +65,7 @@ class AngleControl extends Component {
           <p
             className="center"
             onClick={() => this.angleRotation(this.props.rotation)}
-          >
-            Edit
-          </p>
+          />
         </div>
       </div>
     )

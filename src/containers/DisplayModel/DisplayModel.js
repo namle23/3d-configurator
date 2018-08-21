@@ -28,10 +28,8 @@ let scene,
   instIndex_index = [], //hold index of selected instance of instances,
   obj3dNotDefault,
   objectsNotDefault = [],
-  isShiftDown = false,
-  isCtrlDown = false,
-  cubeGeo = new THREE.BoxGeometry( 1, 1, 1 ),
-  cubeMat = new THREE.MeshBasicMaterial( {color: 0x000000} )
+  cubeGeo = new THREE.BoxGeometry(1, 1, 1),
+  cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 })
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -64,7 +62,6 @@ class DisplayModel extends Component {
     this.setState({
       enableRotation: val
     })
-    console.log(this.state.enableRotation)
   }
 
   create3d() {
@@ -85,6 +82,7 @@ class DisplayModel extends Component {
         transparent: true
       })
     )
+    scene.add(plane)
 
     orbitControls = new OrbitControls(camera, renderer.domElement)
 
@@ -190,36 +188,53 @@ class DisplayModel extends Component {
     })
 
     const onMouseDown = event => {
+      let vector = new THREE.Vector3(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
+      )
+      vector.unproject(camera)
+
+      let raycaster = new THREE.Raycaster(
+        camera.position,
+        vector.sub(camera.position).normalize()
+      )
+
+      let intersects = raycaster.intersectObjects(objects)
+
       if (event.shiftKey) {
-        let vector = new THREE.Vector3(
-          (event.clientX / window.innerWidth) * 2 - 1,
-          -(event.clientY / window.innerHeight) * 2 + 1,
-          0.5
-        )
-        vector.unproject(camera)
-        let raycaster = new THREE.Raycaster(
-          camera.position,
-          vector.sub(camera.position).normalize()
-        )
-        let intersects = raycaster.intersectObjects(objects)
-
         if (intersects.length > 0) {
-          let intersect=intersects[0]
+          let intersect = intersects[0]
 
-          let voxel=new THREE.Mesh(cubeGeo, cubeMat)
+          //prepare point location
+          let x = intersect.point.x + 0.25
+          let y = intersect.point.y + 0.25
+          let z = intersect.point.z + 0.25
+
+          let voxel = new THREE.Mesh(cubeGeo, cubeMat)
           voxel.position.copy(intersect.point).add(intersect.face.normal)
-          voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
+          voxel.position
+            .divideScalar(50)
+            .floor()
+            .multiplyScalar(50)
+            .addScalar(25)
+          voxel.position.set(x, y, z)
+
           scene.add(voxel)
-
-          objects.push(voxel)
-
           render()
         }
-        console.log('shift');
-        
-      } else if(event.ctrlKey) {
-        console.log('ctrl');
-        
+        console.log('shift')
+      } else if (event.ctrlKey) {
+        let intersect = intersects[0]
+
+        console.log(objects)
+
+        if (intersect.object !== plane) {
+          scene.remove(intersect.object)
+          // objects.splice(objects.indexOf(intersect.object), 1)
+        }
+
+        console.log('ctrl')
       } else {
         let vector = new THREE.Vector3(
           (event.clientX / window.innerWidth) * 2 - 1,
@@ -233,14 +248,14 @@ class DisplayModel extends Component {
         )
         let intersects = raycaster.intersectObjects(objects)
         let obj_obj_index, obj_obj_inst_index
-  
+
         if (intersects.length > 0) {
           orbitControls.enabled = false
           selectedObject = intersects[0].object
           intersects = raycaster.intersectObject(plane)
           try {
             offset.copy(intersects[0].point).sub(plane.position)
-  
+
             //get index accordingly
             obj_obj_index = customEvents.getNameIndex(
               selectedObject.name,
@@ -251,7 +266,7 @@ class DisplayModel extends Component {
               selectedObject.name,
               selectedObject.name.indexOf('X') + 1
             )
-  
+
             this.confirmIndex(
               objIndex,
               obj_obj_index,
@@ -285,11 +300,16 @@ class DisplayModel extends Component {
     }
 
     document.addEventListener('keyup', onKeyUp, false)
-    document.getElementById('display').addEventListener('mousedown', onMouseDown, false)
-    document.addEventListener('mouseup',event => {
+    document
+      .getElementById('display')
+      .addEventListener('mousedown', onMouseDown, false)
+    document.addEventListener(
+      'mouseup',
+      event => {
         orbitControls.enabled = true
         selectedObject = null
-      },false
+      },
+      false
     )
 
     customEvents.objectHighlight(
@@ -607,8 +627,8 @@ class DisplayModel extends Component {
 
         <div id="info">
           <strong>click</strong>: show instances,
-          <strong>shift + click</strong>: add spot,
-          <strong>ctrl + click</strong>: remove spot
+          <strong>hover + shift + click</strong>: add spot,
+          {/* <strong>hover + ctrl + click</strong>: remove spot */}
         </div>
 
         <div id="display" />

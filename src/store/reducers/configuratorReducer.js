@@ -20,6 +20,7 @@ const initState = {
   json3dlinks: [], //hold temporary 3D file information
   sortedJson3dlinks: [], //hold array of array of 3d links
   scenes: [],
+  cameras: [],
 
   loading: true,
   error: false

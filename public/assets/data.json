@@ -305,6 +305,160 @@
       ]
     },
     {
+      "code": "PLS1021",
+      "name": "PW-Spa Classic",
+      "price": 2013,
+      "objects": [
+        {
+          "type": "object",
+          "name": "Kylpytynnyrin pohjaosa/bottom",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 550
+            },
+            {
+              "default": 0,
+              "code": "PLS251B",
+              "name": "Musta Kansi",
+              "json3d": "assets/json/link3.json",
+              "price": 199
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Kylpytynnyrin Kansi/cap",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS251B",
+              "name": "Musta Kansi",
+              "json3d": "assets/json/MustaKansi.json",
+              "price": 199
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/link3.json",
+              "price": 550
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja3",
+              "json3d": "assets/json/Pohja1800.json",
+              "price": 650
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Kamiina/power",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS601I",
+              "name": "30 kW",
+              "json3d": "assets/json/30kW.json",
+              "price": 699
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/link3.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Piippupaketti/pipe",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS613E",
+              "name": "Piippupaketti",
+              "json3d": "assets/json/Piippupaketti.json",
+              "price": 50
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/link3.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Sisainen/inner",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS614E",
+              "name": "Sisainen",
+              "json3d": "assets/json/Sisainen.json",
+              "price": 300
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/link3.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Ulompi/outer",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS615E",
+              "name": "Ulompi",
+              "json3d": "assets/json/Ulompi.json",
+              "price": 120
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/link3.json",
+              "price": 550
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Kostea/humid",
+          "instances": [
+            {
+              "default": 1,
+              "code": "PLS616E",
+              "name": "Kostea",
+              "json3d": "assets/json/Kostea.json",
+              "price": 95
+            },
+            {
+              "default": 0,
+              "code": "PLS231",
+              "name": "Pohja 1800",
+              "json3d": "assets/json/link3.json",
+              "price": 550
+            }
+          ]
+        }
+      ]
+    },
+    {
       "code": "PLS1111",
       "name": "PW-Spa Simple",
       "price": 1963,

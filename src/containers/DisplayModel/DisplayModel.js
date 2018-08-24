@@ -28,7 +28,7 @@ let scene,
   instIndex_index = [], //hold index of selected instance of instances,
   obj3dNotDefault,
   objectsNotDefault = [],
-  cubeGeo = new THREE.BoxGeometry(1, 1, 1),
+  cubeGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5),
   cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 })
 
 scene = new THREE.Scene()
@@ -65,7 +65,7 @@ class DisplayModel extends Component {
   }
 
   create3d() {
-    camera.position.set(70, 70, 70)
+    camera.position.set(80, 220, 160)
 
     renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setClearColor(new THREE.Color(0x000, 1.0))
@@ -119,7 +119,7 @@ class DisplayModel extends Component {
             // eslint-disable-next-line
             loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
               obj3d = new THREE.Mesh(geo, mat)
-              obj3d.scale.set(15, 15, 15)
+              obj3d.scale.set(50, 50, 50)
               this.props.scenes[i].add(obj3d)
               obj3d.name = i + 'X' + j
 
@@ -134,7 +134,7 @@ class DisplayModel extends Component {
             // eslint-disable-next-line
             loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
               obj3dNotDefault = new THREE.Mesh(geo, mat)
-              obj3dNotDefault.scale.set(15, 15, 15)
+              obj3dNotDefault.scale.set(50, 50, 50)
               this.props.scenes[i].add(obj3dNotDefault)
               obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
 
@@ -150,12 +150,10 @@ class DisplayModel extends Component {
     }
 
     scene = this.props.scenes[0]
-    camera.lookAt(scene.position)
 
     const render = () => {
       renderer.autoClear = false
       orbitControls.update()
-
       // if (this.state.enableRotation) {
       //   for (let i = 3; i < scene.length; i++) {
       //     scene.children[i].rotation.y += 0.001
@@ -202,6 +200,9 @@ class DisplayModel extends Component {
 
       let intersects = raycaster.intersectObjects(objects)
 
+      let obj_obj_index, obj_obj_inst_index
+
+      //key events
       if (event.shiftKey) {
         if (intersects.length > 0) {
           let intersect = intersects[0]
@@ -211,44 +212,36 @@ class DisplayModel extends Component {
           let y = intersect.point.y + 0.25
           let z = intersect.point.z + 0.25
 
-          let voxel = new THREE.Mesh(cubeGeo, cubeMat)
-          voxel.position.copy(intersect.point).add(intersect.face.normal)
-          voxel.position
+          let cube = new THREE.Mesh(cubeGeo, cubeMat)
+          cube.position.copy(intersect.point).add(intersect.face.normal)
+          cube.position
             .divideScalar(50)
             .floor()
             .multiplyScalar(50)
             .addScalar(25)
-          voxel.position.set(x, y, z)
+          cube.position.set(x, y, z)
 
-          scene.add(voxel)
+          scene.add(cube)
           render()
         }
         console.log('shift')
       } else if (event.ctrlKey) {
         let intersect = intersects[0]
 
-        console.log(objects)
+        let priceNode = document.createTextNode('Nam')
+        let price = document.getElementById('price')
+        price.replaceChild(priceNode, price.childNodes[0])
 
-        if (intersect.object !== plane) {
-          scene.remove(intersect.object)
-          // objects.splice(objects.indexOf(intersect.object), 1)
+        try {
+          if (intersect.object !== plane) {
+            intersect.object.visible = false
+          }
+        } catch (error) {
+          console.log(error)
         }
 
         console.log('ctrl')
       } else {
-        let vector = new THREE.Vector3(
-          (event.clientX / window.innerWidth) * 2 - 1,
-          -(event.clientY / window.innerHeight) * 2 + 1,
-          0.5
-        )
-        vector.unproject(camera)
-        let raycaster = new THREE.Raycaster(
-          camera.position,
-          vector.sub(camera.position).normalize()
-        )
-        let intersects = raycaster.intersectObjects(objects)
-        let obj_obj_index, obj_obj_inst_index
-
         if (intersects.length > 0) {
           orbitControls.enabled = false
           selectedObject = intersects[0].object
@@ -282,27 +275,25 @@ class DisplayModel extends Component {
         }
       }
 
-      document
-        .getElementById('display')
-        .removeEventListener('mousedown', onMouseDown, false)
+      document.removeEventListener('mousedown', onMouseDown)
     }
 
     const onKeyUp = event => {
       if (!event.shiftKey) {
         document
           .getElementById('display')
-          .addEventListener('mousedown', onMouseDown, false)
+          .addEventListener('mousedown', onMouseDown)
       } else if (!event.ctrlKey) {
         document
           .getElementById('display')
-          .addEventListener('mousedown', onMouseDown, false)
+          .addEventListener('mousedown', onMouseDown)
       }
     }
 
-    document.addEventListener('keyup', onKeyUp, false)
+    document.addEventListener('keyup', onKeyUp)
     document
       .getElementById('display')
-      .addEventListener('mousedown', onMouseDown, false)
+      .addEventListener('mousedown', onMouseDown)
     document.addEventListener(
       'mouseup',
       event => {
@@ -312,13 +303,7 @@ class DisplayModel extends Component {
       false
     )
 
-    customEvents.objectHighlight(
-      THREE,
-      camera,
-      selectedObject,
-      objects,
-      orbitControls
-    )
+    customEvents.objectHighlight(THREE, camera, selectedObject, objects)
   } //end create3d()
 
   confirmIndex = (
@@ -466,7 +451,7 @@ class DisplayModel extends Component {
                         //add mousedown event after press exit
                         document
                           .getElementById('display')
-                          .addEventListener('mousedown', onMouseDown, false)
+                          .addEventListener('mousedown', onMouseDown)
                       }}
                     >
                       &times;
@@ -485,6 +470,8 @@ class DisplayModel extends Component {
   }
 
   nextScene(obj_names_length) {
+    camera.position.set(80, 220, 160)
+
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -504,7 +491,6 @@ class DisplayModel extends Component {
     if (index >= obj_names_length) {
       index = 0
       scene = this.props.scenes[0]
-      camera.position.set(70, 70, 70)
 
       let nextNodePrice = document.createTextNode(this.props.obj_prices[0])
       let nextPrice = document.getElementById('price')
@@ -521,7 +507,6 @@ class DisplayModel extends Component {
       })
     } else {
       scene = this.props.scenes[index]
-      camera.position.set(70, 70, 70)
 
       let nextNodePrice = document.createTextNode(this.props.obj_prices[index])
       let nextPrice = document.getElementById('price')
@@ -544,6 +529,8 @@ class DisplayModel extends Component {
   prevScene(obj_names_length) {
     index--
 
+    camera.position.set(100, 220, 160)
+
     if (index < 0) {
       this.props.scenes[index + 1].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -562,7 +549,6 @@ class DisplayModel extends Component {
     if (index <= 0) {
       index = obj_names_length
       scene = this.props.scenes[0]
-      camera.position.set(70, 70, 70)
 
       let prevNodePrice = document.createTextNode(this.props.obj_prices[0])
       let prevPrice = document.getElementById('price')
@@ -573,7 +559,6 @@ class DisplayModel extends Component {
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
     } else {
       scene = this.props.scenes[index]
-      camera.position.set(70, 70, 70)
 
       let prevNodePrice = document.createTextNode(this.props.obj_prices[index])
       let prevPrice = document.getElementById('price')

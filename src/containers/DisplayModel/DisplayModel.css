@@ -3,10 +3,10 @@
 .next {
   position: absolute;
   top: 45%;
-  border-right: 10px solid;
-  border-bottom: 10px solid;
-  height: 50px;
-  width: 50px;
+  border-right: 10px solid gray;
+  border-bottom: 10px solid gray;
+  height: 30px;
+  width: 30px;
   z-index: 2;
   transition: all 0.2s;
 }

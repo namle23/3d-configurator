@@ -139,12 +139,12 @@
 
 .m-container {
   width: 100%;
-  height: 30%;
+  height: 20%;
   position: absolute;
-  bottom: 0;
+  bottom: 0%;
   margin: 0px auto;
   padding: 20px 30px;
-  background-color: #fff;
+  background-color: #f0f0f0;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;

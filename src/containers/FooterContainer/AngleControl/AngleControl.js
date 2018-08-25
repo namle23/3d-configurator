@@ -6,7 +6,7 @@ let enableRotation = false
 class AngleControl extends Component {
   angleTop(camera) {
     try {
-      camera.position.set(0, 90, 90)
+      camera.position.set(69, 250, 117)
     } catch (error) {
       console.log(error)
     }
@@ -14,7 +14,7 @@ class AngleControl extends Component {
 
   angleRight(camera) {
     try {
-      camera.position.set(0, 0, 90)
+      camera.position.set(260, 90, 73)
     } catch (error) {
       console.log(error)
     }
@@ -22,7 +22,7 @@ class AngleControl extends Component {
 
   angleBottom(camera) {
     try {
-      camera.position.set(0, -90, 90)
+      camera.position.set(16, -283, 10)
     } catch (error) {
       console.log(error)
     }
@@ -30,7 +30,7 @@ class AngleControl extends Component {
 
   angleLeft(camera) {
     try {
-      camera.position.set(0, 0, -90)
+      camera.position.set(-274, 73, 30)
     } catch (error) {
       console.log(error)
     }

@@ -28,7 +28,7 @@ let scene,
   instIndex_index = [], //hold index of selected instance of instances,
   obj3dNotDefault,
   objectsNotDefault = [],
-  cubeGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5),
+  cubeGeo = new THREE.BoxGeometry(1, 1, 1),
   cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 })
 
 scene = new THREE.Scene()
@@ -62,10 +62,11 @@ class DisplayModel extends Component {
     this.setState({
       enableRotation: val
     })
+    console.log(this.state.enableRotation)
   }
 
   create3d() {
-    camera.position.set(80, 220, 160)
+    camera.position.set(69, 250, 117)
 
     renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setClearColor(new THREE.Color(0x000, 1.0))
@@ -82,7 +83,6 @@ class DisplayModel extends Component {
         transparent: true
       })
     )
-    scene.add(plane)
 
     orbitControls = new OrbitControls(camera, renderer.domElement)
 
@@ -150,10 +150,12 @@ class DisplayModel extends Component {
     }
 
     scene = this.props.scenes[0]
+    camera.lookAt(scene.position)
 
     const render = () => {
       renderer.autoClear = false
       orbitControls.update()
+
       // if (this.state.enableRotation) {
       //   for (let i = 3; i < scene.length; i++) {
       //     scene.children[i].rotation.y += 0.001
@@ -228,10 +230,6 @@ class DisplayModel extends Component {
       } else if (event.ctrlKey) {
         let intersect = intersects[0]
 
-        let priceNode = document.createTextNode('Nam')
-        let price = document.getElementById('price')
-        price.replaceChild(priceNode, price.childNodes[0])
-
         try {
           if (intersect.object !== plane) {
             intersect.object.visible = false
@@ -282,18 +280,18 @@ class DisplayModel extends Component {
       if (!event.shiftKey) {
         document
           .getElementById('display')
-          .addEventListener('mousedown', onMouseDown)
+          .addEventListener('mousedown', onMouseDown, false)
       } else if (!event.ctrlKey) {
         document
           .getElementById('display')
-          .addEventListener('mousedown', onMouseDown)
+          .addEventListener('mousedown', onMouseDown, false)
       }
     }
 
-    document.addEventListener('keyup', onKeyUp)
+    document.addEventListener('keyup', onKeyUp, false)
     document
       .getElementById('display')
-      .addEventListener('mousedown', onMouseDown)
+      .addEventListener('mousedown', onMouseDown, false)
     document.addEventListener(
       'mouseup',
       event => {
@@ -303,7 +301,13 @@ class DisplayModel extends Component {
       false
     )
 
-    customEvents.objectHighlight(THREE, camera, selectedObject, objects)
+    customEvents.objectHighlight(
+      THREE,
+      camera,
+      selectedObject,
+      objects,
+      orbitControls
+    )
   } //end create3d()
 
   confirmIndex = (
@@ -393,6 +397,8 @@ class DisplayModel extends Component {
                 //hide selected default object
                 matchedChild.visible = false
 
+                console.log(this.props.obj_prices[index])
+
                 let arrMatchedChildName = [],
                   indexOfY = [],
                   slicedValue = []
@@ -451,7 +457,7 @@ class DisplayModel extends Component {
                         //add mousedown event after press exit
                         document
                           .getElementById('display')
-                          .addEventListener('mousedown', onMouseDown)
+                          .addEventListener('mousedown', onMouseDown, false)
                       }}
                     >
                       &times;
@@ -470,8 +476,6 @@ class DisplayModel extends Component {
   }
 
   nextScene(obj_names_length) {
-    camera.position.set(80, 220, 160)
-
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -487,6 +491,7 @@ class DisplayModel extends Component {
     }
 
     index++
+    camera.position.set(69, 250, 117)
 
     if (index >= obj_names_length) {
       index = 0
@@ -528,8 +533,7 @@ class DisplayModel extends Component {
 
   prevScene(obj_names_length) {
     index--
-
-    camera.position.set(100, 220, 160)
+    camera.position.set(80, 220, 160)
 
     if (index < 0) {
       this.props.scenes[index + 1].traverse(object => {
@@ -612,8 +616,8 @@ class DisplayModel extends Component {
 
         <div id="info">
           <strong>click</strong>: show instances,
-          <strong>hover + shift + click</strong>: add spot,
-          {/* <strong>hover + ctrl + click</strong>: remove spot */}
+          <strong>shift + hover + click</strong>: add spot
+          {/* <strong>ctrl + hover + click</strong>: remove spot */}
         </div>
 
         <div id="display" />

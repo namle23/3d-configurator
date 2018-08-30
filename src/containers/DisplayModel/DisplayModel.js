@@ -29,7 +29,9 @@ let scene,
   obj3dNotDefault,
   objectsNotDefault = [],
   cubeGeo = new THREE.BoxGeometry(1, 1, 1),
-  cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 })
+  cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }),
+  initPrice,
+  nPrice
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -52,7 +54,10 @@ class DisplayModel extends Component {
 
     this.state = {
       popup: null,
-      enableRotation: false
+      enableRotation: false,
+      init_price: this.props.obj_prices[index],
+      tempPrice: null,
+      pPrice: null
     }
 
     this.enableEditState = this.enableEditState.bind(this)
@@ -62,7 +67,6 @@ class DisplayModel extends Component {
     this.setState({
       enableRotation: val
     })
-    console.log(this.state.enableRotation)
   }
 
   create3d() {
@@ -226,7 +230,6 @@ class DisplayModel extends Component {
           scene.add(cube)
           render()
         }
-        console.log('shift')
       } else if (event.ctrlKey) {
         let intersect = intersects[0]
 
@@ -237,8 +240,6 @@ class DisplayModel extends Component {
         } catch (error) {
           console.log(error)
         }
-
-        console.log('ctrl')
       } else {
         if (intersects.length > 0) {
           orbitControls.enabled = false
@@ -319,6 +320,8 @@ class DisplayModel extends Component {
     selectedObject,
     onMouseDown
   ) => {
+    let tPrice = this.props.obj_prices[index]
+
     if (objIndex.indexOf(obj_obj_index) !== -1) {
       if (
         arr_instIndex[objIndex.indexOf(obj_obj_index)].indexOf(
@@ -326,13 +329,33 @@ class DisplayModel extends Component {
         ) !== -1
       ) {
         let childNames = scene.children.map(children => children.name)
+
         //index of object in current scene
         let matchedIndex = childNames.findIndex(x => x === selectedObject.name)
         let matchedChild = scene.children[matchedIndex]
         //store instances of object
+
         let tempInstances = this.props.objects[obj_obj_index].objects[
           obj_obj_inst_index
         ].instances
+
+        //store default values of each instances(many)
+        let defaultOfInstance = tempInstances.map(t => t.default)
+
+        //price of the default instance
+        let defaultPrice
+        for (let i = 0; i < defaultOfInstance.length; i++) {
+          if (defaultOfInstance[i] === 1) {
+            defaultPrice =
+              tempInstances[defaultOfInstance.indexOf(defaultOfInstance[i])]
+                .price
+          }
+        }
+
+        //total price of an instances
+        let priceInstances = tempInstances
+          .map(t => t.price)
+          .reduce((total, num) => total + num)
 
         const loaderInstance = new THREE.JSONLoader()
 
@@ -393,11 +416,10 @@ class DisplayModel extends Component {
             <button
               key={inst_index}
               className="btn btn-default btn-xs"
+              id={'btn' + inst_index}
               onClick={() => {
                 //hide selected default object
-                matchedChild.visible = false
-
-                console.log(this.props.obj_prices[index])
+                // matchedChild.visible = false
 
                 let arrMatchedChildName = [],
                   indexOfY = [],
@@ -432,10 +454,44 @@ class DisplayModel extends Component {
                       scene.children[i].name ===
                       arrMatchedChildName[intSlicedValue.indexOf(inst_index)]
                     ) {
-                      scene.children[i].visible = !scene.children[i].visible
+                      //set selected instance to be visible
+                      scene.children[i].visible = true
+
+                      //name of the selected child mesh of instances
+                      let selectedName = arrMatchedChildName.indexOf(
+                        scene.children[i].name
+                      )
+
+                      //array of unselected mesh that need to be invisible
+                      let toInvisibleChild = arrMatchedChildName
+                        .slice(0, selectedName)
+                        .concat(arrMatchedChildName.slice(selectedName + 1))
+
+                      //prepare to make mesh invisible by name
+                      for (let j = 0; j < toInvisibleChild.length; j++) {
+                        for (let k = 0; k < scene.children.length; k++) {
+                          if (toInvisibleChild[j] === scene.children[k].name) {
+                            scene.children[k].visible = false
+                          }
+                        }
+                      }
+
+                      // document.getElementById('btn1').disabled = true
+
+                      nPrice = tempInstance.price
+
+                      this.setState({
+                        pPrice: tempInstance.price
+                      })
+
+                      tPrice = tPrice - this.state.pPrice + nPrice
+
+                      console.log('now ' + nPrice)
+                      console.log('previous ' + this.state.pPrice)
+                      console.log('total ' + tPrice)
                     }
                   }
-                }
+                } //end if
               }}
             >
               {tempInstance.name}
@@ -492,6 +548,12 @@ class DisplayModel extends Component {
 
     index++
     camera.position.set(69, 250, 117)
+
+    this.setState({
+      init_price: this.props.obj_prices[index],
+      tempPrice: [],
+      tempName: []
+    })
 
     if (index >= obj_names_length) {
       index = 0

@@ -42,14 +42,14 @@
             {
               "default": 0,
               "code": "PLS231",
-              "name": "Pohja 1800",
+              "name": "link3",
               "json3d": "assets/json/link3.json",
               "price": 550
             },
             {
               "default": 0,
               "code": "PLS231",
-              "name": "Pohja3",
+              "name": "Pohja1800",
               "json3d": "assets/json/Pohja1800.json",
               "price": 650
             }

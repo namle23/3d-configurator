@@ -43,4 +43,5 @@
 }
 .quart:hover {
   background: black;
+  transform: scale(1.5);
 }

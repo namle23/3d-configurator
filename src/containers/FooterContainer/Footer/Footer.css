@@ -2,11 +2,16 @@
   bottom: 10px;
 }
 
-.name {
-  text-align: center;
+#name {
+  position: fixed;
+  top: 20px;
+  left: 10px;
+  color: gray;
 }
 
-.price {
-  text-align: right;
-  margin-right: 10px;
+#price {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  color: gray;
 }

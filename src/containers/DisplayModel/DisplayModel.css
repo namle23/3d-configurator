@@ -12,18 +12,24 @@
 }
 
 .prev {
-  left: 1%;
+  left: 3%;
   transform: rotate(130deg);
 }
 
 .next {
-  right: 1%;
+  right: 3%;
   transform: rotate(-45deg);
 }
 
-.prev,
-.next:hoover {
-  background: dimgray;
+.prev:hover {
+  border-right: 10px solid black;
+  border-bottom: 10px solid black;
+  transform: scale(1.8) rotate(130deg);
+}
+.next:hover {
+  border-right: 10px solid black;
+  border-bottom: 10px solid black;
+  transform: scale(1.8) rotate(-45deg);
 }
 
 /* screen loader */

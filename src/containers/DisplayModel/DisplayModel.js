@@ -30,8 +30,8 @@ let scene,
   objectsNotDefault = [],
   cubeGeo = new THREE.BoxGeometry(1, 1, 1),
   cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }),
-  initPrice,
-  nPrice
+  nPrice,
+  tPrice
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -55,9 +55,8 @@ class DisplayModel extends Component {
     this.state = {
       popup: null,
       enableRotation: false,
-      init_price: this.props.obj_prices[index],
-      tempPrice: null,
-      pPrice: null
+      pPrice: 0,
+      totalPrice: 0
     }
 
     this.enableEditState = this.enableEditState.bind(this)
@@ -151,7 +150,10 @@ class DisplayModel extends Component {
           }
         }
       }
-    }
+    } //end for loop loader
+
+    //initialize total price
+    tPrice = this.props.total_init[index]
 
     scene = this.props.scenes[0]
     camera.lookAt(scene.position)
@@ -320,7 +322,8 @@ class DisplayModel extends Component {
     selectedObject,
     onMouseDown
   ) => {
-    let tPrice = this.props.obj_prices[index]
+    //counting the number of time that button(btn) is clicked
+    let flag = 0
 
     if (objIndex.indexOf(obj_obj_index) !== -1) {
       if (
@@ -352,12 +355,13 @@ class DisplayModel extends Component {
           }
         }
 
-        //total price of an instances
-        let priceInstances = tempInstances
-          .map(t => t.price)
-          .reduce((total, num) => total + num)
-
         const loaderInstance = new THREE.JSONLoader()
+
+        //get index of all element in tempInstances
+        let tempArrIndex = []
+        for (let i = 0; i < tempInstances.length; i++) {
+          tempArrIndex.push(i)
+        }
 
         let mappedInstance = tempInstances.map((tempInstance, inst_index) => {
           let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
@@ -412,14 +416,19 @@ class DisplayModel extends Component {
             }
           )
 
+          let style = { marginLeft: '220px' }
+
           return (
             <button
+              style={style}
               key={inst_index}
               className="btn btn-default btn-xs"
               id={'btn' + inst_index}
               onClick={() => {
                 //hide selected default object
                 // matchedChild.visible = false
+
+                flag++
 
                 let arrMatchedChildName = [],
                   indexOfY = [],
@@ -476,7 +485,21 @@ class DisplayModel extends Component {
                         }
                       }
 
-                      // document.getElementById('btn1').disabled = true
+                      let toDisplayButton = tempArrIndex
+                        .slice(0, inst_index)
+                        .concat(tempArrIndex.slice(inst_index + 1))
+
+                      //button can be clicked only once
+                      document.getElementById(
+                        'btn' + inst_index
+                      ).disabled = true
+
+                      //enable other buttons
+                      for (let i = 0; i < toDisplayButton.length; i++) {
+                        document.getElementById(
+                          'btn' + toDisplayButton[i]
+                        ).disabled = false
+                      }
 
                       nPrice = tempInstance.price
 
@@ -484,11 +507,23 @@ class DisplayModel extends Component {
                         pPrice: tempInstance.price
                       })
 
-                      tPrice = tPrice - this.state.pPrice + nPrice
+                      //calculate price base on flag value
+                      if (flag === 1) {
+                        tPrice =
+                          tPrice - this.state.pPrice + nPrice - defaultPrice
+                      } else {
+                        tPrice = tPrice - this.state.pPrice + nPrice
+                      }
 
-                      console.log('now ' + nPrice)
-                      console.log('previous ' + this.state.pPrice)
-                      console.log('total ' + tPrice)
+                      let priceNode = document.createTextNode(tPrice)
+                      let price = document.getElementById('price')
+                      price.replaceChild(priceNode, price.childNodes[0])
+
+                      let nameNode = document.createTextNode(
+                        this.props.obj_names[index] + ' (modified)'
+                      )
+                      let name = document.getElementById('name')
+                      name.replaceChild(nameNode, name.childNodes[0])
                     }
                   }
                 } //end if
@@ -514,6 +549,10 @@ class DisplayModel extends Component {
                         document
                           .getElementById('display')
                           .addEventListener('mousedown', onMouseDown, false)
+
+                        this.setState({
+                          pPrice: null
+                        })
                       }}
                     >
                       &times;
@@ -549,17 +588,11 @@ class DisplayModel extends Component {
     index++
     camera.position.set(69, 250, 117)
 
-    this.setState({
-      init_price: this.props.obj_prices[index],
-      tempPrice: [],
-      tempName: []
-    })
-
     if (index >= obj_names_length) {
       index = 0
       scene = this.props.scenes[0]
 
-      let nextNodePrice = document.createTextNode(this.props.obj_prices[0])
+      let nextNodePrice = document.createTextNode(this.props.total_init[0])
       let nextPrice = document.getElementById('price')
       nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
 
@@ -575,7 +608,7 @@ class DisplayModel extends Component {
     } else {
       scene = this.props.scenes[index]
 
-      let nextNodePrice = document.createTextNode(this.props.obj_prices[index])
+      let nextNodePrice = document.createTextNode(this.props.total_init[index])
       let nextPrice = document.getElementById('price')
       nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
 
@@ -594,17 +627,19 @@ class DisplayModel extends Component {
   } //end nextScene
 
   prevScene(obj_names_length) {
-    index--
+    console.log('-before ' + index)
+
     camera.position.set(80, 220, 160)
 
-    if (index < 0) {
-      this.props.scenes[index + 1].traverse(object => {
+    console.log('-after ' + index)
+
+    if (index <= 0) {
+      this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
           object.visible = false
         }
       })
     } else {
-      //need help
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
           object.visible = true
@@ -613,10 +648,10 @@ class DisplayModel extends Component {
     }
 
     if (index <= 0) {
-      index = obj_names_length
+      index = obj_names_length - 1
       scene = this.props.scenes[0]
 
-      let prevNodePrice = document.createTextNode(this.props.obj_prices[0])
+      let prevNodePrice = document.createTextNode(this.props.total_init[0])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
 
@@ -626,7 +661,7 @@ class DisplayModel extends Component {
     } else {
       scene = this.props.scenes[index]
 
-      let prevNodePrice = document.createTextNode(this.props.obj_prices[index])
+      let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
 
@@ -642,6 +677,7 @@ class DisplayModel extends Component {
     }
 
     this.setVisibility()
+    index--
   } //end prevScene
 
   //set visibility of not default instances to false (by default)
@@ -719,7 +755,7 @@ const mapStateToProps = state => {
     code: state.conf.obj_obj_insts_code,
     name: state.conf.obj_obj_insts_name,
     price: state.conf.obj_obj_insts_price,
-    price_total: state.conf.obj_obj_insts_price_total,
+    total_init: state.conf.obj_obj_insts_price_total,
 
     json3dlinks: state.conf.json3dlinks,
     scenes: state.conf.scenes

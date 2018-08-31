@@ -159,7 +159,7 @@
     },
     {
       "code": "ABB02",
-      "name": "Robot-02",
+      "name": "Robot-01",
       "price": 70000,
       "objects": [
         {
@@ -306,7 +306,7 @@
     },
     {
       "code": "PLS1021",
-      "name": "PW-Spa Classic",
+      "name": "PW-Spa Classic Clone",
       "price": 2013,
       "objects": [
         {
@@ -353,26 +353,6 @@
               "name": "Pohja3",
               "json3d": "assets/json/Pohja1800.json",
               "price": 650
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Kamiina/power",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS601I",
-              "name": "30 kW",
-              "json3d": "assets/json/30kW.json",
-              "price": 699
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
             }
           ]
         },

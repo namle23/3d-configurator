@@ -207,7 +207,6 @@ class DisplayModel extends Component {
       )
 
       let intersects = raycaster.intersectObjects(objects)
-
       let obj_obj_index, obj_obj_inst_index
 
       //key events
@@ -588,6 +587,9 @@ class DisplayModel extends Component {
     index++
     camera.position.set(69, 250, 117)
 
+    //set total price according to displaying model
+    tPrice = this.props.total_init[index]
+
     if (index >= obj_names_length) {
       index = 0
       scene = this.props.scenes[0]
@@ -627,11 +629,11 @@ class DisplayModel extends Component {
   } //end nextScene
 
   prevScene(obj_names_length) {
-    console.log('-before ' + index)
+    console.log('-after ' + index)
 
     camera.position.set(80, 220, 160)
-
-    console.log('-after ' + index)
+    //set total price according to displaying model
+    tPrice = this.props.total_init[index]
 
     if (index <= 0) {
       this.props.scenes[index].traverse(object => {

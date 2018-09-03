@@ -19,7 +19,7 @@ export const fetchConfiguratorFailed = () => {
 export const initConfigurator = () => {
   return dispatch => {
     axios
-      .get('assets/datatest.json')
+      .get('assets/data.json')
       .then(res => {
         let loading = true
         dispatch(setConfigurator(res.data, loading))

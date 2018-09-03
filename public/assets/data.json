@@ -1,6 +1,6 @@
 {
   "type": "world",
-  "name": "Plastweld",
+  "name": "Mar Robot",
   "imageroot": "src/assets/img/lake.jpg",
   "objects": [
     {
@@ -18,6 +18,13 @@
               "name": "Small01",
               "json3d": "assets/json/mar/small.json",
               "price": 20000
+            },
+            {
+              "default": 0,
+              "code": "Small02",
+              "name": "Small02",
+              "json3d": "assets/json/mar/small2.json",
+              "price": 25000
             }
           ]
         },
@@ -31,6 +38,13 @@
               "name": "Wheel01",
               "json3d": "assets/json/mar/wheel.json",
               "price": 226500
+            },
+            {
+              "default": 0,
+              "code": "Wheel01",
+              "name": "Wheel01",
+              "json3d": "assets/json/mar/wheel2.json",
+              "price": 226740
             }
           ]
         },
@@ -44,6 +58,13 @@
               "name": "Antena",
               "json3d": "assets/json/mar/antena.json",
               "price": 125000
+            },
+            {
+              "default": 0,
+              "code": "Antena",
+              "name": "Antena",
+              "json3d": "assets/json/mar/antena2.json",
+              "price": 110450
             }
           ]
         },
@@ -57,6 +78,13 @@
               "name": "Base01",
               "json3d": "assets/json/mar/base.json",
               "price": 320500
+            },
+            {
+              "default": 0,
+              "code": "Base01",
+              "name": "Base01",
+              "json3d": "assets/json/mar/base2.json",
+              "price": 378200
             }
           ]
         },
@@ -70,6 +98,13 @@
               "name": "Middel01",
               "json3d": "assets/json/mar/middle.json",
               "price": 150500
+            },
+            {
+              "default": 0,
+              "code": "Middel01",
+              "name": "Middel01",
+              "json3d": "assets/json/mar/middle2.json",
+              "price": 198600
             }
           ]
         }
@@ -88,8 +123,15 @@
               "default": 1,
               "code": "Main",
               "name": "Main",
-              "json3d": "assets/json/ak47/default/main.json",
+              "json3d": "assets/json/ak47/main.json",
               "price": 200
+            },
+            {
+              "default": 0,
+              "code": "Main",
+              "name": "Main",
+              "json3d": "assets/json/ak47/main2.json",
+              "price": 300
             }
           ]
         },
@@ -101,8 +143,15 @@
               "default": 1,
               "code": "Pistol Grip",
               "name": "Pistol Grip",
-              "json3d": "assets/json/ak47/default/pistolgrip.json",
+              "json3d": "assets/json/ak47/pistolgrip.json",
               "price": 200
+            },
+            {
+              "default": 0,
+              "code": "Pistol Grip",
+              "name": "Pistol Grip",
+              "json3d": "assets/json/ak47/pistolgrip2.json",
+              "price": 300
             }
           ]
         },
@@ -114,7 +163,14 @@
               "default": 1,
               "code": "Stock",
               "name": "Stock",
-              "json3d": "assets/json/ak47/default/stock.json",
+              "json3d": "assets/json/ak47/stock.json",
+              "price": 100
+            },
+            {
+              "default": 0,
+              "code": "Stock",
+              "name": "Stock",
+              "json3d": "assets/json/ak47/stock2.json",
               "price": 100
             }
           ]
@@ -127,8 +183,15 @@
               "default": 1,
               "code": "Magazine01",
               "name": "Magazine",
-              "json3d": "assets/json/ak47/default/magazine.json",
+              "json3d": "assets/json/ak47/magazine.json",
               "price": 50
+            },
+            {
+              "default": 0,
+              "code": "Magazine01",
+              "name": "Magazine",
+              "json3d": "assets/json/ak47/magazine2.json",
+              "price": 100
             }
           ]
         },
@@ -140,7 +203,14 @@
               "default": 1,
               "code": "ABB02-6",
               "name": "Hand Grip",
-              "json3d": "assets/json/ak47/default/handgrip.json",
+              "json3d": "assets/json/ak47/handgrip.json",
+              "price": 150
+            },
+            {
+              "default": 0,
+              "code": "ABB02-6",
+              "name": "Hand Grip",
+              "json3d": "assets/json/ak47/handgrip2.json",
               "price": 150
             }
           ]

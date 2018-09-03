@@ -22,7 +22,7 @@ class AngleControl extends Component {
 
   angleBottom(camera) {
     try {
-      camera.position.set(16, -283, 10)
+      camera.position.set(-274, 73, 30)
     } catch (error) {
       console.log(error)
     }
@@ -30,7 +30,7 @@ class AngleControl extends Component {
 
   angleLeft(camera) {
     try {
-      camera.position.set(-274, 73, 30)
+      camera.position.set(16, -283, 10)
     } catch (error) {
       console.log(error)
     }

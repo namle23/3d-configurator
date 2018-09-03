@@ -181,17 +181,17 @@ class DisplayModel extends Component {
     let arr_instIndex_index = customEvents.mappingCenter(instIndex_index)
 
     //mouse events
-    document.addEventListener('mousemove', event => {
-      customEvents.mouseMove(
-        THREE,
-        event,
-        camera,
-        selectedObject,
-        plane,
-        offset,
-        objects
-      )
-    })
+    // document.addEventListener('mousemove', event => {
+    //   customEvents.mouseMove(
+    //     THREE,
+    //     event,
+    //     camera,
+    //     selectedObject,
+    //     plane,
+    //     offset,
+    //     objects
+    //   )
+    // })
 
     const onMouseDown = event => {
       let vector = new THREE.Vector3(

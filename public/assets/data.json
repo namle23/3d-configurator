@@ -4,6 +4,150 @@
   "imageroot": "src/assets/img/lake.jpg",
   "objects": [
     {
+      "code": "Mar",
+      "name": "Mar-Robot",
+      "price": 500000,
+      "objects": [
+        {
+          "type": "object",
+          "name": "small",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Small01",
+              "name": "Small01",
+              "json3d": "assets/json/mar/small.json",
+              "price": 20000
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Wheel",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Wheel01",
+              "name": "Wheel01",
+              "json3d": "assets/json/mar/wheel.json",
+              "price": 226500
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Antena",
+              "name": "Antena",
+              "json3d": "assets/json/mar/antena.json",
+              "price": 125000
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Base",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Base01",
+              "name": "Base01",
+              "json3d": "assets/json/mar/base.json",
+              "price": 320500
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Middel",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Middel01",
+              "name": "Middel01",
+              "json3d": "assets/json/mar/middle.json",
+              "price": 150500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "AK47",
+      "name": "AK47-Kalashnikov",
+      "price": 2000,
+      "objects": [
+        {
+          "type": "object",
+          "name": "Main",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Main",
+              "name": "Main",
+              "json3d": "assets/json/ak47/default/main.json",
+              "price": 200
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Pistol Grip",
+              "name": "Pistol Grip",
+              "json3d": "assets/json/ak47/default/pistolgrip.json",
+              "price": 200
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Stock",
+              "name": "Stock",
+              "json3d": "assets/json/ak47/default/stock.json",
+              "price": 100
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Robot-arm",
+          "instances": [
+            {
+              "default": 1,
+              "code": "Magazine01",
+              "name": "Magazine",
+              "json3d": "assets/json/ak47/default/magazine.json",
+              "price": 50
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "Hand Grip",
+          "instances": [
+            {
+              "default": 1,
+              "code": "ABB02-6",
+              "name": "Hand Grip",
+              "json3d": "assets/json/ak47/default/handgrip.json",
+              "price": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
       "code": "PLS1021",
       "name": "PW-Spa Classic",
       "price": 2013,
@@ -13,18 +157,11 @@
           "name": "Kylpytynnyrin pohjaosa/bottom",
           "instances": [
             {
-              "default": 1,
+              "default": 0,
               "code": "PLS231",
               "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
+              "json3d": "assets/json/kylpy/Pohja1800.json",
               "price": 550
-            },
-            {
-              "default": 0,
-              "code": "PLS251B",
-              "name": "Musta Kansi",
-              "json3d": "assets/json/link3.json",
-              "price": 199
             }
           ]
         },
@@ -36,22 +173,8 @@
               "default": 1,
               "code": "PLS251B",
               "name": "Musta Kansi",
-              "json3d": "assets/json/MustaKansi.json",
+              "json3d": "assets/json/kylpy/MustaKansi.json",
               "price": 199
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "link3",
-              "json3d": "assets/json/link3.json",
-              "price": 550
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 650
             }
           ]
         },
@@ -63,15 +186,8 @@
               "default": 1,
               "code": "PLS601I",
               "name": "30 kW",
-              "json3d": "assets/json/30kW.json",
+              "json3d": "assets/json/kylpy/30kW.json",
               "price": 699
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
             }
           ]
         },
@@ -83,15 +199,8 @@
               "default": 1,
               "code": "PLS613E",
               "name": "Piippupaketti",
-              "json3d": "assets/json/Piippupaketti.json",
+              "json3d": "assets/json/kylpy/Piippupaketti.json",
               "price": 50
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
             }
           ]
         },
@@ -103,15 +212,8 @@
               "default": 1,
               "code": "PLS614E",
               "name": "Sisainen",
-              "json3d": "assets/json/Sisainen.json",
+              "json3d": "assets/json/kylpy/Sisainen.json",
               "price": 300
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
             }
           ]
         },
@@ -123,15 +225,8 @@
               "default": 1,
               "code": "PLS615E",
               "name": "Ulompi",
-              "json3d": "assets/json/Ulompi.json",
+              "json3d": "assets/json/kylpy/Ulompi.json",
               "price": 120
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
             }
           ]
         },
@@ -143,15 +238,8 @@
               "default": 1,
               "code": "PLS616E",
               "name": "Kostea",
-              "json3d": "assets/json/Kostea.json",
+              "json3d": "assets/json/kylpy/Kostea.json",
               "price": 95
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
             }
           ]
         }
@@ -170,15 +258,8 @@
               "default": 1,
               "code": "ABB02-0",
               "name": "Base",
-              "json3d": "assets/json/base.json",
+              "json3d": "assets/json/abb/base.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         },
@@ -190,15 +271,8 @@
               "default": 1,
               "code": "ABB02-1",
               "name": "Link1",
-              "json3d": "assets/json/link1.json",
+              "json3d": "assets/json/abb/link1.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         },
@@ -210,15 +284,8 @@
               "default": 1,
               "code": "ABB02-2",
               "name": "Link2",
-              "json3d": "assets/json/link2.json",
+              "json3d": "assets/json/abb/link2.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         },
@@ -230,15 +297,8 @@
               "default": 1,
               "code": "ABB02-3",
               "name": "Link3",
-              "json3d": "assets/json/link3.json",
+              "json3d": "assets/json/abb/link3.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         },
@@ -250,15 +310,8 @@
               "default": 1,
               "code": "ABB02-4",
               "name": "Link4",
-              "json3d": "assets/json/link4.json",
+              "json3d": "assets/json/abb/link4.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         },
@@ -270,15 +323,8 @@
               "default": 1,
               "code": "ABB02-5",
               "name": "Link5",
-              "json3d": "assets/json/link5.json",
+              "json3d": "assets/json/abb/link5.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         },
@@ -290,376 +336,8 @@
               "default": 1,
               "code": "ABB02-6",
               "name": "Link6",
-              "json3d": "assets/json/link6.json",
+              "json3d": "assets/json/abb/link6.json",
               "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "code": "PLS1021",
-      "name": "PW-Spa Classic Clone",
-      "price": 2013,
-      "objects": [
-        {
-          "type": "object",
-          "name": "Kylpytynnyrin pohjaosa/bottom",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            },
-            {
-              "default": 0,
-              "code": "PLS251B",
-              "name": "Musta Kansi",
-              "json3d": "assets/json/link3.json",
-              "price": 199
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Kylpytynnyrin Kansi/cap",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS251B",
-              "name": "Musta Kansi",
-              "json3d": "assets/json/MustaKansi.json",
-              "price": 199
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja3",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 650
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Piippupaketti/pipe",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS613E",
-              "name": "Piippupaketti",
-              "json3d": "assets/json/Piippupaketti.json",
-              "price": 50
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Sisainen/inner",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS614E",
-              "name": "Sisainen",
-              "json3d": "assets/json/Sisainen.json",
-              "price": 300
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Ulompi/outer",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS615E",
-              "name": "Ulompi",
-              "json3d": "assets/json/Ulompi.json",
-              "price": 120
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Kostea/humid",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS616E",
-              "name": "Kostea",
-              "json3d": "assets/json/Kostea.json",
-              "price": 95
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/link3.json",
-              "price": 550
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "code": "PLS1111",
-      "name": "PW-Spa Simple",
-      "price": 1963,
-      "objects": [
-        {
-          "type": "object",
-          "name": "Kylpytynnyrin pohjaosa/bottom",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Kylpytynnyrin Kansi/cap",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS251B",
-              "name": "Musta Kansi",
-              "json3d": "assets/json/MustaKansi.json",
-              "price": 199
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Kamiina/power",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS601I",
-              "name": "30 kW",
-              "json3d": "assets/json/30kW.json",
-              "price": 699
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Sisainen/inner",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS614E",
-              "name": "Sisainen",
-              "json3d": "assets/json/Sisainen.json",
-              "price": 300
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Ulompi/outer",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS615E",
-              "name": "Ulompi",
-              "json3d": "assets/json/Ulompi.json",
-              "price": 120
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Kostea/humid",
-          "instances": [
-            {
-              "default": 1,
-              "code": "PLS616E",
-              "name": "Kostea",
-              "json3d": "assets/json/Kostea.json",
-              "price": 95
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "code": "ABB02",
-      "name": "Robot-02",
-      "price": 50000,
-      "objects": [
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "ABB02-0",
-              "name": "Base",
-              "json3d": "assets/json/base.json",
-              "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "ABB02-1",
-              "name": "Link1",
-              "json3d": "assets/json/link1.json",
-              "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "ABB02-2",
-              "name": "Link2",
-              "json3d": "assets/json/link2.json",
-              "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "ABB02-3",
-              "name": "Link3",
-              "json3d": "assets/json/link3.json",
-              "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "ABB02-6",
-              "name": "Link6",
-              "json3d": "assets/json/link6.json",
-              "price": 100000
-            },
-            {
-              "default": 0,
-              "code": "PLS231",
-              "name": "Pohja 1800",
-              "json3d": "assets/json/Pohja1800.json",
-              "price": 550
             }
           ]
         }

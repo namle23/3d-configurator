@@ -100,57 +100,69 @@ class DisplayModel extends Component {
     renderer.gammaInput = true
     renderer.gammaOutput = true
 
-    const loadingManager = new THREE.LoadingManager(() => {
-      const loadingScreen = document.getElementById('loading-screen')
-      loadingScreen.classList.add('fade-out')
-      loadingScreen.addEventListener('transitionend', () => {
-        document.getElementById('loading-screen').remove()
+    try {
+      const loadingManager = new THREE.LoadingManager(() => {
+        const loadingScreen = document.getElementById('loading-screen')
+        loadingScreen.classList.add('fade-out')
+        loadingScreen.addEventListener('transitionend', () => {
+          document.getElementById('loading-screen').remove()
+        })
+
+        this.setVisibility()
       })
 
-      this.setVisibility()
-    })
+      const loader = new THREE.JSONLoader(loadingManager)
+      for (let i = 0; i < this.props.default.length; i++) {
+        objIndex.push(i)
+        for (let j = 0; j < this.props.default[i].length; j++) {
+          instIndex.push(j)
+          for (let k = 0; k < this.props.default[i][j].length; k++) {
+            instIndex_index.push(k)
 
-    const loader = new THREE.JSONLoader(loadingManager)
-    for (let i = 0; i < this.props.default.length; i++) {
-      objIndex.push(i)
-      for (let j = 0; j < this.props.default[i].length; j++) {
-        instIndex.push(j)
-        for (let k = 0; k < this.props.default[i][j].length; k++) {
-          instIndex_index.push(k)
+            if (this.props.default[i][j][k] === 1) {
+              // eslint-disable-next-line
+              loader.load(
+                path + this.props.json3dlinks[i][j][k],
+                // eslint-disable-next-line
+                (geo, mat) => {
+                  obj3d = new THREE.Mesh(geo, mat)
+                  obj3d.scale.set(50, 50, 50)
+                  this.props.scenes[i].add(obj3d)
+                  obj3d.name = i + 'X' + j
 
-          if (this.props.default[i][j][k] === 1) {
-            // eslint-disable-next-line
-            loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
-              obj3d = new THREE.Mesh(geo, mat)
-              obj3d.scale.set(50, 50, 50)
-              this.props.scenes[i].add(obj3d)
-              obj3d.name = i + 'X' + j
+                  objects.sort((a, b) => {
+                    let x = a.name.toLowerCase()
+                    let y = b.name.toLowerCase()
+                    return x < y ? -1 : x > y ? 1 : 0
+                  })
+                  objects.push(obj3d)
+                }
+              )
+            } else {
+              // eslint-disable-next-line
+              loader.load(
+                path + this.props.json3dlinks[i][j][k],
+                // eslint-disable-next-line
+                (geo, mat) => {
+                  obj3dNotDefault = new THREE.Mesh(geo, mat)
+                  obj3dNotDefault.scale.set(50, 50, 50)
+                  this.props.scenes[i].add(obj3dNotDefault)
+                  obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
 
-              objects.sort((a, b) => {
-                let x = a.name.toLowerCase()
-                let y = b.name.toLowerCase()
-                return x < y ? -1 : x > y ? 1 : 0
-              })
-              objects.push(obj3d)
-            })
-          } else {
-            // eslint-disable-next-line
-            loader.load(path + this.props.json3dlinks[i][j][k], (geo, mat) => {
-              obj3dNotDefault = new THREE.Mesh(geo, mat)
-              obj3dNotDefault.scale.set(50, 50, 50)
-              this.props.scenes[i].add(obj3dNotDefault)
-              obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
-
-              objectsNotDefault.sort((a, b) => {
-                let x = a.name.toLowerCase()
-                let y = b.name.toLowerCase()
-                return x < y ? -1 : x > y ? 1 : 0
-              })
-            })
+                  objectsNotDefault.sort((a, b) => {
+                    let x = a.name.toLowerCase()
+                    let y = b.name.toLowerCase()
+                    return x < y ? -1 : x > y ? 1 : 0
+                  })
+                }
+              )
+            }
           }
         }
-      }
-    } //end for loop loader
+      } //end for loop loader
+    } catch (error) {
+      console.log(error)
+    }
 
     //initialize total price
     tPrice = this.props.total_init[index]

@@ -114,11 +114,13 @@ class DisplayModel extends Component {
       const loader = new THREE.JSONLoader(loadingManager)
       for (let i = 0; i < this.props.default.length; i++) {
         objIndex.push(i)
+        
         for (let j = 0; j < this.props.default[i].length; j++) {
           instIndex.push(j)
+
           for (let k = 0; k < this.props.default[i][j].length; k++) {
             instIndex_index.push(k)
-
+            
             if (this.props.default[i][j][k] === 1) {
               // eslint-disable-next-line
               loader.load(
@@ -128,8 +130,7 @@ class DisplayModel extends Component {
                   obj3d = new THREE.Mesh(geo, mat)
                   obj3d.scale.set(50, 50, 50)
                   this.props.scenes[i].add(obj3d)
-                  obj3d.name = i + 'X' + j
-
+                  obj3d.name = i + 'X' + j // does this need to go first the above line?
                   objects.sort((a, b) => {
                     let x = a.name.toLowerCase()
                     let y = b.name.toLowerCase()
@@ -147,7 +148,7 @@ class DisplayModel extends Component {
                   obj3dNotDefault = new THREE.Mesh(geo, mat)
                   obj3dNotDefault.scale.set(50, 50, 50)
                   this.props.scenes[i].add(obj3dNotDefault)
-                  obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
+                  obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1, // does this need to go first the above line?
 
                   objectsNotDefault.sort((a, b) => {
                     let x = a.name.toLowerCase()
@@ -492,6 +493,7 @@ class DisplayModel extends Component {
                         for (let k = 0; k < scene.children.length; k++) {
                           if (toInvisibleChild[j] === scene.children[k].name) {
                             scene.children[k].visible = false
+                            // scene.children[k].disabled = true
                           }
                         }
                       }
@@ -582,6 +584,7 @@ class DisplayModel extends Component {
   }
 
   nextScene(obj_names_length) {
+    
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -597,7 +600,6 @@ class DisplayModel extends Component {
     }
 
     index++
-
     camera.position.set(69, 250, 117)
 
     //set total price according to displaying model
@@ -644,19 +646,18 @@ class DisplayModel extends Component {
 
   prevScene(obj_names_length) { //fixed previouse button behaves wrong
 
-    //set total price according to displaying model
-    tPrice = this.props.total_init[index]
+    
 
     if (index < 0) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = false  //fixed if index < 0 then will not visible
+          object.visible = true
         }
       })
     } else {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = true //fixed if index >= 0 then will be visible
+          object.visible = false
         }
       })
     }
@@ -668,6 +669,8 @@ class DisplayModel extends Component {
       index = obj_names_length - 1
       scene = this.props.scenes[index]
 
+      //set total price according to displaying model
+      tPrice = this.props.total_init[index]
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -675,10 +678,18 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[index])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+      
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
     } 
      else if (index === 0){ // when index == 0 then we take the object whose index is 0
       scene = this.props.scenes[0]
 
+      //set total price according to displaying model
+      tPrice = this.props.total_init[index]
       let prevNodePrice = document.createTextNode(this.props.total_init[0])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -686,11 +697,19 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[0])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+
+      this.props.scenes[index].traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.visible = true
+        }
+      })
      }
     
     else { // when index > 0 procede as normal
       scene = this.props.scenes[index]
 
+      //set total price according to displaying model
+      tPrice = this.props.total_init[index]
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])

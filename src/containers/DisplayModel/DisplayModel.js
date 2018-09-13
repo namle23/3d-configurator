@@ -174,12 +174,6 @@ class DisplayModel extends Component {
       renderer.autoClear = false
       orbitControls.update()
 
-      // if (this.state.enableRotation) {
-      //   for (let i = 3; i < scene.length; i++) {
-      //     scene.children[i].rotation.y += 0.001
-      //   }
-      // }
-
       requestAnimationFrame(render)
       renderer.render(scene, camera)
     }
@@ -239,6 +233,7 @@ class DisplayModel extends Component {
             .multiplyScalar(50)
             .addScalar(25)
           cube.position.set(x, y, z)
+          cube.scale.set(2, 2, 2)
 
           scene.add(cube)
           render()
@@ -308,7 +303,7 @@ class DisplayModel extends Component {
       .addEventListener('mousedown', onMouseDown, false)
     document.addEventListener(
       'mouseup',
-      event => {
+      () => {
         orbitControls.enabled = true
         selectedObject = null
       },

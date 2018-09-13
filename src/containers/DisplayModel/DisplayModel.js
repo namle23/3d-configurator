@@ -585,18 +585,19 @@ class DisplayModel extends Component {
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = true
+          object.visible = false
         }
       })
     } else {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = false
+          object.visible = true
         }
       })
     }
 
     index++
+
     camera.position.set(69, 250, 117)
 
     //set total price according to displaying model
@@ -637,32 +638,45 @@ class DisplayModel extends Component {
       })
     }
 
+    // console.log("next " + index);
     this.setVisibility()
   } //end nextScene
 
-  prevScene(obj_names_length) {
-    console.log('-after ' + index)
+  prevScene(obj_names_length) { //fixed previouse button behaves wrong
 
-    camera.position.set(80, 220, 160)
     //set total price according to displaying model
     tPrice = this.props.total_init[index]
 
-    if (index <= 0) {
+    if (index < 0) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = false
+          object.visible = false  //fixed if index < 0 then will not visible
         }
       })
     } else {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = true
+          object.visible = true //fixed if index >= 0 then will be visible
         }
       })
     }
+    
+    index--
+    camera.position.set(80, 220, 160)
 
-    if (index <= 0) {
+    if (index < 0) { // when index < 0 then we choose the last object
       index = obj_names_length - 1
+      scene = this.props.scenes[index]
+
+      let prevNodePrice = document.createTextNode(this.props.total_init[index])
+      let prevPrice = document.getElementById('price')
+      prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
+
+      let prevNodeName = document.createTextNode(this.props.obj_names[index])
+      let prevName = document.getElementById('name')
+      prevName.replaceChild(prevNodeName, prevName.childNodes[0])
+    } 
+     else if (index === 0){ // when index == 0 then we take the object whose index is 0
       scene = this.props.scenes[0]
 
       let prevNodePrice = document.createTextNode(this.props.total_init[0])
@@ -672,7 +686,9 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[0])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
-    } else {
+     }
+    
+    else { // when index > 0 procede as normal
       scene = this.props.scenes[index]
 
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
@@ -690,8 +706,8 @@ class DisplayModel extends Component {
       })
     }
 
+    // console.log("previous " + index);
     this.setVisibility()
-    index--
   } //end prevScene
 
   //set visibility of not default instances to false (by default)

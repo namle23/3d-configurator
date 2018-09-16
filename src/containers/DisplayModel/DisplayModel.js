@@ -588,13 +588,13 @@ class DisplayModel extends Component {
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = false
+          object.visible = true
         }
       })
     } else {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = true
+          object.visible = false  
         }
       })
     }
@@ -645,9 +645,6 @@ class DisplayModel extends Component {
   } //end nextScene
 
   prevScene(obj_names_length) { //fixed previouse button behaves wrong
-
-    
-
     if (index < 0) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {

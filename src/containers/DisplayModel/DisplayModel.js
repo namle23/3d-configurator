@@ -30,9 +30,12 @@ let scene,
   objectsNotDefault = [],
   cubeGeo = new THREE.BoxGeometry(1, 1, 1),
   cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }),
-  nPrice,
-  tPrice
-
+  idInstArr = [] //this array holding the id of each instance under the format eg. 0X1 ..., according to the 3 dimentional indexes
+                // the format of the idInstArr will be as the following (example): [Obj_Array(5), Obj_Array(5), Obj_Array(7), Obj_Array(7)]
+                //                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
+                //                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
+                //                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
+                //                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
   45,
@@ -60,6 +63,7 @@ class DisplayModel extends Component {
     }
 
     this.enableEditState = this.enableEditState.bind(this)
+    this.FindIdTempInstance_index = this.FindIdTempInstance_index.bind(this)
   }
 
   enableEditState(val) {
@@ -67,10 +71,11 @@ class DisplayModel extends Component {
       enableRotation: val
     })
   }
+  
 
   create3d() {
     camera.position.set(69, 250, 117)
-
+    
     renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setClearColor(new THREE.Color(0x000, 1.0))
     renderer.setSize(
@@ -113,13 +118,16 @@ class DisplayModel extends Component {
 
       const loader = new THREE.JSONLoader(loadingManager)
       for (let i = 0; i < this.props.default.length; i++) {
+        idInstArr[i] = []
         objIndex.push(i)
         
         for (let j = 0; j < this.props.default[i].length; j++) {
+          idInstArr[i][j] = []
           instIndex.push(j)
 
           for (let k = 0; k < this.props.default[i][j].length; k++) {
             instIndex_index.push(k)
+            
             
             if (this.props.default[i][j][k] === 1) {
               // eslint-disable-next-line
@@ -130,7 +138,8 @@ class DisplayModel extends Component {
                   obj3d = new THREE.Mesh(geo, mat)
                   obj3d.scale.set(50, 50, 50)
                   this.props.scenes[i].add(obj3d)
-                  obj3d.name = i + 'X' + j // does this need to go first the above line?
+                  obj3d.name = i + 'X' + j 
+                  idInstArr[i][j][k] = obj3d.name //new
                   objects.sort((a, b) => {
                     let x = a.name.toLowerCase()
                     let y = b.name.toLowerCase()
@@ -148,13 +157,14 @@ class DisplayModel extends Component {
                   obj3dNotDefault = new THREE.Mesh(geo, mat)
                   obj3dNotDefault.scale.set(50, 50, 50)
                   this.props.scenes[i].add(obj3dNotDefault)
-                  obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1, // does this need to go first the above line?
-
+                  obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
+                  idInstArr[i][j][k] = obj3dNotDefault.name //new
                   objectsNotDefault.sort((a, b) => {
                     let x = a.name.toLowerCase()
                     let y = b.name.toLowerCase()
                     return x < y ? -1 : x > y ? 1 : 0
                   })
+                objects.push(obj3dNotDefault)
                 }
               )
             }
@@ -165,10 +175,7 @@ class DisplayModel extends Component {
       console.log(error)
     }
 
-    //initialize total price
-    tPrice = this.props.total_init[index]
-
-    scene = this.props.scenes[0]
+    scene = this.props.scenes[index]
     camera.lookAt(scene.position)
 
     const render = () => {
@@ -207,6 +214,7 @@ class DisplayModel extends Component {
     // })
 
     const onMouseDown = event => {
+
       let vector = new THREE.Vector3(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
@@ -334,38 +342,16 @@ class DisplayModel extends Component {
     selectedObject,
     onMouseDown
   ) => {
-    //counting the number of time that button(btn) is clicked
-    let flag = 0
-
     if (objIndex.indexOf(obj_obj_index) !== -1) {
       if (
         arr_instIndex[objIndex.indexOf(obj_obj_index)].indexOf(
           obj_obj_inst_index
         ) !== -1
       ) {
-        let childNames = scene.children.map(children => children.name)
-
-        //index of object in current scene
-        let matchedIndex = childNames.findIndex(x => x === selectedObject.name)
-        let matchedChild = scene.children[matchedIndex]
         //store instances of object
-
         let tempInstances = this.props.objects[obj_obj_index].objects[
           obj_obj_inst_index
         ].instances
-
-        //store default values of each instances(many)
-        let defaultOfInstance = tempInstances.map(t => t.default)
-
-        //price of the default instance
-        let defaultPrice
-        for (let i = 0; i < defaultOfInstance.length; i++) {
-          if (defaultOfInstance[i] === 1) {
-            defaultPrice =
-              tempInstances[defaultOfInstance.indexOf(defaultOfInstance[i])]
-                .price
-          }
-        }
 
         const loaderInstance = new THREE.JSONLoader()
 
@@ -374,7 +360,6 @@ class DisplayModel extends Component {
         for (let i = 0; i < tempInstances.length; i++) {
           tempArrIndex.push(i)
         }
-
         let mappedInstance = tempInstances.map((tempInstance, inst_index) => {
           let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
           rendererInstance.setSize(
@@ -429,122 +414,62 @@ class DisplayModel extends Component {
           )
 
           let style = { marginLeft: '220px' }
+            return(
+              <button
+                style={style}
+                key={inst_index} //inst_index = index of a instance in the instance array
+                className = "btn btn-default btn-xs"
+                id={'btn' + inst_index}
+                onClick={() =>{
+                  let idTempInstance = idInstArr[obj_obj_index][obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
 
-          return (
-            <button
-              style={style}
-              key={inst_index}
-              className="btn btn-default btn-xs"
-              id={'btn' + inst_index}
-              onClick={() => {
-                //hide selected default object
-                // matchedChild.visible = false
+                  let idTempInstace_index = this.props.scenes[index].children.findIndex(child => child.name === idTempInstance) //the index of the id of the current temp instance in
+                                                                                                                                // the scene's children array
+                  
+                  // set the child to be visible                                                                                                            
+                  scene.children[idTempInstace_index].visible = true
 
-                flag++
+                  
 
-                let arrMatchedChildName = [],
-                  indexOfY = [],
-                  slicedValue = []
-
-                for (let i = 0; i < childNames.length; i++) {
-                  if (childNames[i].indexOf(matchedChild.name) > -1) {
-                    arrMatchedChildName.push(childNames[i])
-                    indexOfY.push(childNames[i].indexOf('Y'))
-                  }
-                }
-
-                let splitArray = customEvents.splitArray(
-                  customEvents.mergeArray(arrMatchedChildName, indexOfY)
-                )
-
-                for (let i = 0; i < splitArray.length; i++) {
-                  slicedValue.push(splitArray[i][0].slice(splitArray[i][1] + 1))
-                }
-
-                //change value of default (without Y) to 0 to match index
-                if (slicedValue.indexOf(selectedObject.name) > -1) {
-                  slicedValue[slicedValue.indexOf(selectedObject.name)] = '0'
-                }
-
-                //convert string values to integer value
-                let intSlicedValue = slicedValue.map(x => parseInt(x, 10))
-
-                if (intSlicedValue.indexOf(inst_index) > -1) {
-                  for (let i = 0; i < scene.children.length; i++) {
-                    if (
-                      scene.children[i].name ===
-                      arrMatchedChildName[intSlicedValue.indexOf(inst_index)]
-                    ) {
-                      //set selected instance to be visible
-                      scene.children[i].visible = true
-
-                      //name of the selected child mesh of instances
-                      let selectedName = arrMatchedChildName.indexOf(
-                        scene.children[i].name
-                      )
-
-                      //array of unselected mesh that need to be invisible
-                      let toInvisibleChild = arrMatchedChildName
-                        .slice(0, selectedName)
-                        .concat(arrMatchedChildName.slice(selectedName + 1))
-
-                      //prepare to make mesh invisible by name
-                      for (let j = 0; j < toInvisibleChild.length; j++) {
-                        for (let k = 0; k < scene.children.length; k++) {
-                          if (toInvisibleChild[j] === scene.children[k].name) {
-                            scene.children[k].visible = false
-                            // scene.children[k].disabled = true
-                          }
-                        }
-                      }
-
-                      let toDisplayButton = tempArrIndex
-                        .slice(0, inst_index)
-                        .concat(tempArrIndex.slice(inst_index + 1))
-
-                      //button can be clicked only once
-                      document.getElementById(
-                        'btn' + inst_index
-                      ).disabled = true
-
-                      //enable other buttons
-                      for (let i = 0; i < toDisplayButton.length; i++) {
-                        document.getElementById(
-                          'btn' + toDisplayButton[i]
-                        ).disabled = false
-                      }
-
-                      nPrice = tempInstance.price
-
-                      this.setState({
-                        pPrice: tempInstance.price
-                      })
-
-                      //calculate price base on flag value
-                      if (flag === 1) {
-                        tPrice =
-                          tPrice - this.state.pPrice + nPrice - defaultPrice
-                      } else {
-                        tPrice = tPrice - this.state.pPrice + nPrice
-                      }
-
-                      let priceNode = document.createTextNode(tPrice)
-                      let price = document.getElementById('price')
-                      price.replaceChild(priceNode, price.childNodes[0])
-
-                      let nameNode = document.createTextNode(
-                        this.props.obj_names[index] + ' (modified)'
-                      )
-                      let name = document.getElementById('name')
-                      name.replaceChild(nameNode, name.childNodes[0])
+                  // set all the children, who are from the same array with the chosen one to be invisible (eg: we chose 0X4Y1, and the default unchose is 0X4 => 0X4 invisible)
+                  for(let i = 0; i < idInstArr[obj_obj_index][obj_obj_inst_index].length; i++){
+                    if(i !== inst_index){
+                      idTempInstance = idInstArr[obj_obj_index][obj_obj_inst_index][i]
+                      idTempInstace_index = this.FindIdTempInstance_index(idTempInstance)
+                      scene.children[idTempInstace_index].visible = false
                     }
                   }
-                } //end if
-              }}
-            >
+                  let finalPrice = 0
+
+                  scene.children.filter(child => child.visible === true)
+                  .map((child) =>{
+                    for(let i = 0; i < idInstArr[obj_obj_index].length;i++){
+                      for(let j = 0; j < idInstArr[obj_obj_index][i].length;j++){
+                        if(child.name === idInstArr[obj_obj_index][i][j]){
+                          finalPrice += this.props.objects[obj_obj_index].objects[i].instances[j].price
+                        }
+                        else{
+                          continue
+                        }
+                      }
+                    }
+                    return 1 //just for surpressing the warning of returing something when using Array.map()
+                  })
+                  let priceNode = document.createTextNode(finalPrice)
+                  let price = document.getElementById('price')
+                  price.replaceChild(priceNode, price.childNodes[0])
+
+                  let nameNode = document.createTextNode(
+                    this.props.obj_names[index] + ' (modified)'
+                  )
+                  let name = document.getElementById('name')
+                  name.replaceChild(nameNode, name.childNodes[0])
+                }}
+              >
+
               {tempInstance.name}
-            </button>
-          )
+              </button>
+            )
         }) //end map
 
         this.setState({
@@ -582,6 +507,11 @@ class DisplayModel extends Component {
       }
     } //end first if condition
   }
+  
+  //this method is for surpressing the warning of dont make a function in a loop
+  FindIdTempInstance_index(id){
+    return this.props.scenes[index].children.findIndex(child => child.name === id)
+  }
 
   nextScene(obj_names_length) {
     
@@ -601,9 +531,6 @@ class DisplayModel extends Component {
 
     index++
     camera.position.set(69, 250, 117)
-
-    //set total price according to displaying model
-    tPrice = this.props.total_init[index]
 
     if (index >= obj_names_length) {
       index = 0
@@ -639,8 +566,6 @@ class DisplayModel extends Component {
         }
       })
     }
-
-    // console.log("next " + index);
     this.setVisibility()
   } //end nextScene
 
@@ -666,8 +591,6 @@ class DisplayModel extends Component {
       index = obj_names_length - 1
       scene = this.props.scenes[index]
 
-      //set total price according to displaying model
-      tPrice = this.props.total_init[index]
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -685,8 +608,6 @@ class DisplayModel extends Component {
      else if (index === 0){ // when index == 0 then we take the object whose index is 0
       scene = this.props.scenes[0]
 
-      //set total price according to displaying model
-      tPrice = this.props.total_init[index]
       let prevNodePrice = document.createTextNode(this.props.total_init[0])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -705,8 +626,6 @@ class DisplayModel extends Component {
     else { // when index > 0 procede as normal
       scene = this.props.scenes[index]
 
-      //set total price according to displaying model
-      tPrice = this.props.total_init[index]
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -721,8 +640,6 @@ class DisplayModel extends Component {
         }
       })
     }
-
-    // console.log("previous " + index);
     this.setVisibility()
   } //end prevScene
 
@@ -783,7 +700,7 @@ class DisplayModel extends Component {
       </div>
     )
   }
-}
+}// end of class component
 
 const mapStateToProps = state => {
   return {

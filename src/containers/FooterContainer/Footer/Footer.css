@@ -2,11 +2,19 @@
   bottom: 10px;
 }
 
-#name {
+#name,
+#code {
   position: fixed;
-  top: 20px;
   left: 10px;
   color: gray;
+}
+
+#name {
+  top: 20px;
+}
+
+#code {
+  top: 50px;
 }
 
 #price {

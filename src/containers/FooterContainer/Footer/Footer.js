@@ -7,10 +7,18 @@ import './Footer.css'
 
 class Footer extends Component {
   render() {
+    let code = this.props.objects[0].objects.map(x =>
+      // eslint-disable-next-line
+      x.instances.map(y => {
+        if (y.default === 1) return y.code
+      })
+    )
+
     let price = (
       <div>
-        <h3 id="price">{this.props.price_total[0]}€</h3>
         <h3 id="name">{this.props.obj_names[0]}</h3>
+        <h5 id="code">{code}</h5>
+        <h3 id="price">{this.props.price_total[0]}€</h3>
       </div>
     )
 
@@ -30,7 +38,10 @@ class Footer extends Component {
 
 const mapStateToProps = state => {
   return {
+    objects: state.conf.objects,
+    obj_codes: state.conf.obj_codes,
     obj_names: state.conf.obj_names,
+    code: state.conf.obj_obj_insts_code,
     price_total: state.conf.obj_obj_insts_price_total
   }
 }

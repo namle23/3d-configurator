@@ -13,6 +13,13 @@ import './DisplayModel.css'
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 const customEvents = new CustomEvents() //declare instance for CustomEvents
+const path =
+  window.location.protocol +
+  '//' +
+  window.location.host +
+  '/' +
+  window.location.pathname
+
 let scene,
   camera,
   renderer,
@@ -31,11 +38,11 @@ let scene,
   cubeGeo = new THREE.BoxGeometry(1, 1, 1),
   cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }),
   idInstArr = [] //this array holding the id of each instance under the format eg. 0X1 ..., according to the 3 dimentional indexes
-                // the format of the idInstArr will be as the following (example): [Obj_Array(5), Obj_Array(5), Obj_Array(7), Obj_Array(7)]
-                //                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
-                //                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
-                //                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
-                //                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
+// the format of the idInstArr will be as the following (example): [Obj_Array(5), Obj_Array(5), Obj_Array(7), Obj_Array(7)]
+//                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
+//                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
+//                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
+//                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
   45,
@@ -44,12 +51,27 @@ camera = new THREE.PerspectiveCamera(
   1000
 )
 
-const path =
-  window.location.protocol +
-  '//' +
-  window.location.host +
-  '/' +
-  window.location.pathname
+let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
+rendererInstance.setSize(window.innerWidth / 4, window.innerHeight / 4)
+let cameraInstance = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+)
+const oControl = new OrbitControls(cameraInstance, rendererInstance.domElement)
+
+let sceneInstance = new THREE.Scene()
+const ambientLight = new THREE.AmbientLight(0x383838)
+sceneInstance.add(ambientLight)
+
+const spotLight = new THREE.SpotLight(0xffffff)
+spotLight.position.set(300, 300, 300)
+spotLight.intensity = 1
+sceneInstance.add(spotLight)
+
+cameraInstance.position.set(30, 35, 40)
+cameraInstance.lookAt(sceneInstance.position)
 
 class DisplayModel extends Component {
   constructor(props) {
@@ -71,11 +93,10 @@ class DisplayModel extends Component {
       enableRotation: val
     })
   }
-  
 
   create3d() {
     camera.position.set(69, 250, 117)
-    
+
     renderer = new THREE.WebGLRenderer({ alpha: true })
     renderer.setClearColor(new THREE.Color(0x000, 1.0))
     renderer.setSize(
@@ -120,15 +141,14 @@ class DisplayModel extends Component {
       for (let i = 0; i < this.props.default.length; i++) {
         idInstArr[i] = []
         objIndex.push(i)
-        
+
         for (let j = 0; j < this.props.default[i].length; j++) {
           idInstArr[i][j] = []
           instIndex.push(j)
 
           for (let k = 0; k < this.props.default[i][j].length; k++) {
             instIndex_index.push(k)
-            
-            
+
             if (this.props.default[i][j][k] === 1) {
               // eslint-disable-next-line
               loader.load(
@@ -138,7 +158,7 @@ class DisplayModel extends Component {
                   obj3d = new THREE.Mesh(geo, mat)
                   obj3d.scale.set(50, 50, 50)
                   this.props.scenes[i].add(obj3d)
-                  obj3d.name = i + 'X' + j 
+                  obj3d.name = i + 'X' + j
                   idInstArr[i][j][k] = obj3d.name //new
                   objects.sort((a, b) => {
                     let x = a.name.toLowerCase()
@@ -164,7 +184,7 @@ class DisplayModel extends Component {
                     let y = b.name.toLowerCase()
                     return x < y ? -1 : x > y ? 1 : 0
                   })
-                objects.push(obj3dNotDefault)
+                  objects.push(obj3dNotDefault)
                 }
               )
             }
@@ -192,23 +212,8 @@ class DisplayModel extends Component {
 
     //map array of objects and instances
     let arr_instIndex = customEvents.mappingCenter(instIndex)
-    let arr_instIndex_index = customEvents.mappingCenter(instIndex_index)
-
-    //mouse events
-    // document.addEventListener('mousemove', event => {
-    //   customEvents.mouseMove(
-    //     THREE,
-    //     event,
-    //     camera,
-    //     selectedObject,
-    //     plane,
-    //     offset,
-    //     objects
-    //   )
-    // })
 
     const onMouseDown = event => {
-
       let vector = new THREE.Vector3(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
@@ -280,10 +285,7 @@ class DisplayModel extends Component {
               objIndex,
               obj_obj_index,
               obj_obj_inst_index,
-              arr_instIndex,
-              arr_instIndex_index,
-              selectedObject,
-              onMouseDown
+              arr_instIndex
             )
           } catch (error) {
             console.log('mousedown error' + error)
@@ -332,10 +334,7 @@ class DisplayModel extends Component {
     objIndex, //[0,1,2,3...], depends on the amount of models
     obj_obj_index, //index of current displayed model
     obj_obj_inst_index, //index of current selected object of model (instance index)
-    arr_instIndex,
-    arr_instIndex_index,
-    selectedObject,
-    onMouseDown
+    arr_instIndex
   ) => {
     if (objIndex.indexOf(obj_obj_index) !== -1) {
       if (
@@ -356,33 +355,6 @@ class DisplayModel extends Component {
           tempArrIndex.push(i)
         }
         let mappedInstance = tempInstances.map((tempInstance, inst_index) => {
-          let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-          rendererInstance.setSize(
-            window.innerWidth / 4,
-            window.innerHeight / 4
-          )
-
-          let cameraInstance = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-          )
-
-          const oControl = new OrbitControls(
-            cameraInstance,
-            rendererInstance.domElement
-          )
-
-          let sceneInstance = new THREE.Scene()
-          const ambientLight = new THREE.AmbientLight(0x383838)
-          sceneInstance.add(ambientLight)
-
-          const spotLight = new THREE.SpotLight(0xffffff)
-          spotLight.position.set(300, 300, 300)
-          spotLight.intensity = 1
-          sceneInstance.add(spotLight)
-
           loaderInstance.load(
             path + tempInstance.json3d,
             // eslint-disable-next-line
@@ -391,80 +363,96 @@ class DisplayModel extends Component {
               mesh.scale.set(20, 20, 20)
               sceneInstance.add(mesh)
 
-              cameraInstance.position.set(30, 35, 40)
-              cameraInstance.lookAt(sceneInstance.position)
-
-              const render = () => {
-                requestAnimationFrame(render)
-                oControl.update()
-                rendererInstance.render(sceneInstance, cameraInstance)
-              }
-
-              render()
-
               document
                 .getElementById('instances')
                 .appendChild(rendererInstance.domElement)
             }
           )
 
+          const render = () => {
+            requestAnimationFrame(render)
+            oControl.update()
+            rendererInstance.render(sceneInstance, cameraInstance)
+          }
+
+          render()
+
           let style = { marginLeft: '220px' }
-            return(
-              <button
-                style={style}
-                key={inst_index} //inst_index = index of a instance in the instance array
-                className = "btn btn-default btn-xs"
-                id={'btn' + inst_index}
-                onClick={() =>{
-                  let idTempInstance = idInstArr[obj_obj_index][obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
 
-                  let idTempInstace_index = this.props.scenes[index].children.findIndex(child => child.name === idTempInstance) //the index of the id of the current temp instance in
-                                                                                                                                // the scene's children array
-                  
-                  // set the child to be visible                                                                                                            
-                  scene.children[idTempInstace_index].visible = true
+          return (
+            <button
+              style={style}
+              key={inst_index} //inst_index = index of a instance in the instance array
+              className="btn btn-default btn-xs"
+              id={'btn' + inst_index}
+              onClick={() => {
+                let idTempInstance =
+                  idInstArr[obj_obj_index][obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
 
-                  
+                let idTempInstace_index = this.props.scenes[
+                  index
+                ].children.findIndex(child => child.name === idTempInstance) //the index of the id of the current temp instance in
+                // the scene's children array
 
-                  // set all the children, who are from the same array with the chosen one to be invisible (eg: we chose 0X4Y1, and the default unchose is 0X4 => 0X4 invisible)
-                  for(let i = 0; i < idInstArr[obj_obj_index][obj_obj_inst_index].length; i++){
-                    if(i !== inst_index){
-                      idTempInstance = idInstArr[obj_obj_index][obj_obj_inst_index][i]
-                      idTempInstace_index = this.FindIdTempInstance_index(idTempInstance)
-                      scene.children[idTempInstace_index].visible = false
-                    }
+                // set the child to be visible
+                scene.children[idTempInstace_index].visible = true
+
+                // set all the children, who are from the same array with the chosen one to be invisible (eg: we chose 0X4Y1, and the default unchose is 0X4 => 0X4 invisible)
+                for (
+                  let i = 0;
+                  i < idInstArr[obj_obj_index][obj_obj_inst_index].length;
+                  i++
+                ) {
+                  if (i !== inst_index) {
+                    idTempInstance =
+                      idInstArr[obj_obj_index][obj_obj_inst_index][i]
+                    idTempInstace_index = this.FindIdTempInstance_index(
+                      idTempInstance
+                    )
+                    scene.children[idTempInstace_index].visible = false
                   }
-                  let finalPrice = 0
+                }
 
-                  scene.children.filter(child => child.visible === true)
-                  .map((child) =>{
-                    for(let i = 0; i < idInstArr[obj_obj_index].length;i++){
-                      for(let j = 0; j < idInstArr[obj_obj_index][i].length;j++){
-                        if(child.name === idInstArr[obj_obj_index][i][j]){
-                          finalPrice += this.props.objects[obj_obj_index].objects[i].instances[j].price
-                        }
-                        else{
+                let finalPrice = 0
+
+                scene.children
+                  .filter(child => child.visible === true)
+                  .map(child => {
+                    for (let i = 0; i < idInstArr[obj_obj_index].length; i++) {
+                      for (
+                        let j = 0;
+                        j < idInstArr[obj_obj_index][i].length;
+                        j++
+                      ) {
+                        if (child.name === idInstArr[obj_obj_index][i][j]) {
+                          finalPrice += this.props.objects[obj_obj_index]
+                            .objects[i].instances[j].price
+                        } else {
                           continue
                         }
                       }
                     }
                     return 1 //just for surpressing the warning of returing something when using Array.map()
                   })
-                  let priceNode = document.createTextNode(finalPrice)
-                  let price = document.getElementById('price')
-                  price.replaceChild(priceNode, price.childNodes[0])
 
-                  let nameNode = document.createTextNode(
-                    this.props.obj_names[index] + ' (modified)'
-                  )
-                  let name = document.getElementById('name')
-                  name.replaceChild(nameNode, name.childNodes[0])
-                }}
-              >
+                let priceNode = document.createTextNode(finalPrice)
+                let price = document.getElementById('price')
+                price.replaceChild(priceNode, price.childNodes[0])
 
+                let nameNode = document.createTextNode(
+                  this.props.obj_names[index] + ' (modified)'
+                )
+                let name = document.getElementById('name')
+                name.replaceChild(nameNode, name.childNodes[0])
+
+                //close popup
+                this.setState({ popup: null })
+                document.getElementById('instances').innerHTML = ''
+              }}
+            >
               {tempInstance.name}
-              </button>
-            )
+            </button>
+          )
         }) //end map
 
         this.setState({
@@ -473,26 +461,9 @@ class DisplayModel extends Component {
               <div className="m-mask">
                 <div className="m-wrapper">
                   <div className="m-container">
-                    <span
-                      className="close"
-                      onClick={() => {
-                        this.setState({ popup: null })
-                        document.getElementById('instances').innerHTML = ''
-                        //add mousedown event after press exit
-                        document
-                          .getElementById('display')
-                          .addEventListener('mousedown', onMouseDown, false)
-
-                        this.setState({
-                          pPrice: null
-                        })
-                      }}
-                    >
-                      &times;
-                    </span>
-
                     <div className="map-instances">{mappedInstance}</div>
-                    <div id="instances" />
+                    <div id="instances" onClick={() => {}} />
+                    {/*TODO: Create onClick for selecting instance */}
                   </div>
                 </div>
               </div>
@@ -502,14 +473,15 @@ class DisplayModel extends Component {
       }
     } //end first if condition
   }
-  
+
   //this method is for surpressing the warning of dont make a function in a loop
-  FindIdTempInstance_index(id){
-    return this.props.scenes[index].children.findIndex(child => child.name === id)
+  FindIdTempInstance_index(id) {
+    return this.props.scenes[index].children.findIndex(
+      child => child.name === id
+    )
   }
 
   nextScene(obj_names_length) {
-    
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -519,7 +491,7 @@ class DisplayModel extends Component {
     } else {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
-          object.visible = false  
+          object.visible = false
         }
       })
     }
@@ -564,7 +536,8 @@ class DisplayModel extends Component {
     this.setVisibility()
   } //end nextScene
 
-  prevScene(obj_names_length) { //fixed previouse button behaves wrong
+  prevScene(obj_names_length) {
+    //fixed previouse button behaves wrong
     if (index < 0) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -578,11 +551,12 @@ class DisplayModel extends Component {
         }
       })
     }
-    
+
     index--
     camera.position.set(80, 220, 160)
 
-    if (index < 0) { // when index < 0 then we choose the last object
+    if (index < 0) {
+      // when index < 0 then we choose the last object
       index = obj_names_length - 1
       scene = this.props.scenes[index]
 
@@ -593,14 +567,14 @@ class DisplayModel extends Component {
       let prevNodeName = document.createTextNode(this.props.obj_names[index])
       let prevName = document.getElementById('name')
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
-      
+
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
           object.visible = true
         }
       })
-    } 
-     else if (index === 0){ // when index == 0 then we take the object whose index is 0
+    } else if (index === 0) {
+      // when index == 0 then we take the object whose index is 0
       scene = this.props.scenes[0]
 
       let prevNodePrice = document.createTextNode(this.props.total_init[0])
@@ -616,9 +590,8 @@ class DisplayModel extends Component {
           object.visible = true
         }
       })
-     }
-    
-    else { // when index > 0 procede as normal
+    } else {
+      // when index > 0 procede as normal
       scene = this.props.scenes[index]
 
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
@@ -695,7 +668,7 @@ class DisplayModel extends Component {
       </div>
     )
   }
-}// end of class component
+} // end of class component
 
 const mapStateToProps = state => {
   return {

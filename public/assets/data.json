@@ -1,12 +1,11 @@
 {
   "type": "world",
-  "name": "Mar Robot",
+  "name": "Products",
   "imageroot": "src/assets/img/lake.jpg",
   "objects": [
     {
-      "code": "Mar",
+      "code": "MAR",
       "name": "Mar-Robot",
-      "price": 500000,
       "objects": [
         {
           "type": "object",
@@ -14,14 +13,14 @@
           "instances": [
             {
               "default": 1,
-              "code": "Small01",
+              "code": "SM1",
               "name": "Small01",
               "json3d": "assets/json/mar/small.json",
               "price": 20000
             },
             {
               "default": 0,
-              "code": "Small02",
+              "code": "SM2",
               "name": "Small02",
               "json3d": "assets/json/mar/small2.json",
               "price": 25000
@@ -34,14 +33,14 @@
           "instances": [
             {
               "default": 1,
-              "code": "Wheel01",
+              "code": "WH1",
               "name": "Wheel01",
               "json3d": "assets/json/mar/wheel.json",
               "price": 226500
             },
             {
               "default": 0,
-              "code": "Wheel01",
+              "code": "WH2",
               "name": "Wheel01",
               "json3d": "assets/json/mar/wheel2.json",
               "price": 226740
@@ -50,18 +49,18 @@
         },
         {
           "type": "object",
-          "name": "Robot-arm",
+          "name": "Antena",
           "instances": [
             {
               "default": 1,
-              "code": "Antena",
+              "code": "AN1",
               "name": "Antena",
               "json3d": "assets/json/mar/antena.json",
               "price": 125000
             },
             {
               "default": 0,
-              "code": "Antena",
+              "code": "AN2",
               "name": "Antena",
               "json3d": "assets/json/mar/antena2.json",
               "price": 110450
@@ -74,14 +73,14 @@
           "instances": [
             {
               "default": 1,
-              "code": "Base01",
+              "code": "BS1",
               "name": "Base01",
               "json3d": "assets/json/mar/base.json",
               "price": 320500
             },
             {
               "default": 0,
-              "code": "Base01",
+              "code": "BS2",
               "name": "Base01",
               "json3d": "assets/json/mar/base2.json",
               "price": 378200
@@ -90,19 +89,19 @@
         },
         {
           "type": "object",
-          "name": "Middel",
+          "name": "Middle",
           "instances": [
             {
               "default": 1,
-              "code": "Middel01",
-              "name": "Middel01",
+              "code": "MD1",
+              "name": "Middle01",
               "json3d": "assets/json/mar/middle.json",
               "price": 150500
             },
             {
               "default": 0,
-              "code": "Middel01",
-              "name": "Middel01",
+              "code": "MD2",
+              "name": "Middle02",
               "json3d": "assets/json/mar/middle2.json",
               "price": 198600
             }
@@ -111,124 +110,16 @@
       ]
     },
     {
-      "code": "AK47",
-      "name": "AK47-Kalashnikov",
-      "price": 2000,
-      "objects": [
-        {
-          "type": "object",
-          "name": "Main",
-          "instances": [
-            {
-              "default": 1,
-              "code": "Main",
-              "name": "Main",
-              "json3d": "assets/json/ak47/main.json",
-              "price": 200
-            },
-            {
-              "default": 0,
-              "code": "Main",
-              "name": "Main",
-              "json3d": "assets/json/ak47/main2.json",
-              "price": 300
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "Pistol Grip",
-              "name": "Pistol Grip",
-              "json3d": "assets/json/ak47/pistolgrip.json",
-              "price": 200
-            },
-            {
-              "default": 0,
-              "code": "Pistol Grip",
-              "name": "Pistol Grip",
-              "json3d": "assets/json/ak47/pistolgrip2.json",
-              "price": 300
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "Stock",
-              "name": "Stock",
-              "json3d": "assets/json/ak47/stock.json",
-              "price": 100
-            },
-            {
-              "default": 0,
-              "code": "Stock",
-              "name": "Stock",
-              "json3d": "assets/json/ak47/stock2.json",
-              "price": 100
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Robot-arm",
-          "instances": [
-            {
-              "default": 1,
-              "code": "Magazine01",
-              "name": "Magazine",
-              "json3d": "assets/json/ak47/magazine.json",
-              "price": 50
-            },
-            {
-              "default": 0,
-              "code": "Magazine01",
-              "name": "Magazine",
-              "json3d": "assets/json/ak47/magazine2.json",
-              "price": 100
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "name": "Hand Grip",
-          "instances": [
-            {
-              "default": 1,
-              "code": "ABB02-6",
-              "name": "Hand Grip",
-              "json3d": "assets/json/ak47/handgrip.json",
-              "price": 150
-            },
-            {
-              "default": 0,
-              "code": "ABB02-6",
-              "name": "Hand Grip",
-              "json3d": "assets/json/ak47/handgrip2.json",
-              "price": 150
-            }
-          ]
-        }
-      ]
-    },
-    {
       "code": "PLS1021",
       "name": "PW-Spa Classic",
-      "price": 2013,
       "objects": [
         {
           "type": "object",
           "name": "Kylpytynnyrin pohjaosa/bottom",
           "instances": [
             {
-              "default": 0,
-              "code": "PLS231",
+              "default": 1,
+              "code": "PH1",
               "name": "Pohja 1800",
               "json3d": "assets/json/kylpy/Pohja1800.json",
               "price": 550
@@ -241,7 +132,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "PLS251B",
+              "code": "MK1",
               "name": "Musta Kansi",
               "json3d": "assets/json/kylpy/MustaKansi.json",
               "price": 199
@@ -254,7 +145,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "PLS601I",
+              "code": "KA1",
               "name": "30 kW",
               "json3d": "assets/json/kylpy/30kW.json",
               "price": 699
@@ -267,7 +158,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "PLS613E",
+              "code": "PP1",
               "name": "Piippupaketti",
               "json3d": "assets/json/kylpy/Piippupaketti.json",
               "price": 50
@@ -280,7 +171,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "PLS614E",
+              "code": "SS1",
               "name": "Sisainen",
               "json3d": "assets/json/kylpy/Sisainen.json",
               "price": 300
@@ -294,7 +185,7 @@
             {
               "default": 1,
               "code": "PLS615E",
-              "name": "Ulompi",
+              "name": "UL1",
               "json3d": "assets/json/kylpy/Ulompi.json",
               "price": 120
             }
@@ -306,7 +197,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "PLS616E",
+              "code": "KS1",
               "name": "Kostea",
               "json3d": "assets/json/kylpy/Kostea.json",
               "price": 95
@@ -318,7 +209,6 @@
     {
       "code": "ABB02",
       "name": "Robot-01",
-      "price": 70000,
       "objects": [
         {
           "type": "object",
@@ -326,7 +216,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-0",
+              "code": "BA1",
               "name": "Base",
               "json3d": "assets/json/abb/base.json",
               "price": 100000
@@ -339,7 +229,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-1",
+              "code": "L1",
               "name": "Link1",
               "json3d": "assets/json/abb/link1.json",
               "price": 100000
@@ -352,7 +242,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-2",
+              "code": "L2",
               "name": "Link2",
               "json3d": "assets/json/abb/link2.json",
               "price": 100000
@@ -365,7 +255,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-3",
+              "code": "L3",
               "name": "Link3",
               "json3d": "assets/json/abb/link3.json",
               "price": 100000
@@ -378,7 +268,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-4",
+              "code": "L4",
               "name": "Link4",
               "json3d": "assets/json/abb/link4.json",
               "price": 100000
@@ -391,7 +281,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-5",
+              "code": "L5",
               "name": "Link5",
               "json3d": "assets/json/abb/link5.json",
               "price": 100000
@@ -404,7 +294,7 @@
           "instances": [
             {
               "default": 1,
-              "code": "ABB02-6",
+              "code": "L6",
               "name": "Link6",
               "json3d": "assets/json/abb/link6.json",
               "price": 100000

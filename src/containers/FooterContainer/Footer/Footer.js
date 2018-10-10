@@ -19,9 +19,9 @@ class Footer extends Component {
 
     let price = (
       <div>
-        <h3 id="name">{this.props.obj_names[0]}</h3>
+        <h3 id="name">{this.props.obj_names[this.props.index]}</h3>
         <p id="code">{code}</p>
-        <h3 id="price">{this.props.price_total[0]}€</h3>
+        <h3 id="price">{this.props.price_total[this.props.index]}€</h3>
       </div>
     )
 

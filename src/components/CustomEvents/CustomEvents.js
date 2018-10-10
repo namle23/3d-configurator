@@ -1,40 +1,62 @@
 class CustomEvents {
-  objectHighlight = (THREE, camera, selectedObject, objects) => {
+  objectHighlight = (THREE, camera, instancesColor, instances) => {
+    let lastObject = null,
+      currentObject = {}
+
     document.addEventListener('mousemove', event => {
       let vector = new THREE.Vector3(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
         0.5
       )
+
+      let mouse = { x: null, y: null }
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
       vector.unproject(camera)
-      let raycaster = new THREE.Raycaster(
-        camera.position,
-        vector.sub(camera.position).normalize()
-      )
-      let intersects = raycaster.intersectObjects(objects)
+
+      let raycaster = new THREE.Raycaster(camera.position)
+
+      let intersects = raycaster.intersectObjects(instances)
 
       if (intersects.length > 0) {
         try {
-          if (intersects[0].object !== selectedObject) {
-            if (selectedObject) {
-              selectedObject.material[0].color.setHex(selectedObject.currentHex)
-            }
-            selectedObject = intersects[0].object
-            selectedObject.currentHex = selectedObject.material[0].color.getHex()
-            selectedObject.material[0].color.setHex(0x00ff00)
+          currentObject = intersects[0].object
+
+          currentObject.material[0].color.setHex(0x00ff00)
+
+          if (lastObject != null) {
+            if (lastObject.length !== 0)
+              if (lastObject.hasOwnProperty('material'))
+                if (currentObject.name !== lastObject.name) {
+                  instancesColor.map(child => {
+                    if (child.key === lastObject.name) {
+                      lastObject.material[0].color.setHex(child.value)
+                    }
+
+                    return 1
+                  })
+                }
           }
         } catch (error) {
           console.log(error)
         }
       } else {
-        if (selectedObject) {
-          try {
-            selectedObject.material[0].color.setHex(selectedObject.currentHex)
-          } catch (error) {
-            console.log(error)
-          }
+        if (lastObject != null && lastObject.material) {
+          instancesColor.map(child => {
+            if (child.key === lastObject.name) {
+              lastObject.material[0].color.setHex(child.value)
+            }
+
+            return 1
+          })
         }
+
+        currentObject = {}
       }
+
+      lastObject = currentObject
     })
   }
 

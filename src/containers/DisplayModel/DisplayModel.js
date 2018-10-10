@@ -156,6 +156,7 @@ class DisplayModel extends Component {
 
         for (let j = 0; j < this.props.default[index][i].length; j++) {
           obj_obj_inst_index_arr.push(j)
+          instIndex.push(j)
 
           if (this.props.default[index][i][j] === 1) {
             // eslint-disable-next-line

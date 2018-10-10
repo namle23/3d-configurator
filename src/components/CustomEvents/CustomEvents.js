@@ -16,14 +16,15 @@ class CustomEvents {
 
       vector.unproject(camera)
 
-      let raycaster = new THREE.Raycaster(camera.position)
-
+      let raycaster = new THREE.Raycaster(
+        camera.position,
+        vector.sub(camera.position).normalize()
+      )
       let intersects = raycaster.intersectObjects(instances)
 
       if (intersects.length > 0) {
         try {
           currentObject = intersects[0].object
-
           currentObject.material[0].color.setHex(0x00ff00)
 
           if (lastObject != null) {
@@ -31,9 +32,8 @@ class CustomEvents {
               if (lastObject.hasOwnProperty('material'))
                 if (currentObject.name !== lastObject.name) {
                   instancesColor.map(child => {
-                    if (child.key === lastObject.name) {
+                    if (child.key === lastObject.name)
                       lastObject.material[0].color.setHex(child.value)
-                    }
 
                     return 1
                   })
@@ -45,9 +45,8 @@ class CustomEvents {
       } else {
         if (lastObject != null && lastObject.material) {
           instancesColor.map(child => {
-            if (child.key === lastObject.name) {
+            if (child.key === lastObject.name)
               lastObject.material[0].color.setHex(child.value)
-            }
 
             return 1
           })

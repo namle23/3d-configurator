@@ -75,8 +75,6 @@ let cameraInstance = new THREE.PerspectiveCamera(
 )
 const oControl = new OrbitControls(cameraInstance, rendererInstance.domElement)
 let sceneInstance = new THREE.Scene()
-cameraInstance.position.set(30, 35, 40)
-cameraInstance.lookAt(sceneInstance.position)
 
 const loadingManager = new THREE.LoadingManager()
 
@@ -207,7 +205,6 @@ class DisplayModel extends Component {
     const render = () => {
       renderer.autoClear = false
       orbitControls.update()
-
       requestAnimationFrame(render)
       renderer.render(scene, camera)
     }
@@ -262,7 +259,9 @@ class DisplayModel extends Component {
         let intersect = intersects[0]
 
         try {
-          if (intersect.object !== plane) intersect.object.visible = false
+          if (intersect.object !== plane) {
+            intersect.object.visible = false
+          }
         } catch (error) {
           console.log(error)
         }
@@ -285,7 +284,7 @@ class DisplayModel extends Component {
             )
 
             this.confirmIndex(
-              objIndex,
+              index,
               obj_obj_index,
               obj_obj_inst_index,
               arr_instIndex
@@ -339,18 +338,22 @@ class DisplayModel extends Component {
 
       const ambientLight = new THREE.AmbientLight(0x383838)
       sceneInstance.add(ambientLight)
+
       const spotLight = new THREE.SpotLight(0xffffff)
       spotLight.position.set(300, 300, 300)
       spotLight.intensity = 1
       sceneInstance.add(spotLight)
-      cameraInstance.position.set(30, 35, 40)
 
+      cameraInstance.position.set(30, 35, 40)
       cameraInstance.lookAt(sceneInstance.position)
+
       //store instances of object
       let tempInstances = this.props.objects[obj_obj_index].objects[
         obj_obj_inst_index
       ].instances
+
       const loaderInstance = new THREE.JSONLoader()
+
       //get index of all element in tempInstances
       let tempArrIndex = []
 
@@ -370,6 +373,7 @@ class DisplayModel extends Component {
               .appendChild(rendererInstance.domElement)
           }
         )
+
         const render = () => {
           requestAnimationFrame(render)
           oControl.update()
@@ -435,12 +439,11 @@ class DisplayModel extends Component {
               let nextCode = document.getElementById('code')
               nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
 
-              let idTempInstance =
-                idInstArr[obj_obj_index][obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
+              let idTempInstance = idInstArr[obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
 
-              let idTempInstace_index = this.props.scenes[
-                index
-              ].children.findIndex(child => child.name === idTempInstance) //the index of the id of the current temp instance in
+              let idTempInstace_index = scene.children.findIndex(
+                child => child.name === idTempInstance
+              ) //the index of the id of the current temp instance in
               // the scene's children array
 
               // set the child to be visible
@@ -604,6 +607,20 @@ class DisplayModel extends Component {
         currentIndex: index
       })
 
+      let code = this.props.objects[index].objects
+        .map(x =>
+          // eslint-disable-next-line
+          x.instances.map(y => {
+            if (y.default === 1) return y.code
+          })
+        )
+        .reduce((total, num) => total + num)
+        .replace(/,/g, '')
+
+      let nextNodeCode = document.createTextNode(code)
+      let nextCode = document.getElementById('code')
+      nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
+
       this.create3d(index)
     }
   } //end prevScene
@@ -611,8 +628,9 @@ class DisplayModel extends Component {
   //set visibility of not default instances to false (by default)
   setVisibility() {
     for (let i = 0; i < scene.children.length; i++) {
-      if (scene.children[i].name.indexOf('Y') > -1)
+      if (scene.children[i].name.indexOf('Y') > -1) {
         scene.children[i].visible = false
+      }
     }
   }
 
@@ -632,11 +650,8 @@ class DisplayModel extends Component {
 
   render() {
     return (
-      <div>
-        <div id="cover">
-          <div id="waiting-screen" />
-        </div>
-
+      <div id="cover">
+        <div id="waiting-screen" />
         <div id="info">
           <strong>click</strong>: show instances,
           <strong>shift + hover + click</strong>: add spot
@@ -687,7 +702,8 @@ const mapStateToProps = state => {
     total_init: state.conf.obj_obj_insts_price_total,
 
     json3dlinks: state.conf.json3dlinks,
-    scenes: state.conf.scenes
+    scenes: state.conf.scenes,
+    price_total: state.conf.obj_obj_insts_price_total
   }
 }
 

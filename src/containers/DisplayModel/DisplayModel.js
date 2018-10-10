@@ -149,6 +149,12 @@ class DisplayModel extends Component {
 
       const loader = new THREE.JSONLoader(loadingManager)
 
+      for (let i = 0; i < this.props.default.length; i++) {
+        for (let j = 0; j < this.props.default[i].length; j++) {
+          instIndex.push(j)
+        }
+      }
+
       for (let i = 0; i < this.props.default[index].length; i++) {
         idInstArr[i] = []
         objIndex.push(i)
@@ -156,7 +162,6 @@ class DisplayModel extends Component {
 
         for (let j = 0; j < this.props.default[index][i].length; j++) {
           obj_obj_inst_index_arr.push(j)
-          instIndex.push(j)
 
           if (this.props.default[index][i][j] === 1) {
             // eslint-disable-next-line

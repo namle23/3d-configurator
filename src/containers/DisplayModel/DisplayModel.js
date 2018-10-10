@@ -34,15 +34,16 @@ let scene,
   instIndex = [], //hold index of instance in obj_obj from sliced (part after X)
   instIndex_index = [], //hold index of selected instance of instances,
   obj3dNotDefault,
-  objectsNotDefault = [],
   cubeGeo = new THREE.BoxGeometry(1, 1, 1),
   cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }),
-  idInstArr = [] //this array holding the id of each instance under the format eg. 0X1 ..., according to the 3 dimentional indexes
-// the format of the idInstArr will be as the following (example): [Obj_Array(5), Obj_Array(5), Obj_Array(7), Obj_Array(7)]
-//                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
-//                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
-//                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
-//                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
+  idInstArr = [], //this array holding the id of each instance under the format eg. 0X1 ..., according to the 3 dimentional indexes
+  // the format of the idInstArr will be as the following (example): [Obj_Array(5), Obj_Array(5), Obj_Array(7), Obj_Array(7)]
+  //                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
+  //                                                                  Array(5) :[Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2), Inst_Array(2)]
+  //                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
+  //                                                                  Array(7) :[Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1), Inst_Array(1)]
+  arrCode = []
+
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
   45,
@@ -160,11 +161,6 @@ class DisplayModel extends Component {
                   this.props.scenes[i].add(obj3d)
                   obj3d.name = i + 'X' + j
                   idInstArr[i][j][k] = obj3d.name //new
-                  objects.sort((a, b) => {
-                    let x = a.name.toLowerCase()
-                    let y = b.name.toLowerCase()
-                    return x < y ? -1 : x > y ? 1 : 0
-                  })
                   objects.push(obj3d)
                 }
               )
@@ -179,11 +175,6 @@ class DisplayModel extends Component {
                   this.props.scenes[i].add(obj3dNotDefault)
                   obj3dNotDefault.name = i + 'X' + j + 'Y' + k //format 0X1Y1
                   idInstArr[i][j][k] = obj3dNotDefault.name //new
-                  objectsNotDefault.sort((a, b) => {
-                    let x = a.name.toLowerCase()
-                    let y = b.name.toLowerCase()
-                    return x < y ? -1 : x > y ? 1 : 0
-                  })
                   objects.push(obj3dNotDefault)
                 }
               )
@@ -256,9 +247,7 @@ class DisplayModel extends Component {
         let intersect = intersects[0]
 
         try {
-          if (intersect.object !== plane) {
-            intersect.object.visible = false
-          }
+          if (intersect.object !== plane) intersect.object.visible = false
         } catch (error) {
           console.log(error)
         }
@@ -266,7 +255,6 @@ class DisplayModel extends Component {
         if (intersects.length > 0) {
           orbitControls.enabled = false
           selectedObject = intersects[0].object
-          intersects = raycaster.intersectObject(plane)
           try {
             offset.copy(intersects[0].point).sub(plane.position)
 
@@ -377,15 +365,63 @@ class DisplayModel extends Component {
 
           render()
 
+          let codes = this.props.objects[index].objects.map(x =>
+            x.instances.map(y => y.code)
+          )
+
+          let objCodes = this.props.objects[index].objects.map((x, i) =>
+            x.instances.map(y => {
+              return {
+                key: i,
+                value: y.code
+              }
+            })
+          )
+
           let style = { marginLeft: '220px' }
 
           return (
             <button
               style={style}
-              key={inst_index} //inst_index = index of a instance in the instance array
+              key={inst_index} //inst_index = index of an instance in the instance array
               className="btn btn-default btn-xs"
               id={'btn' + inst_index}
               onClick={() => {
+                let matchedCodes = []
+
+                arrCode.splice(0, 0, {
+                  key: obj_obj_inst_index,
+                  value: codes[obj_obj_inst_index][inst_index]
+                }) //hold changing object code, not unique
+
+                let changing = customEvents.delDuplicateObject(arrCode) //going to change object, uniqe
+
+                let remain = customEvents.checkRemainIndex(
+                  arr_instIndex[index],
+                  customEvents.delDuplicate(arrCode.map(c => c.key))
+                ) //the remaining object that haven't been selected
+
+                for (let i = 0; i < objCodes.length; i++) {
+                  for (let j = 0; j < objCodes[i].length; j++) {
+                    for (let k = 0; k < remain.length; k++) {
+                      if (remain[k] === objCodes[i][j].key) {
+                        matchedCodes.push(objCodes[i][j])
+                      }
+                    }
+                  }
+                }
+
+                changing = [
+                  ...changing,
+                  ...customEvents.delDuplicateObject(matchedCodes)
+                ].sort((a, b) => (b.key < a.key ? 1 : -1)) //spread into one array of newly created product code
+
+                let nextNodeCode = document.createTextNode(
+                  changing.map(c => c.value).reduce((t, n) => t + n)
+                )
+                let nextCode = document.getElementById('code')
+                nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
+
                 let idTempInstance =
                   idInstArr[obj_obj_index][obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
 
@@ -427,9 +463,7 @@ class DisplayModel extends Component {
                         if (child.name === idInstArr[obj_obj_index][i][j]) {
                           finalPrice += this.props.objects[obj_obj_index]
                             .objects[i].instances[j].price
-                        } else {
-                          continue
-                        }
+                        } else continue
                       }
                     }
                     return 1 //just for surpressing the warning of returing something when using Array.map()
@@ -482,17 +516,15 @@ class DisplayModel extends Component {
   }
 
   nextScene(obj_names_length) {
+    arrCode = []
+
     if (index >= obj_names_length) {
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
+        if (object instanceof THREE.Mesh) object.visible = true
       })
     } else {
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = false
-        }
+        if (object instanceof THREE.Mesh) object.visible = false
       })
     }
 
@@ -503,6 +535,21 @@ class DisplayModel extends Component {
       index = 0
       scene = this.props.scenes[0]
 
+      let code = this.props.objects[0].objects
+        .map(x =>
+          // eslint-disable-next-line
+          x.instances.map(y => {
+            if (y.default === 1) return y.code
+            else if (y.default === 0) return ''
+          })
+        )
+        .reduce((total, num) => total + num)
+        .replace(/,/g, '')
+
+      let nextNodeCode = document.createTextNode(code)
+      let nextCode = document.getElementById('code')
+      nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
+
       let nextNodePrice = document.createTextNode(this.props.total_init[0])
       let nextPrice = document.getElementById('price')
       nextPrice.replaceChild(nextNodePrice, nextPrice.childNodes[0])
@@ -512,12 +559,24 @@ class DisplayModel extends Component {
       nextName.replaceChild(nextNodeName, nextName.childNodes[0])
 
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
+        if (object instanceof THREE.Mesh) object.visible = true
       })
     } else {
       scene = this.props.scenes[index]
+
+      let code = this.props.objects[index].objects
+        .map(x =>
+          // eslint-disable-next-line
+          x.instances.map(y => {
+            if (y.default === 1) return y.code
+          })
+        )
+        .reduce((total, num) => total + num)
+        .replace(/,/g, '')
+
+      let nextNodeCode = document.createTextNode(code)
+      let nextCode = document.getElementById('code')
+      nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
 
       let nextNodePrice = document.createTextNode(this.props.total_init[index])
       let nextPrice = document.getElementById('price')
@@ -528,16 +587,15 @@ class DisplayModel extends Component {
       nextName.replaceChild(nextNodeName, nextName.childNodes[0])
 
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
+        if (object instanceof THREE.Mesh) object.visible = true
       })
     }
     this.setVisibility()
   } //end nextScene
 
   prevScene(obj_names_length) {
-    //fixed previouse button behaves wrong
+    arrCode = []
+
     if (index < 0) {
       this.props.scenes[index].traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -546,9 +604,7 @@ class DisplayModel extends Component {
       })
     } else {
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = false
-        }
+        if (object instanceof THREE.Mesh) object.visible = false
       })
     }
 
@@ -560,6 +616,16 @@ class DisplayModel extends Component {
       index = obj_names_length - 1
       scene = this.props.scenes[index]
 
+      let code = this.props.objects[index].objects.map(x =>
+        // eslint-disable-next-line
+        x.instances.map(y => {
+          if (y.default === 1) return y.code
+          else return ''
+        })
+      )
+
+      console.log(code)
+
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
       prevPrice.replaceChild(prevNodePrice, prevPrice.childNodes[0])
@@ -569,13 +635,21 @@ class DisplayModel extends Component {
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
 
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
+        if (object instanceof THREE.Mesh) object.visible = true
       })
     } else if (index === 0) {
       // when index == 0 then we take the object whose index is 0
       scene = this.props.scenes[0]
+
+      let code = this.props.objects[0].objects.map(x =>
+        // eslint-disable-next-line
+        x.instances.map(y => {
+          if (y.default === 1) return y.code
+          else return ''
+        })
+      )
+
+      console.log(code)
 
       let prevNodePrice = document.createTextNode(this.props.total_init[0])
       let prevPrice = document.getElementById('price')
@@ -586,13 +660,21 @@ class DisplayModel extends Component {
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
 
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
+        if (object instanceof THREE.Mesh) object.visible = true
       })
     } else {
-      // when index > 0 procede as normal
+      // when index > 0 proceed as normal
       scene = this.props.scenes[index]
+
+      let code = this.props.objects[index].objects.map(x =>
+        // eslint-disable-next-line
+        x.instances.map(y => {
+          if (y.default === 1) return y.code
+          else return ''
+        })
+      )
+
+      console.log(code)
 
       let prevNodePrice = document.createTextNode(this.props.total_init[index])
       let prevPrice = document.getElementById('price')
@@ -603,9 +685,7 @@ class DisplayModel extends Component {
       prevName.replaceChild(prevNodeName, prevName.childNodes[0])
 
       this.props.scenes[index].traverse(object => {
-        if (object instanceof THREE.Mesh) {
-          object.visible = true
-        }
+        if (object instanceof THREE.Mesh) object.visible = true
       })
     }
     this.setVisibility()
@@ -613,13 +693,10 @@ class DisplayModel extends Component {
 
   //set visibility of not default instances to false (by default)
   setVisibility() {
-    for (let i = 0; i < this.props.scenes.length; i++) {
-      for (let j = 0; j < this.props.scenes[i].children.length; j++) {
-        if (this.props.scenes[i].children[j].name.indexOf('Y') > -1) {
+    for (let i = 0; i < this.props.scenes.length; i++)
+      for (let j = 0; j < this.props.scenes[i].children.length; j++)
+        if (this.props.scenes[i].children[j].name.indexOf('Y') > -1)
           this.props.scenes[i].children[j].visible = false
-        }
-      }
-    }
   }
 
   componentDidMount() {

@@ -24,6 +24,13 @@
               "name": "Small02",
               "json3d": "assets/json/mar/small2.json",
               "price": 25000
+            },
+            {
+              "default": 0,
+              "code": "SM3",
+              "name": "Small03",
+              "json3d": "assets/json/mar/small2.json",
+              "price": 30000
             }
           ]
         },
@@ -184,8 +191,8 @@
           "instances": [
             {
               "default": 1,
-              "code": "PLS615E",
-              "name": "UL1",
+              "code": "UL1",
+              "name": "Ulompi",
               "json3d": "assets/json/kylpy/Ulompi.json",
               "price": 120
             }

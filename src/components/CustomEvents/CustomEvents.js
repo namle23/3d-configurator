@@ -160,17 +160,17 @@ class CustomEvents {
     return parseInt(target.slice(first, second), 10)
   }
 
-  mergeArray(arr1, arr2) {
-    return arr1.reduce((arr, v, i) => {
-      return arr.concat(v, arr2[i])
-    }, [])
-  }
+  // mergeArray(arr1, arr2) {
+  //   return arr1.reduce((arr, v, i) => {
+  //     return arr.concat(v, arr2[i])
+  //   }, [])
+  // }
 
-  splitArray(arr) {
-    let result = []
-    for (let i = 0; i < arr.length; i += 2) result.push(arr.slice(i, i + 2))
-    return result
-  }
+  // splitArray(arr) {
+  //   let result = []
+  //   for (let i = 0; i < arr.length; i += 2) result.push(arr.slice(i, i + 2))
+  //   return result
+  // }
 
   delDuplicate(arrNode) {
     let dup = []
@@ -184,6 +184,26 @@ class CustomEvents {
     })
 
     return arr
+  }
+
+  delDuplicateObject(arr) {
+    return arr.reduce(
+      (p, c) => {
+        let key = [c.key].join('|')
+        if (p.temp.indexOf(key) === -1) {
+          p.out.push(c)
+          p.temp.push(key)
+        }
+        return p
+      },
+      { temp: [], out: [] }
+    ).out
+  }
+
+  checkRemainIndex(arr1, arr2) {
+    arr1 = arr1.filter(val => !arr2.includes(val))
+
+    return arr1
   }
 }
 

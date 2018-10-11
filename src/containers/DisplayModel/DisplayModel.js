@@ -39,7 +39,8 @@ let scene,
   instancesColor = [],
   instances = [], //holding all the instances of the current model
   obj_obj_index_arr = [], //holding the indexes of obj_obj
-  obj_obj_inst_index_arr = [] //holding the indexes of obj_obj_inst
+  obj_obj_inst_index_arr = [], //holding the indexes of obj_obj_inst
+  sceneInstance_arr = [] //holding the sceneInstance of each instance in popup window
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -66,15 +67,11 @@ plane = new THREE.Mesh(
 )
 
 let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-rendererInstance.setSize(window.innerWidth / 4, window.innerHeight / 4)
-let cameraInstance = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-)
-const oControl = new OrbitControls(cameraInstance, rendererInstance.domElement)
-let sceneInstance = new THREE.Scene()
+
+rendererInstance.setSize(
+  window.innerWidth , 
+  window.innerHeight * 0.5
+  )
 
 const loadingManager = new THREE.LoadingManager()
 
@@ -339,19 +336,8 @@ class DisplayModel extends Component {
     arr_instIndex
   ) => {
     if (index === obj_obj_index) {
-      for (let i = sceneInstance.children.length - 1; i >= 0; i--)
-        sceneInstance.remove(sceneInstance.children[i])
-
-      const ambientLight = new THREE.AmbientLight(0x383838)
-      sceneInstance.add(ambientLight)
-
-      const spotLight = new THREE.SpotLight(0xffffff)
-      spotLight.position.set(300, 300, 300)
-      spotLight.intensity = 1
-      sceneInstance.add(spotLight)
-
-      cameraInstance.position.set(30, 35, 40)
-      cameraInstance.lookAt(sceneInstance.position)
+      //empty the holding array
+      sceneInstance_arr = []
 
       //store instances of object
       let tempInstances = this.props.objects[obj_obj_index].objects[
@@ -360,34 +346,7 @@ class DisplayModel extends Component {
 
       const loaderInstance = new THREE.JSONLoader()
 
-      //get index of all element in tempInstances
-      let tempArrIndex = []
-
-      for (let i = 0; i < tempInstances.length; i++) tempArrIndex.push(i)
-
       let mappedInstance = tempInstances.map((tempInstance, inst_index) => {
-        loaderInstance.load(
-          path + tempInstance.json3d,
-          // eslint-disable-next-line
-          (geo, mat) => {
-            let mesh = new THREE.Mesh(geo, mat)
-            mesh.scale.set(20, 20, 20)
-            sceneInstance.add(mesh)
-
-            document
-              .getElementById('instances')
-              .appendChild(rendererInstance.domElement)
-          }
-        )
-
-        const render = () => {
-          requestAnimationFrame(render)
-          oControl.update()
-          rendererInstance.render(sceneInstance, cameraInstance)
-        }
-
-        render()
-
         let codes = this.props.objects[index].objects.map(x =>
           x.instances.map(y => y.code)
         )
@@ -497,12 +456,38 @@ class DisplayModel extends Component {
               //close popup
               this.setState({ popup: null })
               document.getElementById('instances').innerHTML = ''
+              cancelAnimationFrame(idRequestAnimate)
             }}
           >
             {tempInstance.name}
           </button>
         )
       }) //end map
+
+      //create orbit control area for each instance according to the size of rendererInstace's view port and scissor
+      let createInstanceNode = tempInstances.map((tempInstances, inst_index) => {
+        let style = {
+          position: 'absolute',
+          marginLeft: '0px auto',
+          width: '300px',
+          height: '301px',
+          left: (310*inst_index + 30) + 'px',
+          top: '58px',
+          padding: '50px',
+          borderStyle: 'solid',
+          borderColor: 'black',
+          zIndex: 1
+        }
+
+        return(
+          <div 
+          id={'instance ' + inst_index} 
+          key = {inst_index}
+          style={style}>
+          </div>
+        )
+      })
+
 
       this.setState({
         popup: (
@@ -511,7 +496,10 @@ class DisplayModel extends Component {
               <div className="m-wrapper">
                 <div className="m-container">
                   <div className="map-instances">{mappedInstance}</div>
-                  <div id="instances" onClick={() => {}} />
+                  {createInstanceNode}
+                  <div id="instances" onClick={() => {
+                    
+                  }} />
                   {/*TODO: Create onClick for selecting instance */}
                 </div>
               </div>
@@ -519,6 +507,76 @@ class DisplayModel extends Component {
           </div>
         )
       }) //end setState to add popup
+
+      //assign the DOM element of the rendererInstace
+      let instancesNode = document.getElementById('instances')
+      instancesNode.appendChild(rendererInstance.domElement)
+
+      //create appropriate sceneInstance to each instance in the popup window and store them in sceneInstance_arr
+      tempInstances.forEach((tempInstance, inst_index) => {
+        let sceneInstance = new THREE.Scene()
+        
+        let instanceNode = document.getElementById('instance ' + inst_index)
+
+        loaderInstance.load(
+          path + tempInstance.json3d,
+          // eslint-disable-next-line
+          (geo, mat) => {
+            let mesh = new THREE.Mesh(geo, mat)
+            mesh.name = "test " + inst_index
+            mesh.scale.set(20, 20, 20)
+            sceneInstance.add(mesh)
+          }
+        )
+        const ambientLight = new THREE.AmbientLight(0x383838)
+        sceneInstance.add(ambientLight)
+
+        const spotLight = new THREE.SpotLight(0xffffff)
+        spotLight.position.set(300, 300, 300)
+        spotLight.intensity = 1
+        sceneInstance.add(spotLight)
+        let cameraInstance = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+          )
+        cameraInstance.position.set(30, 35, 40)
+        cameraInstance.lookAt(sceneInstance.position)
+        sceneInstance.userData.camera = cameraInstance
+
+        
+        sceneInstance.userData.element = {X: inst_index*310, Y: 0}
+        sceneInstance.userData.oElement = instanceNode
+
+        let oControl = new OrbitControls(cameraInstance, sceneInstance.userData.oElement)
+        sceneInstance.userData.oControl = oControl
+        sceneInstance_arr.push(sceneInstance)
+        
+      })
+
+      //for canceling the requestAnimationFrame in popup window
+      let idRequestAnimate
+
+      
+      const render = () => {
+        rendererInstance.autoClear = false
+
+        rendererInstance.setScissor(true)
+
+        sceneInstance_arr.forEach(function(sceneInstance, inst_index){
+          var element = sceneInstance.userData.element
+
+          rendererInstance.setViewport( element.X, element.Y, 300, 300 )
+					rendererInstance.setScissor(element.X, element.Y, 300, 300 )
+          var camera = sceneInstance.userData.camera
+          rendererInstance.render( sceneInstance, camera)
+        })
+
+        idRequestAnimate = requestAnimationFrame(render)
+      }
+
+      render()
     }
   }
 
@@ -642,7 +700,6 @@ class DisplayModel extends Component {
 
   componentDidMount() {
     this.create3d(index)
-
     window.addEventListener(
       'resize',
       () => {
@@ -652,6 +709,16 @@ class DisplayModel extends Component {
       },
       false
     )
+  }
+
+  //to update the next total price if we did any changes in the previous model
+  componentDidUpdate = (prevProps, prevState) => {
+    if(prevState.currentIndex !== this.state.currentIndex){
+      let priceNode = document.createTextNode(this.props.price_total[this.state.currentIndex])
+      let price = document.getElementById('price')
+      price.replaceChild(priceNode, price.childNodes[0])
+    }
+    
   }
 
   render() {

@@ -40,7 +40,8 @@ let scene,
   instances = [], //holding all the instances of the current model
   obj_obj_index_arr = [], //holding the indexes of obj_obj
   obj_obj_inst_index_arr = [], //holding the indexes of obj_obj_inst
-  sceneInstance_arr = [] //holding the sceneInstance of each instance in popup window
+  sceneInstance_arr = [], //holding the sceneInstance of each instance in popup window
+  mouseDownCount = 0
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -81,7 +82,8 @@ class DisplayModel extends Component {
       enableRotation: false,
       pPrice: 0,
       totalPrice: 0,
-      currentIndex: index
+      currentIndex: index,
+      currentTime: 0
     }
 
     this.enableEditState = this.enableEditState.bind(this)
@@ -213,6 +215,8 @@ class DisplayModel extends Component {
 
     document.getElementById('display').appendChild(renderer.domElement) //append models to screen
 
+    // let coverNode = document.getElementById('cover')
+
     //map array of objects and instances
     let arr_instIndex = customEvents.mappingCenter(instIndex)
 
@@ -269,6 +273,7 @@ class DisplayModel extends Component {
         if (intersects.length > 0) {
           orbitControls.enabled = false
           selectedObject = intersects[0].object
+          mouseDownCount = mouseDownCount +1
           try {
             offset.copy(intersects[0].point).sub(plane.position)
 
@@ -282,13 +287,15 @@ class DisplayModel extends Component {
               selectedObject.name,
               selectedObject.name.indexOf('X') + 1
             )
+            if(mouseDownCount === 1){
+              this.confirmIndex(
+                index,
+                obj_obj_index,
+                obj_obj_inst_index,
+                arr_instIndex
+              )
+            }
 
-            this.confirmIndex(
-              index,
-              obj_obj_index,
-              obj_obj_inst_index,
-              arr_instIndex
-            )
           } catch (error) {
             console.log('mousedown error' + error)
           }
@@ -310,19 +317,17 @@ class DisplayModel extends Component {
       }
     }
 
-    document.addEventListener('keyup', onKeyUp, false)
-    document
-      .getElementById('display')
-      .addEventListener('mousedown', onMouseDown, false)
-    document.addEventListener(
-      'mouseup',
-      () => {
+
+    document.addEventListener('keyup', onKeyUp)
+    document.getElementById('display').addEventListener('mousedown', onMouseDown, false)
+
+    document.addEventListener('mouseup', () => {
         orbitControls.enabled = true
         selectedObject = null
+        mouseDownCount =0
       },
       false
     )
-
     customEvents.objectHighlight(THREE, camera, instancesColor, instances)
   } //end create3d()
 
@@ -335,27 +340,71 @@ class DisplayModel extends Component {
     if (index === obj_obj_index) {
       //empty the holding array
       sceneInstance_arr = []
+      
+      rendererInstance.autoClear = true
+
+      let hasRow = false
 
       //store instances of object
       let tempInstances = this.props.objects[obj_obj_index].objects[
         obj_obj_inst_index
       ].instances
 
+      let numOfInstances = tempInstances.length
+
+      let row = 0
       const loaderInstance = new THREE.JSONLoader()
 
+      let sceneWidth = (window.innerWidth / numOfInstances)
+      let sceneHeight 
+      //default is to have 4 instances in one row
+      if(numOfInstances <= 4){
+        hasRow = false
+        sceneHeight = window.innerHeight * 0.5
+      }
+      else{
+        hasRow = true
+      }
+      
+      //define a timer for setInterval and clearInterval
+      let timer 
+
+      //boolean for checking if we choose the instance or not
+      let choose = false
+      
       //create orbit control area for each instance according to the size of rendererInstace's view port and scissor
-      let createInstanceNode = tempInstances.map((t, inst_index) => {
-        let style = {
-          position: 'absolute',
-          marginLeft: '0px auto',
-          width: '300px',
-          height: '301px',
-          left: 310 * inst_index + 30 + 'px',
-          top: '58px',
-          padding: '50px',
-          borderStyle: 'solid',
-          borderColor: 'black',
-          zIndex: 1
+      let createInstanceNode  = tempInstances.map((t, inst_index) => {
+        let style = {}
+
+        if(!hasRow){
+          style = {
+            position: 'absolute',
+            marginLeft: '0px auto',
+            width: sceneWidth,
+            height: sceneHeight,
+            left: sceneWidth * (inst_index%numOfInstances) + 30 + 'px',
+            top: '18px',
+            padding: '50px',
+            borderStyle: 'solid',
+            borderColor: 'black',
+            zIndex: 0
+          }
+        }
+        
+        else{
+          row++
+          style = {
+            position: 'absolute',
+            marginLeft: '0px auto',
+            width: sceneWidth,
+            height: '305px',
+            left: sceneWidth * (inst_index%numOfInstances) + 30 + 'px',
+            top: 300 * row + 18 + 'px',
+            padding: '50px',
+            borderStyle: 'solid',
+            borderColor: 'black',
+            zIndex: 0
+          }
         }
 
         let codes = this.props.objects[index].objects.map(x =>
@@ -376,99 +425,120 @@ class DisplayModel extends Component {
             id={'instance ' + inst_index}
             key={inst_index}
             style={style}
-            onClick={() => {
-              let matchedCodes = []
 
-              arrCode.splice(0, 0, {
-                key: obj_obj_inst_index,
-                value: codes[obj_obj_inst_index][inst_index]
-              }) //hold changing object code, not unique
+            onMouseUp = {() => {
+              clearInterval(timer)
 
-              let changing = customEvents.delDuplicateObject(arrCode) //going to change object, unique
+              if(choose){
+                let matchedCodes = []
 
-              let remain = customEvents.checkRemainIndex(
-                arr_instIndex[index],
-                customEvents.delDuplicate(arrCode.map(c => c.key))
-              ) //the remaining object that haven't been selected
+                arrCode.splice(0, 0, {
+                  key: obj_obj_inst_index,
+                  value: codes[obj_obj_inst_index][inst_index]
+                }) //hold changing object code, not unique
 
-              for (let i = 0; i < objCodes.length; i++) {
-                for (let j = 0; j < objCodes[i].length; j++) {
-                  for (let k = 0; k < remain.length; k++) {
-                    if (remain[k] === objCodes[i][j].key) {
-                      matchedCodes.push(objCodes[i][j])
-                    }
-                  }
-                }
-              }
+                let changing = customEvents.delDuplicateObject(arrCode) //going to change object, unique
 
-              changing = [
-                ...changing,
-                ...customEvents.delDuplicateObject(matchedCodes)
-              ].sort((a, b) => (b.key < a.key ? 1 : -1)) //spread into one array of newly created product code
+                let remain = customEvents.checkRemainIndex(
+                  arr_instIndex[index],
+                  customEvents.delDuplicate(arrCode.map(c => c.key))
+                ) //the remaining object that haven't been selected
 
-              let nextNodeCode = document.createTextNode(
-                changing.map(c => c.value).reduce((t, n) => t + n)
-              )
-              let nextCode = document.getElementById('code')
-              nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
-
-              let idTempInstance = idInstArr[obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
-
-              let idTempInstace_index = scene.children.findIndex(
-                child => child.name === idTempInstance
-              ) //the index of the id of the current temp instance in
-              // the scene's children array
-
-              // set the child to be visible
-              scene.children[idTempInstace_index].visible = true
-
-              // set all the children, who are from the same array with the chosen one to be invisible (eg: we chose 0X4Y1, and the default unchose is 0X4 => 0X4 invisible)
-              for (let i = 0; i < idInstArr[obj_obj_inst_index].length; i++) {
-                if (i !== inst_index) {
-                  idTempInstance = idInstArr[obj_obj_inst_index][i]
-                  idTempInstace_index = this.FindIdTempInstance_index(
-                    idTempInstance
-                  )
-                  scene.children[idTempInstace_index].visible = false
-                }
-              }
-
-              let finalPrice = 0
-
-              scene.children
-                .filter(child => child.visible === true)
-                .map(child => {
-                  for (let i = 0; i < idInstArr.length; i++) {
-                    for (let j = 0; j < idInstArr[i].length; j++) {
-                      if (child.name === idInstArr[i][j]) {
-                        finalPrice += this.props.objects[index].objects[i]
-                          .instances[j].price
-                      } else {
-                        continue
+                for (let i = 0; i < objCodes.length; i++) {
+                  for (let j = 0; j < objCodes[i].length; j++) {
+                    for (let k = 0; k < remain.length; k++) {
+                      if (remain[k] === objCodes[i][j].key) {
+                        matchedCodes.push(objCodes[i][j])
                       }
                     }
                   }
-                  return 1 //just for surpressing the warning of returing something when using Array.map()
-                })
+                }
 
-              let priceNode = document.createTextNode(finalPrice)
-              let price = document.getElementById('price')
-              price.replaceChild(priceNode, price.childNodes[0])
+                changing = [
+                  ...changing,
+                  ...customEvents.delDuplicateObject(matchedCodes)
+                ].sort((a, b) => (b.key < a.key ? 1 : -1)) //spread into one array of newly created product code
 
-              let nameNode = document.createTextNode(
-                this.props.obj_names[index] + ' (modified)'
-              )
-              let name = document.getElementById('name')
-              name.replaceChild(nameNode, name.childNodes[0])
+                let nextNodeCode = document.createTextNode(
+                  changing.map(c => c.value).reduce((t, n) => t + n)
+                )
+                let nextCode = document.getElementById('code')
+                nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0])
 
-              //close popup
-              this.setState({ popup: null })
-              document.getElementById('instances').innerHTML = ''
-              cancelAnimationFrame(idRequestAnimate)
+                let idTempInstance = idInstArr[obj_obj_inst_index][inst_index] //this is the id for current temp instance, eg: 0X4 or 0X4Y1
+
+                let idTempInstace_index = scene.children.findIndex(
+                  child => child.name === idTempInstance
+                ) //the index of the id of the current temp instance in
+                // the scene's children array
+
+                // set the child to be visible
+                scene.children[idTempInstace_index].visible = true
+
+                // set all the children, who are from the same array with the chosen one to be invisible (eg: we chose 0X4Y1, and the default unchose is 0X4 => 0X4 invisible)
+                for (let i = 0; i < idInstArr[obj_obj_inst_index].length; i++) {
+                  if (i !== inst_index) {
+                    idTempInstance = idInstArr[obj_obj_inst_index][i]
+                    idTempInstace_index = this.FindIdTempInstance_index(
+                      idTempInstance
+                    )
+                    scene.children[idTempInstace_index].visible = false
+                  }
+                }
+
+                let finalPrice = 0
+
+                scene.children
+                  .filter(child => child.visible === true)
+                  .map(child => {
+                    for (let i = 0; i < idInstArr.length; i++) {
+                      for (let j = 0; j < idInstArr[i].length; j++) {
+                        if (child.name === idInstArr[i][j]) {
+                          finalPrice += this.props.objects[index].objects[i]
+                            .instances[j].price
+                        } else {
+                          continue
+                        }
+                      }
+                    }
+                    return 1 //just for surpressing the warning of returing something when using Array.map()
+                  })
+
+                let priceNode = document.createTextNode(finalPrice)
+                let price = document.getElementById('price')
+                price.replaceChild(priceNode, price.childNodes[0])
+
+                let nameNode = document.createTextNode(
+                  this.props.obj_names[index] + ' (modified)'
+                )
+                let name = document.getElementById('name')
+                name.replaceChild(nameNode, name.childNodes[0])
+
+                //close popup
+                this.setState({ popup: null })
+                let instancesNode = document.getElementById('instances')
+                instancesNode.removeChild(instancesNode.firstChild)
+                cancelAnimationFrame(idRequestAnimate)
+              }
+
+            }}
+
+            onMouseDown={ () => {
+              //initially choose the instance
+              choose = true
+
+              //next is to set a timer to check if the current mouse is held down then choose equals false => able to rotate and observe
+              timer = setInterval(() => {
+                choose = false
+              }, 100)
+
             }}
           />
+
         )
       })
+
+      row = 0
 
       this.setState({
         popup: (
@@ -484,11 +554,8 @@ class DisplayModel extends Component {
           </div>
         )
       }) //end setState to add popup
-
-      //assign the DOM element of the rendererInstace
-      let instancesNode = document.getElementById('instances')
-      instancesNode.appendChild(rendererInstance.domElement)
-
+      
+      
       //create appropriate sceneInstance to each instance in the popup window and store them in sceneInstance_arr
       tempInstances.forEach((tempInstance, inst_index) => {
         let sceneInstance = new THREE.Scene()
@@ -499,9 +566,12 @@ class DisplayModel extends Component {
           // eslint-disable-next-line
           (geo, mat) => {
             let mesh = new THREE.Mesh(geo, mat)
-            mesh.name = 'test ' + inst_index
             mesh.scale.set(20, 20, 20)
             sceneInstance.add(mesh)
+
+            //assign the DOM element of the rendererInstace
+            let instancesNode = document.getElementById('instances')
+            instancesNode.appendChild(rendererInstance.domElement)
           }
         )
         const ambientLight = new THREE.AmbientLight(0x383838)
@@ -514,15 +584,21 @@ class DisplayModel extends Component {
 
         let cameraInstance = new THREE.PerspectiveCamera(
           75,
-          window.innerWidth / window.innerHeight,
-          0.1,
+          window.innerWidth / (sceneHeight),
+          1,
           1000
         )
-        cameraInstance.position.set(30, 35, 40)
+        cameraInstance.position.set(100, 35, 40)
         cameraInstance.lookAt(sceneInstance.position)
         sceneInstance.userData.camera = cameraInstance
-
-        sceneInstance.userData.element = { X: inst_index * 310, Y: 0 }
+        
+        if(!hasRow){
+          sceneInstance.userData.element = { X: (inst_index % numOfInstances) * sceneWidth + 10, Y: 0 }
+        }
+        else{
+          row++
+          sceneInstance.userData.element = { X: (inst_index % numOfInstances) * 300 + 10, Y: 300 * row }
+        }
         sceneInstance.userData.oElement = instanceNode
 
         let oControl = new OrbitControls(
@@ -541,11 +617,17 @@ class DisplayModel extends Component {
 
         rendererInstance.setScissor(true)
 
-        sceneInstance_arr.forEach(function(sceneInstance, inst_index) {
+        sceneInstance_arr.forEach(function(sceneInstance) {
           var element = sceneInstance.userData.element
 
-          rendererInstance.setViewport(element.X, element.Y, 300, 300)
-          rendererInstance.setScissor(element.X, element.Y, 300, 300)
+          if(!hasRow){
+            rendererInstance.setViewport(element.X, element.Y, sceneWidth, sceneHeight)
+            rendererInstance.setScissor(element.X, element.Y, sceneWidth, sceneHeight)
+          }
+          else{
+            rendererInstance.setViewport(element.X, element.Y, 300, 300)
+            rendererInstance.setScissor(element.X, element.Y, 300, 300)
+          }
           var camera = sceneInstance.userData.camera
           rendererInstance.render(sceneInstance, camera)
         })
@@ -569,6 +651,9 @@ class DisplayModel extends Component {
 
     let displayNode = document.getElementById('display')
     displayNode.removeChild(displayNode.firstChild)
+
+    let newDisplayNode = displayNode.cloneNode(true)
+    displayNode.parentNode.replaceChild(newDisplayNode, displayNode)  
 
     if (index >= obj_names_length) {
       index = 0
@@ -620,6 +705,9 @@ class DisplayModel extends Component {
 
     let displayNode = document.getElementById('display')
     displayNode.removeChild(displayNode.firstChild)
+
+    let newDisplayNode = displayNode.cloneNode(true)
+    displayNode.parentNode.replaceChild(newDisplayNode, displayNode)  
 
     if (index < 0) {
       // when index < 0 then we choose the last object

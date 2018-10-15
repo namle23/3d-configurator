@@ -41,7 +41,7 @@ let scene,
   obj_obj_index_arr = [], //holding the indexes of obj_obj
   obj_obj_inst_index_arr = [], //holding the indexes of obj_obj_inst
   sceneInstance_arr = [], //holding the sceneInstance of each instance in popup window
-  mouseDownCount = 0
+  mouseDownCount = 0 //to ensure the popup window only runs once
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(

@@ -7,7 +7,7 @@ import './Footer.css'
 
 class Footer extends Component {
   render() {
-    let code = this.props.objects[this.props.index].objects
+    let code = this.props.objects[0].objects
       .map(x =>
         // eslint-disable-next-line
         x.instances.map(y => {

@@ -39,9 +39,13 @@ let scene,
   instancesColor = [],
   instances = [], //holding all the instances of the current model
   obj_obj_index_arr = [], //holding the indexes of obj_obj
+<<<<<<< HEAD
   obj_obj_inst_index_arr = [], //holding the indexes of obj_obj_inst
   sceneInstance_arr = [], //holding the sceneInstance of each instance in popup window
   mouseDownCount = 0 //to ensure the popup window only runs once
+=======
+  obj_obj_inst_index_arr = [] //holding the indexes of obj_obj_inst
+>>>>>>> parent of c09c3a6... opt popup
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -68,8 +72,20 @@ plane = new THREE.Mesh(
 )
 
 let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
+<<<<<<< HEAD
 
 rendererInstance.setSize(window.innerWidth, window.innerHeight * 0.5)
+=======
+rendererInstance.setSize(window.innerWidth / 4, window.innerHeight / 4)
+let cameraInstance = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+)
+const oControl = new OrbitControls(cameraInstance, rendererInstance.domElement)
+let sceneInstance = new THREE.Scene()
+>>>>>>> parent of c09c3a6... opt popup
 
 const loadingManager = new THREE.LoadingManager()
 
@@ -338,12 +354,28 @@ class DisplayModel extends Component {
     arr_instIndex
   ) => {
     if (index === obj_obj_index) {
+<<<<<<< HEAD
       //empty the holding array
       sceneInstance_arr = []
       
       rendererInstance.autoClear = true
 
       let hasRow = false
+=======
+      for (let i = sceneInstance.children.length - 1; i >= 0; i--)
+        sceneInstance.remove(sceneInstance.children[i])
+
+      const ambientLight = new THREE.AmbientLight(0x383838)
+      sceneInstance.add(ambientLight)
+
+      const spotLight = new THREE.SpotLight(0xffffff)
+      spotLight.position.set(300, 300, 300)
+      spotLight.intensity = 1
+      sceneInstance.add(spotLight)
+
+      cameraInstance.position.set(30, 35, 40)
+      cameraInstance.lookAt(sceneInstance.position)
+>>>>>>> parent of c09c3a6... opt popup
 
       //store instances of object
       let tempInstances = this.props.objects[obj_obj_index].objects[
@@ -355,6 +387,7 @@ class DisplayModel extends Component {
       let row = 0
       const loaderInstance = new THREE.JSONLoader()
 
+<<<<<<< HEAD
       let sceneWidth = (window.innerWidth / numOfInstances)
       let sceneHeight 
       //default is to have 4 instances in one row
@@ -407,6 +440,36 @@ class DisplayModel extends Component {
           }
         }
 
+=======
+      //get index of all element in tempInstances
+      let tempArrIndex = []
+
+      for (let i = 0; i < tempInstances.length; i++) tempArrIndex.push(i)
+
+      let mappedInstance = tempInstances.map((tempInstance, inst_index) => {
+        loaderInstance.load(
+          path + tempInstance.json3d,
+          // eslint-disable-next-line
+          (geo, mat) => {
+            let mesh = new THREE.Mesh(geo, mat)
+            mesh.scale.set(20, 20, 20)
+            sceneInstance.add(mesh)
+
+            document
+              .getElementById('instances')
+              .appendChild(rendererInstance.domElement)
+          }
+        )
+
+        const render = () => {
+          requestAnimationFrame(render)
+          oControl.update()
+          rendererInstance.render(sceneInstance, cameraInstance)
+        }
+
+        render()
+
+>>>>>>> parent of c09c3a6... opt popup
         let codes = this.props.objects[index].objects.map(x =>
           x.instances.map(y => y.code)
         )
@@ -527,6 +590,7 @@ class DisplayModel extends Component {
               //initially choose the instance
               choose = true
 
+<<<<<<< HEAD
               //next is to set a timer to check if the current mouse is held down then choose equals false => able to rotate and observe
               timer = setInterval(() => {
                 choose = false
@@ -540,20 +604,39 @@ class DisplayModel extends Component {
 
       row = 0
 
+=======
+              //close popup
+              this.setState({ popup: null })
+              document.getElementById('instances').innerHTML = ''
+            }}
+          >
+            {tempInstance.name}
+          </button>
+        )
+      }) //end map
+
+>>>>>>> parent of c09c3a6... opt popup
       this.setState({
         popup: (
           <div>
             <div className="m-mask">
               <div className="m-wrapper">
                 <div className="m-container">
+<<<<<<< HEAD
                   {createInstanceNode}
                   <div id="instances" />
+=======
+                  <div className="map-instances">{mappedInstance}</div>
+                  <div id="instances" onClick={() => {}} />
+                  {/*TODO: Create onClick for selecting instance */}
+>>>>>>> parent of c09c3a6... opt popup
                 </div>
               </div>
             </div>
           </div>
         )
       }) //end setState to add popup
+<<<<<<< HEAD
       
       
       //create appropriate sceneInstance to each instance in the popup window and store them in sceneInstance_arr
@@ -636,6 +719,8 @@ class DisplayModel extends Component {
       }
 
       render()
+=======
+>>>>>>> parent of c09c3a6... opt popup
     }
   }
 
@@ -765,6 +850,7 @@ class DisplayModel extends Component {
 
   componentDidMount() {
     this.create3d(index)
+
     window.addEventListener(
       'resize',
       () => {
@@ -776,6 +862,7 @@ class DisplayModel extends Component {
     )
   }
 
+<<<<<<< HEAD
   //to update the next total price if we did any changes in the previous model
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.currentIndex !== this.state.currentIndex) {
@@ -787,6 +874,8 @@ class DisplayModel extends Component {
     }
   }
 
+=======
+>>>>>>> parent of c09c3a6... opt popup
   render() {
     return (
       <div id="cover">

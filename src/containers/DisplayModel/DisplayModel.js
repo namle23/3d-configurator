@@ -39,13 +39,7 @@ let scene,
   instancesColor = [],
   instances = [], //holding all the instances of the current model
   obj_obj_index_arr = [], //holding the indexes of obj_obj
-<<<<<<< HEAD
-  obj_obj_inst_index_arr = [], //holding the indexes of obj_obj_inst
-  sceneInstance_arr = [], //holding the sceneInstance of each instance in popup window
-  mouseDownCount = 0 //to ensure the popup window only runs once
-=======
   obj_obj_inst_index_arr = [] //holding the indexes of obj_obj_inst
->>>>>>> parent of c09c3a6... opt popup
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -72,10 +66,6 @@ plane = new THREE.Mesh(
 )
 
 let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-<<<<<<< HEAD
-
-rendererInstance.setSize(window.innerWidth, window.innerHeight * 0.5)
-=======
 rendererInstance.setSize(window.innerWidth / 4, window.innerHeight / 4)
 let cameraInstance = new THREE.PerspectiveCamera(
   75,
@@ -85,7 +75,6 @@ let cameraInstance = new THREE.PerspectiveCamera(
 )
 const oControl = new OrbitControls(cameraInstance, rendererInstance.domElement)
 let sceneInstance = new THREE.Scene()
->>>>>>> parent of c09c3a6... opt popup
 
 const loadingManager = new THREE.LoadingManager()
 
@@ -354,14 +343,6 @@ class DisplayModel extends Component {
     arr_instIndex
   ) => {
     if (index === obj_obj_index) {
-<<<<<<< HEAD
-      //empty the holding array
-      sceneInstance_arr = []
-      
-      rendererInstance.autoClear = true
-
-      let hasRow = false
-=======
       for (let i = sceneInstance.children.length - 1; i >= 0; i--)
         sceneInstance.remove(sceneInstance.children[i])
 
@@ -375,7 +356,6 @@ class DisplayModel extends Component {
 
       cameraInstance.position.set(30, 35, 40)
       cameraInstance.lookAt(sceneInstance.position)
->>>>>>> parent of c09c3a6... opt popup
 
       //store instances of object
       let tempInstances = this.props.objects[obj_obj_index].objects[
@@ -387,60 +367,6 @@ class DisplayModel extends Component {
       let row = 0
       const loaderInstance = new THREE.JSONLoader()
 
-<<<<<<< HEAD
-      let sceneWidth = (window.innerWidth / numOfInstances)
-      let sceneHeight 
-      //default is to have 4 instances in one row
-      if(numOfInstances <= 4){
-        hasRow = false
-        sceneHeight = window.innerHeight * 0.5
-      }
-      else{
-        hasRow = true
-      }
-      
-      //define a timer for setInterval and clearInterval
-      let timer 
-
-      //boolean for checking if we choose the instance or not
-      let choose = false
-      
-      //create orbit control area for each instance according to the size of rendererInstace's view port and scissor
-      let createInstanceNode  = tempInstances.map((t, inst_index) => {
-        let style = {}
-
-        if(!hasRow){
-          style = {
-            position: 'absolute',
-            marginLeft: '0px auto',
-            width: sceneWidth,
-            height: sceneHeight,
-            left: sceneWidth * (inst_index%numOfInstances) + 30 + 'px',
-            top: '18px',
-            padding: '50px',
-            borderStyle: 'solid',
-            borderColor: 'black',
-            zIndex: 0
-          }
-        }
-        
-        else{
-          row++
-          style = {
-            position: 'absolute',
-            marginLeft: '0px auto',
-            width: sceneWidth,
-            height: '305px',
-            left: sceneWidth * (inst_index%numOfInstances) + 30 + 'px',
-            top: 300 * row + 18 + 'px',
-            padding: '50px',
-            borderStyle: 'solid',
-            borderColor: 'black',
-            zIndex: 0
-          }
-        }
-
-=======
       //get index of all element in tempInstances
       let tempArrIndex = []
 
@@ -469,7 +395,6 @@ class DisplayModel extends Component {
 
         render()
 
->>>>>>> parent of c09c3a6... opt popup
         let codes = this.props.objects[index].objects.map(x =>
           x.instances.map(y => y.code)
         )
@@ -590,137 +515,29 @@ class DisplayModel extends Component {
               //initially choose the instance
               choose = true
 
-<<<<<<< HEAD
-              //next is to set a timer to check if the current mouse is held down then choose equals false => able to rotate and observe
-              timer = setInterval(() => {
-                choose = false
-              }, 100)
-
-            }}
-          />
-
-        )
-      })
-
-      row = 0
-
-=======
               //close popup
               this.setState({ popup: null })
               document.getElementById('instances').innerHTML = ''
             }}
-          >
-            {tempInstance.name}
-          </button>
+          />
         )
       }) //end map
 
->>>>>>> parent of c09c3a6... opt popup
       this.setState({
         popup: (
           <div>
             <div className="m-mask">
               <div className="m-wrapper">
                 <div className="m-container">
-<<<<<<< HEAD
-                  {createInstanceNode}
-                  <div id="instances" />
-=======
                   <div className="map-instances">{mappedInstance}</div>
                   <div id="instances" onClick={() => {}} />
                   {/*TODO: Create onClick for selecting instance */}
->>>>>>> parent of c09c3a6... opt popup
                 </div>
               </div>
             </div>
           </div>
         )
       }) //end setState to add popup
-<<<<<<< HEAD
-      
-      
-      //create appropriate sceneInstance to each instance in the popup window and store them in sceneInstance_arr
-      tempInstances.forEach((tempInstance, inst_index) => {
-        let sceneInstance = new THREE.Scene()
-        let instanceNode = document.getElementById('instance ' + inst_index)
-
-        loaderInstance.load(
-          path + tempInstance.json3d,
-          // eslint-disable-next-line
-          (geo, mat) => {
-            let mesh = new THREE.Mesh(geo, mat)
-            mesh.scale.set(20, 20, 20)
-            sceneInstance.add(mesh)
-
-            //assign the DOM element of the rendererInstace
-            let instancesNode = document.getElementById('instances')
-            instancesNode.appendChild(rendererInstance.domElement)
-          }
-        )
-        const ambientLight = new THREE.AmbientLight(0x383838)
-        sceneInstance.add(ambientLight)
-
-        const spotLight = new THREE.SpotLight(0xffffff)
-        spotLight.position.set(300, 300, 300)
-        spotLight.intensity = 1
-        sceneInstance.add(spotLight)
-
-        let cameraInstance = new THREE.PerspectiveCamera(
-          75,
-          window.innerWidth / (sceneHeight),
-          1,
-          1000
-        )
-        cameraInstance.position.set(100, 35, 40)
-        cameraInstance.lookAt(sceneInstance.position)
-        sceneInstance.userData.camera = cameraInstance
-        
-        if(!hasRow){
-          sceneInstance.userData.element = { X: (inst_index % numOfInstances) * sceneWidth + 10, Y: 0 }
-        }
-        else{
-          row++
-          sceneInstance.userData.element = { X: (inst_index % numOfInstances) * 300 + 10, Y: 300 * row }
-        }
-        sceneInstance.userData.oElement = instanceNode
-
-        let oControl = new OrbitControls(
-          cameraInstance,
-          sceneInstance.userData.oElement
-        )
-        sceneInstance.userData.oControl = oControl
-        sceneInstance_arr.push(sceneInstance)
-      })
-
-      //for canceling the requestAnimationFrame in popup window
-      let idRequestAnimate
-
-      const render = () => {
-        rendererInstance.autoClear = false
-
-        rendererInstance.setScissor(true)
-
-        sceneInstance_arr.forEach(function(sceneInstance) {
-          var element = sceneInstance.userData.element
-
-          if(!hasRow){
-            rendererInstance.setViewport(element.X, element.Y, sceneWidth, sceneHeight)
-            rendererInstance.setScissor(element.X, element.Y, sceneWidth, sceneHeight)
-          }
-          else{
-            rendererInstance.setViewport(element.X, element.Y, 300, 300)
-            rendererInstance.setScissor(element.X, element.Y, 300, 300)
-          }
-          var camera = sceneInstance.userData.camera
-          rendererInstance.render(sceneInstance, camera)
-        })
-
-        idRequestAnimate = requestAnimationFrame(render)
-      }
-
-      render()
-=======
->>>>>>> parent of c09c3a6... opt popup
     }
   }
 
@@ -862,20 +679,6 @@ class DisplayModel extends Component {
     )
   }
 
-<<<<<<< HEAD
-  //to update the next total price if we did any changes in the previous model
-  componentDidUpdate = (prevProps, prevState) => {
-    if (prevState.currentIndex !== this.state.currentIndex) {
-      let priceNode = document.createTextNode(
-        this.props.price_total[this.state.currentIndex]
-      )
-      let price = document.getElementById('price')
-      price.replaceChild(priceNode, price.childNodes[0])
-    }
-  }
-
-=======
->>>>>>> parent of c09c3a6... opt popup
   render() {
     return (
       <div id="cover">

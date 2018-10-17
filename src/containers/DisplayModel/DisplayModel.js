@@ -32,8 +32,6 @@ let scene,
   objIndex = [], //hold index if object sliced from selectedObject (part before X)
   instIndex = [], //hold index of instance in obj_obj from sliced (part after X)
   obj3dNotDefault,
-  cubeGeo = new THREE.BoxGeometry(1, 1, 1),
-  cubeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }),
   idInstArr = [], //this array holding the id of each instance under the format eg. 0X1 ..., according to the 3 dimentional indexes
   arrCode = [], //hold product code
   instancesColor = [],
@@ -105,9 +103,8 @@ class DisplayModel extends Component {
     instances = []
 
     //empty all the children of the scene
-    for (let i = scene.children.length - 1; i >= 0; i--) {
+    for (let i = scene.children.length - 1; i >= 0; i--)
       scene.remove(scene.children[i])
-    }
 
     camera.position.set(69, 250, 117)
 
@@ -145,11 +142,8 @@ class DisplayModel extends Component {
 
       const loader = new THREE.JSONLoader(loadingManager)
 
-      for (let i = 0; i < this.props.default.length; i++) {
-        for (let j = 0; j < this.props.default[i].length; j++) {
-          instIndex.push(j)
-        }
-      }
+      for (let i = 0; i < this.props.default.length; i++)
+        for (let j = 0; j < this.props.default[i].length; j++) instIndex.push(j)
 
       for (let i = 0; i < this.props.default[index].length; i++) {
         idInstArr[i] = []
@@ -242,21 +236,24 @@ class DisplayModel extends Component {
           let intersect = intersects[0]
 
           //prepare point location
-          let x = intersect.point.x + 0.25
-          let y = intersect.point.y + 0.25
-          let z = intersect.point.z + 0.25
+          let x = intersect.point.x + 0.35
+          let y = intersect.point.y + 0.35
+          let z = intersect.point.z + 0.35
 
-          let cube = new THREE.Mesh(cubeGeo, cubeMat)
-          cube.position.copy(intersect.point).add(intersect.face.normal)
-          cube.position
+          let addSpot = new THREE.Mesh(
+            new THREE.SphereGeometry(2, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2),
+            new THREE.MeshBasicMaterial({ color: 0xffffff })
+          )
+          addSpot.position.copy(intersect.point).add(intersect.face.normal)
+          addSpot.position
             .divideScalar(50)
             .floor()
             .multiplyScalar(50)
             .addScalar(25)
-          cube.position.set(x, y, z)
-          cube.scale.set(2, 2, 2)
+          addSpot.position.set(x, y, z)
+          addSpot.scale.set(2, 2, 2)
 
-          scene.add(cube)
+          scene.add(addSpot)
           render()
         }
       } else if (event.ctrlKey) {
@@ -273,7 +270,7 @@ class DisplayModel extends Component {
         if (intersects.length > 0) {
           orbitControls.enabled = false
           selectedObject = intersects[0].object
-          mouseDownCount = mouseDownCount +1
+          mouseDownCount = mouseDownCount + 1
           try {
             offset.copy(intersects[0].point).sub(plane.position)
 
@@ -287,7 +284,7 @@ class DisplayModel extends Component {
               selectedObject.name,
               selectedObject.name.indexOf('X') + 1
             )
-            if(mouseDownCount === 1){
+            if (mouseDownCount === 1) {
               this.confirmIndex(
                 index,
                 obj_obj_index,
@@ -295,7 +292,6 @@ class DisplayModel extends Component {
                 arr_instIndex
               )
             }
-
           } catch (error) {
             console.log('mousedown error' + error)
           }
@@ -309,25 +305,23 @@ class DisplayModel extends Component {
       if (!event.shiftKey) {
         document
           .getElementById('display')
-          .addEventListener('mousedown', onMouseDown, false)
+          .addEventListener('mousedown', onMouseDown)
       } else if (!event.ctrlKey) {
         document
           .getElementById('display')
-          .addEventListener('mousedown', onMouseDown, false)
+          .addEventListener('mousedown', onMouseDown)
       }
     }
 
-
     document.addEventListener('keyup', onKeyUp)
-    document.getElementById('display').addEventListener('mousedown', onMouseDown, false)
-
+    document
+      .getElementById('display')
+      .addEventListener('mousedown', onMouseDown)
     document.addEventListener('mouseup', () => {
-        orbitControls.enabled = true
-        selectedObject = null
-        mouseDownCount =0
-      },
-      false
-    )
+      orbitControls.enabled = true
+      selectedObject = null
+      mouseDownCount = 0
+    })
     customEvents.objectHighlight(THREE, camera, instancesColor, instances)
   } //end create3d()
 
@@ -340,7 +334,7 @@ class DisplayModel extends Component {
     if (index === obj_obj_index) {
       //empty the holding array
       sceneInstance_arr = []
-      
+
       rendererInstance.autoClear = true
 
       let hasRow = false
@@ -355,54 +349,50 @@ class DisplayModel extends Component {
       let row = 0
       const loaderInstance = new THREE.JSONLoader()
 
-      let sceneWidth = (window.innerWidth / numOfInstances)
-      let sceneHeight 
+      let sceneWidth = window.innerWidth / numOfInstances,
+        sceneHeight
+
       //default is to have 4 instances in one row
-      if(numOfInstances <= 4){
+      if (numOfInstances <= 4) {
         hasRow = false
         sceneHeight = window.innerHeight * 0.5
-      }
-      else{
+      } else {
         hasRow = true
       }
-      
-      //define a timer for setInterval and clearInterval
-      let timer 
 
-      //boolean for checking if we choose the instance or not
-      let choose = false
-      
+      //define a timer for setInterval and clearInterval, boolean chooser for checking if we choose the instance
+      let timer,
+        choose = false
+
       //create orbit control area for each instance according to the size of rendererInstace's view port and scissor
-      let createInstanceNode  = tempInstances.map((t, inst_index) => {
+      let createInstanceNode = tempInstances.map((t, inst_index) => {
         let style = {}
 
-        if(!hasRow){
+        if (!hasRow) {
           style = {
             position: 'absolute',
             marginLeft: '0px auto',
             width: sceneWidth,
             height: sceneHeight,
-            left: sceneWidth * (inst_index%numOfInstances) + 30 + 'px',
+            left: sceneWidth * (inst_index % numOfInstances) + 30 + 'px',
             top: '18px',
             padding: '50px',
             borderStyle: 'solid',
-            borderColor: 'black',
+            borderColor: 'gray',
             zIndex: 0
           }
-        }
-        
-        else{
+        } else {
           row++
           style = {
             position: 'absolute',
             marginLeft: '0px auto',
             width: sceneWidth,
             height: '305px',
-            left: sceneWidth * (inst_index%numOfInstances) + 30 + 'px',
+            left: sceneWidth * (inst_index % numOfInstances) + 30 + 'px',
             top: 300 * row + 18 + 'px',
             padding: '50px',
             borderStyle: 'solid',
-            borderColor: 'black',
+            borderColor: 'gray',
             zIndex: 0
           }
         }
@@ -425,11 +415,10 @@ class DisplayModel extends Component {
             id={'instance ' + inst_index}
             key={inst_index}
             style={style}
-
-            onMouseUp = {() => {
+            onMouseUp={() => {
               clearInterval(timer)
 
-              if(choose){
+              if (choose) {
                 let matchedCodes = []
 
                 arrCode.splice(0, 0, {
@@ -444,15 +433,11 @@ class DisplayModel extends Component {
                   customEvents.delDuplicate(arrCode.map(c => c.key))
                 ) //the remaining object that haven't been selected
 
-                for (let i = 0; i < objCodes.length; i++) {
-                  for (let j = 0; j < objCodes[i].length; j++) {
-                    for (let k = 0; k < remain.length; k++) {
-                      if (remain[k] === objCodes[i][j].key) {
+                for (let i = 0; i < objCodes.length; i++)
+                  for (let j = 0; j < objCodes[i].length; j++)
+                    for (let k = 0; k < remain.length; k++)
+                      if (remain[k] === objCodes[i][j].key)
                         matchedCodes.push(objCodes[i][j])
-                      }
-                    }
-                  }
-                }
 
                 changing = [
                   ...changing,
@@ -476,7 +461,7 @@ class DisplayModel extends Component {
                 scene.children[idTempInstace_index].visible = true
 
                 // set all the children, who are from the same array with the chosen one to be invisible (eg: we chose 0X4Y1, and the default unchose is 0X4 => 0X4 invisible)
-                for (let i = 0; i < idInstArr[obj_obj_inst_index].length; i++) {
+                for (let i = 0; i < idInstArr[obj_obj_inst_index].length; i++)
                   if (i !== inst_index) {
                     idTempInstance = idInstArr[obj_obj_inst_index][i]
                     idTempInstace_index = this.FindIdTempInstance_index(
@@ -484,23 +469,19 @@ class DisplayModel extends Component {
                     )
                     scene.children[idTempInstace_index].visible = false
                   }
-                }
 
                 let finalPrice = 0
 
                 scene.children
                   .filter(child => child.visible === true)
                   .map(child => {
-                    for (let i = 0; i < idInstArr.length; i++) {
-                      for (let j = 0; j < idInstArr[i].length; j++) {
-                        if (child.name === idInstArr[i][j]) {
+                    for (let i = 0; i < idInstArr.length; i++)
+                      for (let j = 0; j < idInstArr[i].length; j++)
+                        if (child.name === idInstArr[i][j])
                           finalPrice += this.props.objects[index].objects[i]
                             .instances[j].price
-                        } else {
-                          continue
-                        }
-                      }
-                    }
+                        else continue
+
                     return 1 //just for surpressing the warning of returing something when using Array.map()
                   })
 
@@ -520,10 +501,8 @@ class DisplayModel extends Component {
                 instancesNode.removeChild(instancesNode.firstChild)
                 cancelAnimationFrame(idRequestAnimate)
               }
-
             }}
-
-            onMouseDown={ () => {
+            onMouseDown={() => {
               //initially choose the instance
               choose = true
 
@@ -531,10 +510,8 @@ class DisplayModel extends Component {
               timer = setInterval(() => {
                 choose = false
               }, 100)
-
             }}
           />
-
         )
       })
 
@@ -554,8 +531,7 @@ class DisplayModel extends Component {
           </div>
         )
       }) //end setState to add popup
-      
-      
+
       //create appropriate sceneInstance to each instance in the popup window and store them in sceneInstance_arr
       tempInstances.forEach((tempInstance, inst_index) => {
         let sceneInstance = new THREE.Scene()
@@ -584,20 +560,25 @@ class DisplayModel extends Component {
 
         let cameraInstance = new THREE.PerspectiveCamera(
           75,
-          window.innerWidth / (sceneHeight),
+          window.innerWidth / sceneHeight,
           1,
           1000
         )
         cameraInstance.position.set(100, 35, 40)
         cameraInstance.lookAt(sceneInstance.position)
         sceneInstance.userData.camera = cameraInstance
-        
-        if(!hasRow){
-          sceneInstance.userData.element = { X: (inst_index % numOfInstances) * sceneWidth + 10, Y: 0 }
-        }
-        else{
+
+        if (!hasRow) {
+          sceneInstance.userData.element = {
+            X: (inst_index % numOfInstances) * sceneWidth + 10,
+            Y: 0
+          }
+        } else {
           row++
-          sceneInstance.userData.element = { X: (inst_index % numOfInstances) * 300 + 10, Y: 300 * row }
+          sceneInstance.userData.element = {
+            X: (inst_index % numOfInstances) * 300 + 10,
+            Y: 300 * row
+          }
         }
         sceneInstance.userData.oElement = instanceNode
 
@@ -620,11 +601,20 @@ class DisplayModel extends Component {
         sceneInstance_arr.forEach(function(sceneInstance) {
           var element = sceneInstance.userData.element
 
-          if(!hasRow){
-            rendererInstance.setViewport(element.X, element.Y, sceneWidth, sceneHeight)
-            rendererInstance.setScissor(element.X, element.Y, sceneWidth, sceneHeight)
-          }
-          else{
+          if (!hasRow) {
+            rendererInstance.setViewport(
+              element.X,
+              element.Y,
+              sceneWidth,
+              sceneHeight
+            )
+            rendererInstance.setScissor(
+              element.X,
+              element.Y,
+              sceneWidth,
+              sceneHeight
+            )
+          } else {
             rendererInstance.setViewport(element.X, element.Y, 300, 300)
             rendererInstance.setScissor(element.X, element.Y, 300, 300)
           }
@@ -653,7 +643,7 @@ class DisplayModel extends Component {
     displayNode.removeChild(displayNode.firstChild)
 
     let newDisplayNode = displayNode.cloneNode(true)
-    displayNode.parentNode.replaceChild(newDisplayNode, displayNode)  
+    displayNode.parentNode.replaceChild(newDisplayNode, displayNode)
 
     if (index >= obj_names_length) {
       index = 0
@@ -707,7 +697,7 @@ class DisplayModel extends Component {
     displayNode.removeChild(displayNode.firstChild)
 
     let newDisplayNode = displayNode.cloneNode(true)
-    displayNode.parentNode.replaceChild(newDisplayNode, displayNode)  
+    displayNode.parentNode.replaceChild(newDisplayNode, displayNode)
 
     if (index < 0) {
       // when index < 0 then we choose the last object
@@ -756,11 +746,9 @@ class DisplayModel extends Component {
 
   //set visibility of not default instances to false (by default)
   setVisibility() {
-    for (let i = 0; i < scene.children.length; i++) {
-      if (scene.children[i].name.indexOf('Y') > -1) {
+    for (let i = 0; i < scene.children.length; i++)
+      if (scene.children[i].name.indexOf('Y') > -1)
         scene.children[i].visible = false
-      }
-    }
   }
 
   componentDidMount() {
@@ -791,12 +779,6 @@ class DisplayModel extends Component {
     return (
       <div id="cover">
         <div id="waiting-screen" />
-        <div id="info">
-          <strong>click</strong>: show instances,
-          <strong>shift + hover + click</strong>: add spot
-          {/* <strong>ctrl + hover + click</strong>: remove spot */}
-        </div>
-
         <div id="display" />
 
         <i

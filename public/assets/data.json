@@ -1,7 +1,7 @@
 {
   "type": "world",
   "name": "Products",
-  "imageroot": "src/assets/img/lake.jpg",
+  "imageroot": "assets/img/lake.jpg",
   "objects": [
     {
       "code": "MAR",

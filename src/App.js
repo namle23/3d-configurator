@@ -12,9 +12,13 @@ class App extends Component {
   }
 
   render() {
+    let style = {
+      backgroundImage: 'url(http://localhost:3000//assets/img/lake.jpg)'
+    }
+
     return (
       <BrowserRouter>
-        <div className="App">
+        <div className="App" style={style}>
           <Modal />
         </div>
       </BrowserRouter>

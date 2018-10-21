@@ -56,7 +56,18 @@ class CustomEvents {
       }
 
       lastObject = currentObject
+
     })
+  }
+
+  mouseDownOnSpot = (event, selectedObject, THREE) => {
+    let mouse = new THREE.Vector2()
+    console.log(event.clientX + " " + event.clientY)
+    mouse.x = (event.clientX/window.innerWidth)*2-1
+    mouse.y = (event.clientY/window.innerHeight)*2-1
+
+    selectedObject.translateX(parseFloat(mouse.x))
+    selectedObject.translateY(parseFloat(mouse.y))
   }
 
   // mouseDown(
@@ -226,6 +237,9 @@ class CustomEvents {
 
     return arr1
   }
+
+
+
 }
 
 export default CustomEvents

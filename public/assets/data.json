@@ -111,6 +111,41 @@
               "name": "Middle02",
               "json3d": "assets/json/mar/middle2.json",
               "price": 198600
+            },
+            {
+              "default": 0,
+              "code": "MD2",
+              "name": "Middle02",
+              "json3d": "assets/json/mar/middle2.json",
+              "price": 198600
+            },
+            {
+              "default": 0,
+              "code": "MD2",
+              "name": "Middle02",
+              "json3d": "assets/json/mar/middle2.json",
+              "price": 198600
+            },
+            {
+              "default": 0,
+              "code": "MD2",
+              "name": "Middle02",
+              "json3d": "assets/json/mar/middle2.json",
+              "price": 198600
+            },
+            {
+              "default": 0,
+              "code": "MD2",
+              "name": "Middle02",
+              "json3d": "assets/json/mar/middle2.json",
+              "price": 198600
+            },
+            {
+              "default": 0,
+              "code": "MD2",
+              "name": "Middle02",
+              "json3d": "assets/json/mar/middle2.json",
+              "price": 198600
             }
           ]
         }

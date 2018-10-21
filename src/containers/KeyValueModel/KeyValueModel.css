@@ -1,0 +1,118 @@
+.create-new-kv{
+    position: relative;
+    height: 10%;
+}
+
+.destroy-button-kv{
+    font-size: 53%;
+    position: absolute;
+    right: 0px;
+    top: 20%;
+}
+
+.pair-display-holder{
+    position: relative;
+    top: 5%;
+    background-color: #b2b2b2;
+    height: 75%;
+    overflow-y: scroll;
+}
+
+.pair-key-title{
+    position: absolute;
+    left: 10%;
+}
+
+.pair-value-title{
+    position: absolute;
+    left: 40%;
+}
+
+.pair-key-kv{
+    position: absolute;
+    left: 10%;
+}
+
+.pair-value-kv{
+    position: absolute;
+    left: 40%;
+}
+
+.pair-kv-row-display{
+    position: relative;
+    height: 30px;
+    top: 30px;
+}
+
+.pair-delete-kv{
+    position: absolute;
+    left: 70%;
+}
+
+.kv-container{
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    top: 20px;
+    right: 150px;
+    background-color: #b2b2b2;
+}
+
+.kv-title{
+    position: relative;
+    display: block;
+    height: 10%;
+    background-color: #cccccc;
+    
+}
+
+.kv-body{
+    background-color: #FFF8F8;
+    height: 100%;
+}
+
+.object-title{
+    position: relative;
+    text-align: center;
+    top: 10%;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.exit-kv-container{
+    position: absolute;
+    right:0px;
+    top: 0px;
+}
+
+.new-button-kv{
+    font-size: 90%;
+}
+
+.new-form-kv{
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+input[type=text] {
+    width: 100%;
+    
+}
+
+#key-holder, #value-holder{
+    left: 100px;
+}
+
+#key-label{
+    position: relative;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 90%;
+    left: 40%;
+}
+
+#value-label{
+    position: relative;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 90%;
+    left: 40%;
+}
+

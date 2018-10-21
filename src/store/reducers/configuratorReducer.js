@@ -111,7 +111,7 @@ const reducerConfigurator = (state = initState, action) => {
 
           return state.scenes
         }),
-
+        
         loading: false,
         error: false
       }

@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { connect } from 'react-redux'
 
 import Footer from '../../containers/FooterContainer/Footer/Footer'
+import KeyValueModel from '../../containers/KeyValueModel/KeyValueModel'
 
 import * as configuratorAction from '../../store/actions/index'
 // import separateObject from '../../components/CustomEvents/SeparateObject'
@@ -39,8 +40,10 @@ let scene,
   obj_obj_index_arr = [], //holding the indexes of obj_obj
   obj_obj_inst_index_arr = [], //holding the indexes of obj_obj_inst
   sceneInstance_arr = [], //holding the sceneInstance of each instance in popup window
-  mouseDownCount = 0 //to ensure the popup window only runs once
-
+  mouseDownCount = 0, //to ensure the popup window only runs once
+  spotCreatedCount = 0, //count the time one spot is created
+  spotArrayData = [], //to store data of spots
+  spotArrayModel = [] //to store models of spots
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
   45,
@@ -67,7 +70,7 @@ plane = new THREE.Mesh(
 
 let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
 
-rendererInstance.setSize(window.innerWidth, window.innerHeight * 0.5)
+rendererInstance.setSize(window.innerWidth, window.innerHeight)
 
 const loadingManager = new THREE.LoadingManager()
 
@@ -76,12 +79,15 @@ class DisplayModel extends Component {
     super(props)
 
     this.state = {
+      keyValuePopup: null,
       popup: null,
       enableRotation: false,
       pPrice: 0,
       totalPrice: 0,
       currentIndex: index,
-      currentTime: 0
+      destroySpot: false,
+      spotArrayData: [],
+      spotArrayModel: []
     }
 
     this.enableEditState = this.enableEditState.bind(this)
@@ -96,11 +102,15 @@ class DisplayModel extends Component {
   }
 
   create3d(index) {
+
+    spotCreatedCount = 0
+
     //empty all the relevant arrays
     obj_obj_index_arr = []
     obj_obj_inst_index_arr = []
     idInstArr = []
     instances = []
+    instancesColor = []
 
     //empty all the children of the scene
     for (let i = scene.children.length - 1; i >= 0; i--)
@@ -233,7 +243,12 @@ class DisplayModel extends Component {
       //key events
       if (event.shiftKey) {
         if (intersects.length > 0) {
+          
+         
           let intersect = intersects[0]
+
+          selectedObject = intersects[0].object
+
 
           //prepare point location
           let x = intersect.point.x + 0.35
@@ -242,8 +257,9 @@ class DisplayModel extends Component {
 
           let addSpot = new THREE.Mesh(
             new THREE.SphereGeometry(2, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2),
-            new THREE.MeshBasicMaterial({ color: 0xffffff })
+            new Array(new THREE.MeshBasicMaterial({ color: 0xcccccc }))
           )
+
           addSpot.position.copy(intersect.point).add(intersect.face.normal)
           addSpot.position
             .divideScalar(50)
@@ -253,8 +269,23 @@ class DisplayModel extends Component {
           addSpot.position.set(x, y, z)
           addSpot.scale.set(2, 2, 2)
 
+          addSpot.name = "Spot " + spotCreatedCount
+          addSpot.userData.spotIndex = spotCreatedCount
+          spotCreatedCount++;
           scene.add(addSpot)
+          
+          //to add the spot into the instances array so that its can be highlighted
+          instances.push(addSpot)
+          
+          //adding the spot's current hex color for later comparision
+          instancesColor.push({
+            key: addSpot.name,
+            value: addSpot.material[0].color.getHex()
+          })
+
           render()
+
+          this.handleAddSpot(addSpot.name, addSpot.userData.spotIndex)
         }
       } else if (event.ctrlKey) {
         let intersect = intersects[0]
@@ -274,24 +305,36 @@ class DisplayModel extends Component {
           try {
             offset.copy(intersects[0].point).sub(plane.position)
 
-            //get index accordingly
-            obj_obj_index = customEvents.getNameIndex(
-              selectedObject.name,
-              0,
-              selectedObject.name.indexOf('X')
-            )
-            obj_obj_inst_index = customEvents.getNameIndex(
-              selectedObject.name,
-              selectedObject.name.indexOf('X') + 1
-            )
-            if (mouseDownCount === 1) {
-              this.confirmIndex(
-                index,
-                obj_obj_index,
-                obj_obj_inst_index,
-                arr_instIndex
+            if(!selectedObject.name.startsWith("Spot")){
+              //get index accordingly
+              obj_obj_index = customEvents.getNameIndex(
+                selectedObject.name,
+                0,
+                selectedObject.name.indexOf('X')
               )
+              obj_obj_inst_index = customEvents.getNameIndex(
+                selectedObject.name,
+                selectedObject.name.indexOf('X') + 1
+              )
+              if (mouseDownCount === 1) {
+                this.confirmIndex(
+                  index,
+                  obj_obj_index,
+                  obj_obj_inst_index,
+                  arr_instIndex
+                )
+              }
             }
+
+            else{
+              let spotIndex = selectedObject.userData.spotIndex
+
+              console.log(spotIndex)
+              this.setState({
+                keyValuePopup: spotArrayModel[spotIndex]
+              })
+            }
+
           } catch (error) {
             console.log('mousedown error' + error)
           }
@@ -332,12 +375,12 @@ class DisplayModel extends Component {
     arr_instIndex
   ) => {
     if (index === obj_obj_index) {
+
+
       //empty the holding array
       sceneInstance_arr = []
 
       rendererInstance.autoClear = true
-
-      let hasRow = false
 
       //store instances of object
       let tempInstances = this.props.objects[obj_obj_index].objects[
@@ -346,20 +389,15 @@ class DisplayModel extends Component {
 
       let numOfInstances = tempInstances.length
 
-      let row = 0
+      let row = parseInt(numOfInstances/2, 10) + 1
+
       const loaderInstance = new THREE.JSONLoader()
 
-      let sceneWidth = window.innerWidth / numOfInstances,
-        sceneHeight
+      let sceneWidth = window.innerWidth / 2
+      let sceneHeight = 300
 
-      //default is to have 4 instances in one row
-      if (numOfInstances <= 4) {
-        hasRow = false
-        sceneHeight = window.innerHeight * 0.5
-      } else {
-        hasRow = true
-      }
-
+      rendererInstance.setSize(window.innerWidth, row*sceneHeight)
+      
       //define a timer for setInterval and clearInterval, boolean chooser for checking if we choose the instance
       let timer,
         choose = false
@@ -368,34 +406,18 @@ class DisplayModel extends Component {
       let createInstanceNode = tempInstances.map((t, inst_index) => {
         let style = {}
 
-        if (!hasRow) {
           style = {
             position: 'absolute',
             marginLeft: '0px auto',
             width: sceneWidth,
             height: sceneHeight,
-            left: sceneWidth * (inst_index % numOfInstances) + 30 + 'px',
-            top: '18px',
+            left: sceneWidth * (inst_index % 2) + 30 + 'px',
+            top: sceneHeight * parseInt(inst_index / 2, 10) + 20+ 'px',
             padding: '50px',
             borderStyle: 'solid',
             borderColor: 'gray',
             zIndex: 0
           }
-        } else {
-          row++
-          style = {
-            position: 'absolute',
-            marginLeft: '0px auto',
-            width: sceneWidth,
-            height: '305px',
-            left: sceneWidth * (inst_index % numOfInstances) + 30 + 'px',
-            top: 300 * row + 18 + 'px',
-            padding: '50px',
-            borderStyle: 'solid',
-            borderColor: 'gray',
-            zIndex: 0
-          }
-        }
 
         let codes = this.props.objects[index].objects.map(x =>
           x.instances.map(y => y.code)
@@ -515,14 +537,12 @@ class DisplayModel extends Component {
         )
       })
 
-      row = 0
-
       this.setState({
         popup: (
           <div>
             <div className="m-mask">
               <div className="m-wrapper">
-                <div className="m-container">
+                <div id= "m-container" className="m-container">
                   {createInstanceNode}
                   <div id="instances" />
                 </div>
@@ -531,6 +551,10 @@ class DisplayModel extends Component {
           </div>
         )
       }) //end setState to add popup
+
+      //assign the DOM element of the rendererInstace
+      let instancesNode = document.getElementById('instances')
+      instancesNode.appendChild(rendererInstance.domElement)      
 
       //create appropriate sceneInstance to each instance in the popup window and store them in sceneInstance_arr
       tempInstances.forEach((tempInstance, inst_index) => {
@@ -545,9 +569,6 @@ class DisplayModel extends Component {
             mesh.scale.set(20, 20, 20)
             sceneInstance.add(mesh)
 
-            //assign the DOM element of the rendererInstace
-            let instancesNode = document.getElementById('instances')
-            instancesNode.appendChild(rendererInstance.domElement)
           }
         )
         const ambientLight = new THREE.AmbientLight(0x383838)
@@ -568,18 +589,11 @@ class DisplayModel extends Component {
         cameraInstance.lookAt(sceneInstance.position)
         sceneInstance.userData.camera = cameraInstance
 
-        if (!hasRow) {
-          sceneInstance.userData.element = {
-            X: (inst_index % numOfInstances) * sceneWidth + 10,
-            Y: 0
-          }
-        } else {
-          row++
-          sceneInstance.userData.element = {
-            X: (inst_index % numOfInstances) * 300 + 10,
-            Y: 300 * row
-          }
+        sceneInstance.userData.element = {
+          X: (inst_index % 2) * sceneWidth,
+          Y: sceneHeight * parseInt(inst_index / 2, 10)
         }
+
         sceneInstance.userData.oElement = instanceNode
 
         let oControl = new OrbitControls(
@@ -588,6 +602,8 @@ class DisplayModel extends Component {
         )
         sceneInstance.userData.oControl = oControl
         sceneInstance_arr.push(sceneInstance)
+
+        
       })
 
       //for canceling the requestAnimationFrame in popup window
@@ -601,23 +617,19 @@ class DisplayModel extends Component {
         sceneInstance_arr.forEach(function(sceneInstance) {
           var element = sceneInstance.userData.element
 
-          if (!hasRow) {
-            rendererInstance.setViewport(
-              element.X,
-              element.Y,
-              sceneWidth,
-              sceneHeight
-            )
-            rendererInstance.setScissor(
-              element.X,
-              element.Y,
-              sceneWidth,
-              sceneHeight
-            )
-          } else {
-            rendererInstance.setViewport(element.X, element.Y, 300, 300)
-            rendererInstance.setScissor(element.X, element.Y, 300, 300)
-          }
+          rendererInstance.setViewport(
+            element.X,
+            element.Y,
+            sceneWidth,
+            sceneHeight
+          )
+          rendererInstance.setScissor(
+            element.X,
+            element.Y,
+            sceneWidth,
+            sceneHeight
+          )
+
           var camera = sceneInstance.userData.camera
           rendererInstance.render(sceneInstance, camera)
         })
@@ -629,6 +641,76 @@ class DisplayModel extends Component {
     }
   }
 
+  handleAddSpot = (name, index) => {
+    spotArrayData[index] = []
+
+    this.setState({
+      spotArrayData: spotArrayData
+    })
+
+    spotArrayModel[index] = 
+        <KeyValueModel spotName={name} 
+                      spotIndex={index} 
+                      handleDestroy={this.handleDestroySpot} 
+                      handleAddPair={this.handleAddKeyValuePair} 
+                      handleDeletePair={this.handleDeleteKeyValuePair}
+                      handleExit = {this.handleExit}
+                      spotData = {this.state.spotArrayData[index]}
+        />
+    
+
+    this.setState({
+      keyValuePopup: spotArrayModel[index]
+    })
+  }
+
+  handleDestroySpot = (name, index) => {
+    this.setState(prevState => ({
+      destroySpot: !prevState.destroySpot
+    }))
+
+    this.removeSpotFromScene(name)
+
+    spotArrayData.splice(index, 1)
+    spotArrayModel.splice(index, 1)
+  }
+
+  removeSpotFromScene = (spotName) => {
+    let spotIndex = scene.children.findIndex(child => child.name === spotName)
+
+    scene.remove(scene.children[spotIndex])
+
+    this.setState({
+      keyValuePopup: null
+    })
+  }
+
+  handleAddKeyValuePair = (index, key, value) => {
+    spotArrayData[index].push({
+      key: key,
+      value: value
+    })
+
+    this.setState({
+      spotArrayData: spotArrayData
+    })
+
+
+  }
+
+  handleDeleteKeyValuePair = (index, pairIndex) => {
+    spotArrayData[index].splice(pairIndex, 1)
+
+    this.setState({
+      spotArrayData: spotArrayData
+    })
+  }
+
+  handleExit = (index) => {
+    this.setState({
+      keyValuePopup: null
+    })
+  }
   //this method is for surpressing the warning of dont make a function in a loop
   FindIdTempInstance_index(id) {
     return scene.children.findIndex(child => child.name === id)
@@ -780,7 +862,7 @@ class DisplayModel extends Component {
       <div id="cover">
         <div id="waiting-screen" />
         <div id="display" />
-
+        
         <i
           className="prev"
           onClick={() => this.prevScene(this.props.obj_names.length)}
@@ -789,7 +871,7 @@ class DisplayModel extends Component {
           className="next"
           onClick={() => this.nextScene(this.props.obj_names.length)}
         />
-
+        <div>{this.state.keyValuePopup}</div>
         <div>{this.state.popup}</div>
 
         <div id="footer">

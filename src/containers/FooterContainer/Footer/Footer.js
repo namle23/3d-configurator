@@ -36,8 +36,9 @@ class Footer extends Component {
           camera={this.props.camera}
           update={this.props.update}
           enableActivateAddingSpot={this.props.enableActivateAddingSpot}
-          currentActiveSpotState={this.props.currentActiveSpotState}
           switchBetweenCubeAndSphere={this.props.switchBetweenCubeAndSphere}
+          sphereSelected={this.props.sphereSelected}
+          enableAddingSpot={this.props.enableAddingSpot}
         />
       </div>
     )

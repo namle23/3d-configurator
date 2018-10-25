@@ -530,7 +530,6 @@ class DisplayModel extends Component {
                 nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0]);
 
                 let idTempInstance = idInstArr[obj_obj_inst_index][inst_index]; //this is the id for current temp instance, eg: 0X4 or 0X4Y1
-                console.log(idTempInstance)
                 let idTempInstace_index = scene.children.findIndex(
                   child => child.name === idTempInstance
                 ); //the index of the id of the current temp instance in
@@ -820,8 +819,12 @@ class DisplayModel extends Component {
       nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0]);
 
       this.setState({
-        currentIndex: index
+        currentIndex: index,
+        enableAddingSpot: false,
+        sphereSelected: true,
+        keyValuePopup: null
       });
+
       this.create3d(index);
     } else {
       let code = this.props.objects[index].objects
@@ -839,8 +842,12 @@ class DisplayModel extends Component {
       nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0]);
 
       this.setState({
-        currentIndex: index
+        currentIndex: index,
+        enableAddingSpot: false,
+        sphereSelected: true,
+        keyValuePopup: null
       });
+
       this.create3d(index);
     }
   } //end nextScene
@@ -859,9 +866,6 @@ class DisplayModel extends Component {
     if (index < 0) {
       // when index < 0 then we choose the last object
       index = obj_names_length - 1;
-      this.setState({
-        currentIndex: index
-      });
 
       let code = this.props.objects[index].objects
         .map(x =>
@@ -876,12 +880,16 @@ class DisplayModel extends Component {
       let nextNodeCode = document.createTextNode(code);
       let nextCode = document.getElementById("code");
       nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0]);
+
+      this.setState({
+        currentIndex: index,
+        enableAddingSpot: false,
+        sphereSelected: true,
+        keyValuePopup: null
+      });
 
       this.create3d(index);
     } else {
-      this.setState({
-        currentIndex: index
-      });
 
       let code = this.props.objects[index].objects
         .map(x =>
@@ -896,6 +904,13 @@ class DisplayModel extends Component {
       let nextNodeCode = document.createTextNode(code);
       let nextCode = document.getElementById("code");
       nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0]);
+
+      this.setState({
+        currentIndex: index,
+        enableAddingSpot: false,
+        sphereSelected: true,
+        keyValuePopup: null
+      });
 
       this.create3d(index);
     }
@@ -969,8 +984,9 @@ class DisplayModel extends Component {
             update={this.enableEditState}
             enableActivateAddingSpot={this.enableActivateAddingSpot}
             index={this.state.currentIndex}
-            currentActiveSpotState={this.state.enableAddingSpot}
             switchBetweenCubeAndSphere={this.switchBetweenCubeAndSphere}
+            sphereSelected={this.state.sphereSelected}
+            enableAddingSpot={this.state.enableAddingSpot}
           />
         </div>
       </div>

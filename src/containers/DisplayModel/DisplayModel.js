@@ -49,8 +49,11 @@ let scene,
   spotArrayModel = [], //to store models of spots
   choose = false,
   onMouseDown,
+  onClickEvent,
   spotArrayObject = [],
-  dragControls
+  dragControls,
+  activateAddingSpot
+
 
 scene = new THREE.Scene();
 camera = new THREE.PerspectiveCamera(
@@ -95,7 +98,9 @@ class DisplayModel extends Component {
       currentIndex: index,
       destroySpot: false,
       spotArrayData: [],
-      spotArrayModel: []
+      spotArrayModel: [],
+      enableAddingSpot: false,
+      sphereSelected: true
     };
 
     this.enableEditState = this.enableEditState.bind(this);
@@ -107,6 +112,17 @@ class DisplayModel extends Component {
     this.setState({
       enableRotation: val
     });
+  }
+  enableActivateAddingSpot = () => {
+    this.setState(prevState => ({
+      enableAddingSpot: !prevState.enableAddingSpot
+    }))
+  }
+
+  switchBetweenCubeAndSphere = () => {
+    this.setState(prevState => ({
+      sphereSelected: !prevState.sphereSelected
+    }))
   }
 
   create3d(index) {
@@ -166,6 +182,7 @@ class DisplayModel extends Component {
         for (let j = 0; j < this.props.default[i].length; j++)
           instIndex.push(j);
 
+
       for (let i = 0; i < this.props.default[index].length; i++) {
         idInstArr[i] = [];
         objIndex.push(i);
@@ -190,6 +207,10 @@ class DisplayModel extends Component {
                   key: obj3d.name,
                   value: obj3d.material[0].color.getHex()
                 });
+
+                this.setState(prevState => ({
+                  loadFinished: !prevState.loadFinished
+                }))
               }
             );
           } else {
@@ -217,8 +238,6 @@ class DisplayModel extends Component {
       console.log(error);
     }
 
-    camera.lookAt(scene.position);
-
     const render = () => {
       renderer.autoClear = false;
       orbitControls.update();
@@ -237,7 +256,7 @@ class DisplayModel extends Component {
 
     let timer;
 
-    document.getElementById("display").addEventListener("click", event => {
+    onClickEvent = event => {
       let vector = new THREE.Vector3(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
@@ -254,59 +273,7 @@ class DisplayModel extends Component {
       let obj_obj_index, obj_obj_inst_index;
 
       //key events
-      if (event.shiftKey) {
-        if (intersects.length > 0) {
-          let intersect = intersects[0];
-
-          selectedObject = intersects[0].object;
-
-          //prepare point location
-          let x = intersect.point.x + 0.35;
-          let y = intersect.point.y + 0.35;
-          let z = intersect.point.z + 0.35;
-
-          let addSpot = new THREE.Mesh(
-            new THREE.SphereGeometry(2, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2),
-            new Array(new THREE.MeshBasicMaterial({ color: 0xcccccc }))
-          );
-
-          addSpot.position.copy(intersect.point).add(intersect.face.normal);
-          addSpot.position
-            .divideScalar(50)
-            .floor()
-            .multiplyScalar(50)
-            .addScalar(25);
-          addSpot.position.set(x, y, z);
-          addSpot.scale.set(2, 2, 2);
-
-          addSpot.name = "Spot " + spotCreatedCount;
-          addSpot.userData.spotIndex = spotCreatedCount;
-          spotCreatedCount++;
-          scene.add(addSpot);
-
-          //to add the spot into the instances array so that its can be highlighted
-          instances.push(addSpot);
-          
-          spotArrayObject.push(addSpot)
-          
-          //for dragging the spot to reposition
-          dragControls = new DragControls(spotArrayObject, camera, renderer.domElement)
-          dragControls.addEventListener('dragstart', (event) => {
-            orbitControls.enabled = false;
-          })
-
-
-          //adding the spot's current hex color for later comparision
-          instancesColor.push({
-            key: addSpot.name,
-            value: addSpot.material[0].color.getHex()
-          });
-
-          render();
-
-          this.handleAddSpot(addSpot.name, addSpot.userData.spotIndex);
-        }
-      } else if (event.ctrlKey) {
+      if (event.ctrlKey) {
         let intersect = intersects[0];
 
         try {
@@ -355,7 +322,9 @@ class DisplayModel extends Component {
         }
       }
       choose = false;
-    });
+    };
+
+    document.getElementById("display").addEventListener("click", onClickEvent)
 
     onMouseDown = event => {
       choose = true;
@@ -363,8 +332,6 @@ class DisplayModel extends Component {
       timer = setInterval(() => {
         choose = false;
       }, 100);
-
-      
     };
 
     document
@@ -379,6 +346,87 @@ class DisplayModel extends Component {
     });
 
     customEvents.objectHighlight(THREE, camera, instancesColor, instances);
+
+    activateAddingSpot = (event) => {
+      let vector = new THREE.Vector3(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
+      );
+      vector.unproject(camera);
+  
+      let raycaster = new THREE.Raycaster(
+        camera.position,
+        vector.sub(camera.position).normalize()
+      );
+  
+      let intersects = raycaster.intersectObjects(instances);
+  
+      if (intersects.length > 0) {
+        let intersect = intersects[0];
+  
+        selectedObject = intersects[0].object;
+  
+        //prepare point location
+        let x = intersect.point.x + 0.35;
+        let y = intersect.point.y + 0.35;
+        let z = intersect.point.z + 0.35;
+        let addSpot
+
+        if(this.state.sphereSelected){
+          addSpot = new THREE.Mesh(
+            new THREE.SphereGeometry(2, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2),
+            new THREE.MeshPhongMaterial({ color: 0xcccccc })
+          );
+          
+        }
+
+        else{
+          addSpot = new THREE.Mesh(
+            new THREE.CubeGeometry(3,3,3),
+            new THREE.MeshPhongMaterial({ color: 0xcccccc})
+          )
+        }
+        addSpot.position.copy(intersect.point).add(intersect.face.normal);
+        addSpot.position
+          .divideScalar(50)
+          .floor()
+          .multiplyScalar(50)
+          .addScalar(25);
+        addSpot.position.set(x, y, z);
+        addSpot.scale.set(2, 2, 2);
+  
+        addSpot.name = "Spot " + spotCreatedCount;
+        addSpot.userData.spotIndex = spotCreatedCount;
+        spotCreatedCount++;
+        scene.add(addSpot);
+  
+        //to add the spot into the instances array so that its can be highlighted
+        instances.push(addSpot);
+        
+        spotArrayObject.push(addSpot)
+        
+        //for dragging the spot to reposition
+        dragControls = new DragControls(spotArrayObject, camera, renderer.domElement)
+        dragControls.addEventListener('dragstart', (event) => {
+          orbitControls.enabled = false;
+        })
+        dragControls.addEventListener('dragend', (event) => {
+        })
+        
+  
+        //adding the spot's current hex color for later comparision
+        instancesColor.push({
+          key: addSpot.name,
+          value: addSpot.material.color.getHex()
+        });
+  
+        render();
+  
+        this.handleAddSpot(addSpot.name, addSpot.userData.spotIndex);
+      }
+    } //end of activateAddingSpot
+
   } //end create3d()
 
   confirmIndex = (
@@ -448,9 +496,7 @@ class DisplayModel extends Component {
             id={"instance " + inst_index}
             key={inst_index}
             style={style}
-            onMouseUp={() => {
-              clearInterval(timer);
-
+            onClick={() => {
               if (choose) {
                 let matchedCodes = [];
 
@@ -484,7 +530,7 @@ class DisplayModel extends Component {
                 nextCode.replaceChild(nextNodeCode, nextCode.childNodes[0]);
 
                 let idTempInstance = idInstArr[obj_obj_inst_index][inst_index]; //this is the id for current temp instance, eg: 0X4 or 0X4Y1
-
+                console.log(idTempInstance)
                 let idTempInstace_index = scene.children.findIndex(
                   child => child.name === idTempInstance
                 ); //the index of the id of the current temp instance in
@@ -534,7 +580,9 @@ class DisplayModel extends Component {
                 instancesNode.removeChild(instancesNode.firstChild);
                 cancelAnimationFrame(idRequestAnimate);
               }
+              choose = false
             }}
+
             onMouseDown={() => {
               //initially choose the instance
               choose = true;
@@ -543,6 +591,10 @@ class DisplayModel extends Component {
               timer = setInterval(() => {
                 choose = false;
               }, 100);
+            }}
+
+            onMouseUp={() => {
+              clearInterval(timer)
             }}
           />
         );
@@ -648,6 +700,8 @@ class DisplayModel extends Component {
       render();
     }
   };
+  
+  
 
   handleAddSpot = (name, index) => {
     spotArrayData[index] = [];
@@ -739,7 +793,7 @@ class DisplayModel extends Component {
   nextScene(obj_names_length) {
     arrCode = [];
     index++;
-    camera.position.set(69, 250, 117);
+    // camera.position.set(69, 250, 117);
 
     let displayNode = document.getElementById("display");
     displayNode.removeChild(displayNode.firstChild);
@@ -794,6 +848,7 @@ class DisplayModel extends Component {
   prevScene(obj_names_length) {
     arrCode = [];
     index--;
+    // camera.position.set(69, 250, 117);
 
     let displayNode = document.getElementById("display");
     displayNode.removeChild(displayNode.firstChild);
@@ -877,6 +932,18 @@ class DisplayModel extends Component {
     }
 
     orbitControls.enabled = true;
+    
+    if(prevState.enableAddingSpot !== this.state.enableAddingSpot){
+      if(this.state.enableAddingSpot){
+        document.getElementById("display").removeEventListener("click", onClickEvent)
+        document.getElementById("display").addEventListener("click", activateAddingSpot)
+      }
+      else{
+        document.getElementById("display").removeEventListener("click", activateAddingSpot)
+        document.getElementById("display").addEventListener("click", onClickEvent)
+      }
+    }
+
   };
 
   render() {
@@ -900,7 +967,10 @@ class DisplayModel extends Component {
           <Footer
             camera={camera}
             update={this.enableEditState}
+            enableActivateAddingSpot={this.enableActivateAddingSpot}
             index={this.state.currentIndex}
+            currentActiveSpotState={this.state.enableAddingSpot}
+            switchBetweenCubeAndSphere={this.switchBetweenCubeAndSphere}
           />
         </div>
       </div>

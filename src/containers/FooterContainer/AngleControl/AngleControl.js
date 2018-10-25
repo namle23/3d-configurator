@@ -4,6 +4,12 @@ import './AngleControl.css'
 let enableRotation = false
 
 class AngleControl extends Component {
+
+  state = {
+    activated: false,
+    sphereSelected: true
+  }
+
   angleTop(camera) {
     try {
       camera.position.set(69, 250, 117)
@@ -40,6 +46,22 @@ class AngleControl extends Component {
     rotation = !rotation
     enableRotation = !enableRotation
     this.props.update(enableRotation)
+    console.log(true)
+  }
+
+  enableActivateAddingSpot = () => {
+    this.props.enableActivateAddingSpot()
+    this.setState(prevState => ({
+      activated: !prevState.activated
+    }))
+  }
+
+  switchBetweenCubeAndSphere = () => {
+    this.setState(prevState => ({
+      sphereSelected: !prevState.sphereSelected
+    }))
+
+    this.props.switchBetweenCubeAndSphere()
   }
 
   render() {
@@ -63,12 +85,69 @@ class AngleControl extends Component {
             onClick={() => this.angleLeft(this.props.camera)}
           />
           <p
-            className="center"
-            onClick={() => this.angleRotation(this.props.rotation)}
+            className="center-before" id="circle-center"
+            onClick={this.enableActivateAddingSpot}
           />
         </div>
-      </div>
+        {
+            (this.state.activated) ? 
+            
+              ((this.state.sphereSelected) ? 
+                (
+                  <div className="switches-container">
+                    <div className="switch-to-cube">
+                      <button id="switch-to-cube-bttn" onClick={this.switchBetweenCubeAndSphere}>Switch to cube</button>
+                    </div>
+                    <div className="switch-to-sphere">
+                    <button id="switch-to-sphere-bttn" onClick={this.switchBetweenCubeAndSphere} disabled>Switch to sphere</button>
+                    </div>
+                  </div>
+                )
+                :
+                (
+                  <div className="switches-container">
+                    <div className="switch-to-cube">
+                      <button id="switch-to-cube-bttn" onClick={this.switchBetweenCubeAndSphere} disabled>Switch to cube</button>
+                    </div>
+                    <div className="switch-to-sphere">
+                    <button id="switch-to-sphere-bttn" onClick={this.switchBetweenCubeAndSphere}>Switch to sphere</button>
+                    </div>
+                  </div>
+                )
+              ) 
+            : null
+              
+          }
+    </div>
     )
+  }
+
+  componentDidMount(){
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(prevProps.currentActiveSpotState !== this.props.currentActiveSpotState){
+      if(this.props.currentActiveSpotState){
+        document.getElementById("circle-center").classList.remove("center-before")
+        document.getElementById("circle-center").classList.add("center-after")
+      }
+      else{
+        document.getElementById("circle-center").classList.remove("center-after")
+        document.getElementById("circle-center").classList.add("center-before")
+      }
+    }
+
+    // if(prevState.sphereSelected !== this.state.sphereSelected){
+    //   if(this.state.sphereSelected){
+    //     document.getElementById("switch-to-cube-bttn").disabled = true
+    //     document.getElementById("switch-to-sphere-bttn").disabled = false
+    //   }
+    //   else{
+    //     document.getElementById("switch-to-sphere-bttn").disabled = true
+    //     document.getElementById("switch-to-cube-bttn").disabled = false
+    //   }
+    // }
+
   }
 }
 

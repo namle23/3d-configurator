@@ -25,19 +25,34 @@ class CustomEvents {
       if (intersects.length > 0) {
         try {
           currentObject = intersects[0].object
-          currentObject.material[0].color.setHex(0x00ff00)
+          if(!currentObject.name.startsWith("Spot"))
+            currentObject.material[0].color.setHex(0x00ff00)
+
+          else
+            currentObject.material.color.setHex(0x00ff00)
 
           if (lastObject != null) {
             if (lastObject.length !== 0)
               if (lastObject.hasOwnProperty('material'))
                 if (currentObject.name !== lastObject.name) {
-                  instancesColor.map(child => {
-                    if (child.key === lastObject.name)
-                      lastObject.material[0].color.setHex(child.value)
-
-                    return 1
-                  })
+                  if(!lastObject.name.startsWith("Spot")){
+                    instancesColor.map(child => {
+                      if (child.key === lastObject.name)
+                        lastObject.material[0].color.setHex(child.value)
+  
+                      return 1
+                    })
+                  }
+                  else{
+                    instancesColor.map(child => {
+                      if (child.key === lastObject.name)
+                        lastObject.material.color.setHex(child.value)
+  
+                      return 1
+                    })
+                  }
                 }
+                
           }
         } catch (error) {
           console.log(error)
@@ -45,8 +60,14 @@ class CustomEvents {
       } else {
         if (lastObject != null && lastObject.material) {
           instancesColor.map(child => {
-            if (child.key === lastObject.name)
-              lastObject.material[0].color.setHex(child.value)
+            if (child.key === lastObject.name){
+              if(!child.key.startsWith("Spot")){
+                lastObject.material[0].color.setHex(child.value)
+              }
+              else{
+                lastObject.material.color.setHex(child.value)
+              }
+            }
 
             return 1
           })

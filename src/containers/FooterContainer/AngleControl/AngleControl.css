@@ -31,17 +31,52 @@
   top: 50%;
   left: 50%;
 }
-.center {
+.center-before {
   height: 60%;
   width: 60%;
   padding: 20%;
   position: absolute;
   top: 20%;
   left: 20%;
-  background: lightgray;
+  background: green;
   border-radius: 50%;
 }
 .quart:hover {
   background: black;
   transform: scale(1.5);
+}
+
+.center-before:hover {
+  background: lightgreen;
+  transform: scale(1);
+}
+
+.center-after {
+  height: 60%;
+  width: 60%;
+  padding: 20%;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  background: red;
+  border-radius: 50%;
+}
+
+.center-after:hover {
+  background: lightcoral;
+  transform: scale(1);
+}
+
+.switch-to-cube{
+  position: relative;
+}
+
+.switch-to-sphere{
+  position: relative;
+}
+
+.switches-container{
+  position: absolute;
+  top: 0%;
+  left: 11%;
 }

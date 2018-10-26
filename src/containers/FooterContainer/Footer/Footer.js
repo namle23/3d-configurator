@@ -6,6 +6,7 @@ import AngleControl from '../AngleControl/AngleControl'
 import './Footer.css'
 
 class Footer extends Component {
+
   render() {
     let code = this.props.objects[this.props.index].objects
       .map(x =>
@@ -24,7 +25,8 @@ class Footer extends Component {
         <h3 id="price">{this.props.price_total[this.props.index]}€</h3>
       </div>
     )
-
+    
+    
     return (
       <div className="footer-wrap">
         <div>{price}</div>
@@ -33,6 +35,10 @@ class Footer extends Component {
           className="angle-control"
           camera={this.props.camera}
           update={this.props.update}
+          enableActivateAddingSpot={this.props.enableActivateAddingSpot}
+          switchBetweenCubeAndSphere={this.props.switchBetweenCubeAndSphere}
+          sphereSelected={this.props.sphereSelected}
+          enableAddingSpot={this.props.enableAddingSpot}
         />
       </div>
     )

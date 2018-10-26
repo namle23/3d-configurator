@@ -13,7 +13,6 @@ import CustomEvents from '../../components/CustomEvents/CustomEvents'
 import './DisplayModel.css'
 
 import DragControls from 'three-dragcontrols'
-
 const OrbitControls = require('three-orbit-controls')(THREE)
 
 const customEvents = new CustomEvents() //declare instance for CustomEvents
@@ -78,7 +77,7 @@ plane = new THREE.Mesh(
   })
 )
 
-let rendererInstance = new THREE.WebGLRenderer({ alpha: true })
+const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
 
 rendererInstance.setSize(window.innerWidth, window.innerHeight)
 
@@ -145,7 +144,6 @@ class DisplayModel extends Component {
 
     const ambientLight = new THREE.AmbientLight(0x383838)
     scene.add(ambientLight)
-
     const spotLight = new THREE.SpotLight(0xffffff)
     spotLight.position.set(300, 300, 300)
     spotLight.intensity = 1
@@ -249,9 +247,8 @@ class DisplayModel extends Component {
     // let coverNode = document.getElementById('cover')
 
     //map array of objects and instances
-    let arr_instIndex = customEvents.mappingCenter(instIndex)
-
-    let timer
+    let arr_instIndex = customEvents.mappingCenter(instIndex),
+      timer
 
     onClickEvent = event => {
       let vector = new THREE.Vector3(
@@ -269,57 +266,44 @@ class DisplayModel extends Component {
       let intersects = raycaster.intersectObjects(instances)
       let obj_obj_index, obj_obj_inst_index
 
-      //key events
-      if (event.ctrlKey) {
-        let intersect = intersects[0]
-
+      if (intersects.length > 0) {
+        selectedObject = intersects[0].object
+        mouseDownCount = mouseDownCount + 1
         try {
-          if (intersect.object !== plane) {
-            intersect.object.visible = false
+          offset.copy(intersects[0].point).sub(plane.position)
+
+          if (!selectedObject.name.startsWith('Spot') && choose) {
+            //get index accordingly
+            obj_obj_index = customEvents.getNameIndex(
+              selectedObject.name,
+              0,
+              selectedObject.name.indexOf('X')
+            )
+            obj_obj_inst_index = customEvents.getNameIndex(
+              selectedObject.name,
+              selectedObject.name.indexOf('X') + 1
+            )
+            if (mouseDownCount === 1) {
+              this.confirmIndex(
+                index,
+                obj_obj_index,
+                obj_obj_inst_index,
+                arr_instIndex
+              )
+            }
+          } else {
+            let spotIndex = selectedObject.userData.spotIndex
+
+            this.setState({
+              keyValuePopup: spotArrayModel[spotIndex]
+            })
           }
         } catch (error) {
-          console.log(error)
-        }
-      } else {
-        if (intersects.length > 0) {
-          selectedObject = intersects[0].object
-          mouseDownCount = mouseDownCount + 1
-          try {
-            offset.copy(intersects[0].point).sub(plane.position)
-
-            if (!selectedObject.name.startsWith('Spot') && choose) {
-              //get index accordingly
-              obj_obj_index = customEvents.getNameIndex(
-                selectedObject.name,
-                0,
-                selectedObject.name.indexOf('X')
-              )
-              obj_obj_inst_index = customEvents.getNameIndex(
-                selectedObject.name,
-                selectedObject.name.indexOf('X') + 1
-              )
-              if (mouseDownCount === 1) {
-                this.confirmIndex(
-                  index,
-                  obj_obj_index,
-                  obj_obj_inst_index,
-                  arr_instIndex
-                )
-              }
-            } else {
-              let spotIndex = selectedObject.userData.spotIndex
-
-              this.setState({
-                keyValuePopup: spotArrayModel[spotIndex]
-              })
-            }
-          } catch (error) {
-            console.log('mousedown error' + error)
-          }
+          console.log('mousedown error' + error)
         }
       }
-      choose = false
     }
+    choose = false
 
     document.getElementById('display').addEventListener('click', onClickEvent)
 
@@ -328,7 +312,7 @@ class DisplayModel extends Component {
 
       timer = setInterval(() => {
         choose = false
-      }, 100)
+      }, 200)
     }
 
     document
@@ -365,10 +349,10 @@ class DisplayModel extends Component {
         selectedObject = intersects[0].object
 
         //prepare point location
-        let x = intersect.point.x + 0.35
-        let y = intersect.point.y + 0.35
-        let z = intersect.point.z + 0.35
-        let addSpot
+        let x = intersect.point.x + 0.35,
+          y = intersect.point.y + 0.35,
+          z = intersect.point.z + 0.35,
+          addSpot
 
         if (this.state.sphereSelected) {
           addSpot = new THREE.Mesh(

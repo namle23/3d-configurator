@@ -25,34 +25,30 @@ class CustomEvents {
       if (intersects.length > 0) {
         try {
           currentObject = intersects[0].object
-          if(!currentObject.name.startsWith("Spot"))
+          if (!currentObject.name.startsWith('Spot'))
             currentObject.material[0].color.setHex(0x00ff00)
-
-          else
-            currentObject.material.color.setHex(0x00ff00)
+          else currentObject.material.color.setHex(0x00ff00)
 
           if (lastObject != null) {
             if (lastObject.length !== 0)
               if (lastObject.hasOwnProperty('material'))
                 if (currentObject.name !== lastObject.name) {
-                  if(!lastObject.name.startsWith("Spot")){
+                  if (!lastObject.name.startsWith('Spot')) {
                     instancesColor.map(child => {
                       if (child.key === lastObject.name)
                         lastObject.material[0].color.setHex(child.value)
-  
+
                       return 1
                     })
-                  }
-                  else{
+                  } else {
                     instancesColor.map(child => {
                       if (child.key === lastObject.name)
                         lastObject.material.color.setHex(child.value)
-  
+
                       return 1
                     })
                   }
                 }
-                
           }
         } catch (error) {
           console.log(error)
@@ -60,11 +56,10 @@ class CustomEvents {
       } else {
         if (lastObject != null && lastObject.material) {
           instancesColor.map(child => {
-            if (child.key === lastObject.name){
-              if(!child.key.startsWith("Spot")){
+            if (child.key === lastObject.name) {
+              if (!child.key.startsWith('Spot')) {
                 lastObject.material[0].color.setHex(child.value)
-              }
-              else{
+              } else {
                 lastObject.material.color.setHex(child.value)
               }
             }
@@ -77,15 +72,14 @@ class CustomEvents {
       }
 
       lastObject = currentObject
-
     })
   }
 
   mouseDownOnSpot = (event, selectedObject, THREE) => {
     let mouse = new THREE.Vector2()
-    console.log(event.clientX + " " + event.clientY)
-    mouse.x = (event.clientX/window.innerWidth)*2-1
-    mouse.y = (event.clientY/window.innerHeight)*2-1
+    console.log(event.clientX + ' ' + event.clientY)
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    mouse.y = (event.clientY / window.innerHeight) * 2 - 1
 
     selectedObject.translateX(parseFloat(mouse.x))
     selectedObject.translateY(parseFloat(mouse.y))
@@ -258,9 +252,6 @@ class CustomEvents {
 
     return arr1
   }
-
-
-
 }
 
 export default CustomEvents

@@ -8,6 +8,7 @@
   bottom: 20px;
   transform: rotate(45deg);
 }
+
 .quart {
   position: absolute;
   height: 50%;
@@ -15,22 +16,27 @@
   background: gray;
   transition: all 0.2s;
 }
+
 .quart:first-child {
   top: 0;
   left: 0;
 }
+
 .quart:nth-child(2) {
   top: 0;
   left: 50%;
 }
+
 .quart:nth-child(3) {
   top: 50%;
   left: 0;
 }
+
 .quart:nth-child(4) {
   top: 50%;
   left: 50%;
 }
+
 .center-before {
   height: 60%;
   width: 60%;
@@ -41,6 +47,7 @@
   background: green;
   border-radius: 50%;
 }
+
 .quart:hover {
   background: black;
   transform: scale(1.5);
@@ -67,15 +74,19 @@
   transform: scale(1);
 }
 
-.switch-to-cube{
+.switch-to-cube {
   position: relative;
 }
 
-.switch-to-sphere{
+.switch-to-sphere {
   position: relative;
 }
 
-.switches-container{
+.switch-to-sphere {
+  position: relative;
+}
+
+.switches-container {
   position: absolute;
   top: 0%;
   left: 11%;

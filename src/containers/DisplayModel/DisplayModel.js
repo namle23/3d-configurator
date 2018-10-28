@@ -51,7 +51,8 @@ let scene,
   onClickEvent,
   spotArrayObject = [],
   dragControls,
-  activateAddingSpot
+  activateAddingSpot,
+  addSpot
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(
@@ -78,7 +79,6 @@ plane = new THREE.Mesh(
 )
 
 const rendererInstance = new THREE.WebGLRenderer({ alpha: true })
-
 rendererInstance.setSize(window.innerWidth, window.innerHeight)
 
 const loadingManager = new THREE.LoadingManager()
@@ -283,14 +283,13 @@ class DisplayModel extends Component {
               selectedObject.name,
               selectedObject.name.indexOf('X') + 1
             )
-            if (mouseDownCount === 1) {
+            if (mouseDownCount === 1)
               this.confirmIndex(
                 index,
                 obj_obj_index,
                 obj_obj_inst_index,
                 arr_instIndex
               )
-            }
           } else {
             let spotIndex = selectedObject.userData.spotIndex
 
@@ -303,13 +302,13 @@ class DisplayModel extends Component {
         }
       }
     }
+
     choose = false
 
     document.getElementById('display').addEventListener('click', onClickEvent)
 
     onMouseDown = event => {
       choose = true
-
       timer = setInterval(() => {
         choose = false
       }, 200)
@@ -345,18 +344,16 @@ class DisplayModel extends Component {
 
       if (intersects.length > 0) {
         let intersect = intersects[0]
-
         selectedObject = intersects[0].object
 
         //prepare point location
         let x = intersect.point.x + 0.35,
           y = intersect.point.y + 0.35,
-          z = intersect.point.z + 0.35,
-          addSpot
+          z = intersect.point.z + 0.35
 
         if (this.state.sphereSelected) {
           addSpot = new THREE.Mesh(
-            new THREE.SphereGeometry(2, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2),
+            new THREE.SphereGeometry(2, 50, 50),
             new THREE.MeshPhongMaterial({ color: 0xcccccc })
           )
         } else {
@@ -365,6 +362,7 @@ class DisplayModel extends Component {
             new THREE.MeshPhongMaterial({ color: 0xcccccc })
           )
         }
+
         addSpot.position.copy(intersect.point).add(intersect.face.normal)
         addSpot.position
           .divideScalar(50)
@@ -377,11 +375,10 @@ class DisplayModel extends Component {
         addSpot.name = 'Spot ' + spotCreatedCount
         addSpot.userData.spotIndex = spotCreatedCount
         spotCreatedCount++
-        scene.add(addSpot)
+        if (event.button === 0) scene.add(addSpot)
 
         //to add the spot into the instances array so that its can be highlighted
         instances.push(addSpot)
-
         spotArrayObject.push(addSpot)
 
         //for dragging the spot to reposition
@@ -390,10 +387,10 @@ class DisplayModel extends Component {
           camera,
           renderer.domElement
         )
-        dragControls.addEventListener('dragstart', event => {
+        dragControls.addEventListener('dragstart', e => {
           orbitControls.enabled = false
         })
-        dragControls.addEventListener('dragend', event => {})
+        dragControls.addEventListener('dragend', e => {})
 
         //adding the spot's current hex color for later comparision
         instancesColor.push({
@@ -426,13 +423,11 @@ class DisplayModel extends Component {
       ].instances
 
       let numOfInstances = tempInstances.length
-
       let row = parseInt(numOfInstances / 2, 10) + 1
-
-      const loaderInstance = new THREE.JSONLoader()
-
       let sceneWidth = window.innerWidth / 2
       let sceneHeight = 300
+
+      const loaderInstance = new THREE.JSONLoader()
 
       rendererInstance.setSize(window.innerWidth, row * sceneHeight)
 
@@ -647,11 +642,10 @@ class DisplayModel extends Component {
 
       const render = () => {
         rendererInstance.autoClear = false
-
         rendererInstance.setScissor(true)
 
         sceneInstance_arr.forEach(function(sceneInstance) {
-          var element = sceneInstance.userData.element
+          let element = sceneInstance.userData.element
 
           rendererInstance.setViewport(
             element.X,
@@ -666,7 +660,7 @@ class DisplayModel extends Component {
             sceneHeight
           )
 
-          var camera = sceneInstance.userData.camera
+          let camera = sceneInstance.userData.camera
           rendererInstance.render(sceneInstance, camera)
         })
 
@@ -693,6 +687,7 @@ class DisplayModel extends Component {
         handleDeletePair={this.handleDeleteKeyValuePair}
         handleExit={this.handleExit}
         spotData={this.state.spotArrayData[index]}
+        spotArrayObject={spotArrayObject}
       />
     )
 
@@ -719,7 +714,7 @@ class DisplayModel extends Component {
         })
       }
     } catch (err) {
-      console.log(err + ' at line 707')
+      console.log(err)
     }
   }
 
@@ -736,7 +731,7 @@ class DisplayModel extends Component {
         })
       }
     } catch (err) {
-      console.log(err + ' at line 736')
+      console.log(err)
     }
   }
 
@@ -750,7 +745,7 @@ class DisplayModel extends Component {
         })
       }
     } catch (err) {
-      console.log(err + ' at line 751')
+      console.log(err)
     }
   }
 
@@ -759,6 +754,7 @@ class DisplayModel extends Component {
       keyValuePopup: null
     })
   }
+
   //this method is for surpressing the warning of dont make a function in a loop
   FindIdTempInstance_index(id) {
     return scene.children.findIndex(child => child.name === id)
@@ -767,7 +763,6 @@ class DisplayModel extends Component {
   nextScene(obj_names_length) {
     arrCode = []
     index++
-    // camera.position.set(69, 250, 117);
 
     let displayNode = document.getElementById('display')
     displayNode.removeChild(displayNode.firstChild)
@@ -830,7 +825,6 @@ class DisplayModel extends Component {
   prevScene(obj_names_length) {
     arrCode = []
     index--
-    // camera.position.set(69, 250, 117);
 
     let displayNode = document.getElementById('display')
     displayNode.removeChild(displayNode.firstChild)

@@ -3,6 +3,10 @@ import { connect } from 'react-redux'
 
 import './KeyValueModel.css'
 
+let x = 2,
+  y = 2,
+  z = 2
+
 class KeyValueModel extends Component {
   state = {
     newButtonClicked: false,
@@ -131,6 +135,40 @@ class KeyValueModel extends Component {
                 )}
               >
                 Destroy
+              </button>
+              <button
+                className="plus-kv"
+                onClick={() => {
+                  x++
+                  y++
+                  z++
+
+                  let a = this.props.spotArrayObject.map(b => {
+                    if (b.name === this.props.spotName) return b
+                    else return null
+                  })
+
+                  a.filter(e => e !== null)[0].scale.set(x, y, z)
+                }}
+              >
+                +
+              </button>
+              <button
+                className="minus-kv"
+                onClick={() => {
+                  x--
+                  y--
+                  z--
+
+                  let a = this.props.spotArrayObject.map(b => {
+                    if (b.name === this.props.spotName) return b
+                    else return null
+                  })
+
+                  a.filter(e => e !== null)[0].scale.set(x, y, z)
+                }}
+              >
+                -
               </button>
             </div>
           </div>

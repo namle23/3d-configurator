@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 import './KeyValueModel.css'
 
@@ -12,7 +13,34 @@ class KeyValueModel extends Component {
     newButtonClicked: false,
     keyValuePair: null,
     keyHolder: '',
-    valueHolder: ''
+    valueHolder: '',
+    showBtnToDb: false
+  }
+
+  handlePost = e => {
+    e.preventDefault()
+
+    let todb = {
+      spotIndex: this.props.spotIndex,
+      spotName: this.props.spotName,
+      spotData: this.props.spotData
+    }
+
+    axios.post('http://localhost:5000/todb', { todb }).then(res => {})
+  }
+
+  handleGet = e => {
+    axios.preventDefault()
+  }
+
+  handleDelete = e => {
+    e.preventDefault()
+
+    axios.delete('http://localhost:5000/deldb')
+  }
+
+  handleUpdate = e => {
+    e.preventDefault()
   }
 
   isNewButtonClicked = () => {
@@ -25,6 +53,10 @@ class KeyValueModel extends Component {
     this.setState({
       keyValuePair: this.props.spotData.map((pair, pairIndex) => {
         let id = 'pair ' + pairIndex
+        let index = this.props.spotData.indexOf('')
+
+        if (index > -1) this.props.spotData.splice(index, 1)
+
         return (
           <div id={id} key={id} className="pair-kv-row-display">
             <div className="pair-key-kv">
@@ -61,7 +93,6 @@ class KeyValueModel extends Component {
 
   deleteKeyValuePair = pairIndex => {
     this.props.handleDeletePair(this.props.spotIndex, pairIndex)
-
     this.displayPairs()
   }
 
@@ -88,6 +119,15 @@ class KeyValueModel extends Component {
     })
   }
 
+  resizeButton(x, y, z) {
+    let a = this.props.spotArrayObject.map(b => {
+      if (b.name === this.props.spotName) return b
+      else return null
+    })
+
+    a.filter(e => e !== null)[0].scale.set(x, y, z)
+  }
+
   render() {
     let kvContainerId = 'kv-container ' + this.props.spotIndex
     return (
@@ -100,27 +140,31 @@ class KeyValueModel extends Component {
         </div>
         <div className="kv-body">
           <div className="new-form-kv">
-            <div id="grid-item">
-              <label id="key-label">Key</label>
-              <input
-                type="text"
-                id="key-holder"
-                name="keyHolder"
-                value={this.state.keyHolder}
-                onChange={this.keyHolderChange}
-              />
-            </div>
+            <form onSubmit={this.handlePost}>
+              <div id="grid-item">
+                <label id="key-label">Key</label>
+                <input
+                  type="text"
+                  id="key-holder"
+                  name="keyHolder"
+                  value={this.state.keyHolder}
+                  onChange={this.keyHolderChange}
+                />
+              </div>
 
-            <div id="grid-item">
-              <label id="value-label">Value</label>
-              <input
-                type="text"
-                id="value-holder"
-                name="valueHolder"
-                value={this.state.valueHolder}
-                onChange={this.valueHolderChange}
-              />
-            </div>
+              <div id="grid-item">
+                <label id="value-label">Value</label>
+                <input
+                  type="text"
+                  id="value-holder"
+                  name="valueHolder"
+                  value={this.state.valueHolder}
+                  onChange={this.valueHolderChange}
+                />
+              </div>
+
+              <button type="submit">Add to db</button>
+            </form>
 
             <div id="grid-item">
               <button className="new-button-kv" onClick={this.addNewPair}>
@@ -142,13 +186,7 @@ class KeyValueModel extends Component {
                   x++
                   y++
                   z++
-
-                  let a = this.props.spotArrayObject.map(b => {
-                    if (b.name === this.props.spotName) return b
-                    else return null
-                  })
-
-                  a.filter(e => e !== null)[0].scale.set(x, y, z)
+                  this.resizeButton(x, y, z)
                 }}
               >
                 +
@@ -159,13 +197,7 @@ class KeyValueModel extends Component {
                   x--
                   y--
                   z--
-
-                  let a = this.props.spotArrayObject.map(b => {
-                    if (b.name === this.props.spotName) return b
-                    else return null
-                  })
-
-                  a.filter(e => e !== null)[0].scale.set(x, y, z)
+                  this.resizeButton(x, y, z)
                 }}
               >
                 -

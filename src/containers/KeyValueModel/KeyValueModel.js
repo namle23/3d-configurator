@@ -14,7 +14,8 @@ class KeyValueModel extends Component {
     keyValuePair: null,
     keyHolder: '',
     valueHolder: '',
-    showBtnToDb: false
+    showBtnToDb: false,
+    displayTable: null
   }
 
   handlePost = e => {
@@ -26,11 +27,40 @@ class KeyValueModel extends Component {
       spotData: this.props.spotData
     }
 
-    axios.post('http://localhost:5000/todb', { todb }).then(res => {})
+    try {
+      axios.post('http://localhost:5000/todb', { todb }).then(res => {})
+    } catch (error) {}
   }
 
   handleGet = e => {
-    axios.preventDefault()
+    e.preventDefault()
+
+    let selectedSpotIndex = this.props.spotIndex
+
+    axios
+      .post('http://localhost:5000/getdb', { selectedSpotIndex })
+      .then(res => {
+        let kv = res.data.map(kv => (
+          <tr>
+            <th>{kv.key}</th>
+            <th>{kv.value}</th>
+          </tr>
+        ))
+
+        let displayTable = (
+          <table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>{kv}</tbody>
+          </table>
+        )
+
+        this.setState({ displayTable: displayTable })
+      })
   }
 
   handleDelete = e => {
@@ -58,7 +88,7 @@ class KeyValueModel extends Component {
         if (index > -1) this.props.spotData.splice(index, 1)
 
         return (
-          <div id={id} key={id} className="pair-kv-row-display">
+          <div id={id} key={id} className="pair-kv-row-displayTable">
             <div className="pair-key-kv">
               <p>{pair.key}</p>
             </div>
@@ -138,6 +168,15 @@ class KeyValueModel extends Component {
             &times;
           </button>
         </div>
+
+        <div className="panel panel-primary">
+          <div className="panel-body" id="getResult">
+            {this.state.displayTable}
+          </div>
+        </div>
+
+        <button onClick={this.handleGet}>Get</button>
+
         <div className="kv-body">
           <div className="new-form-kv">
             <form onSubmit={this.handlePost}>
@@ -204,7 +243,7 @@ class KeyValueModel extends Component {
               </button>
             </div>
           </div>
-          <div className="pair-display-holder">
+          <div className="pair-displayTable-holder">
             <div>
               <div className="pair-key-title">
                 <p>Key</p>

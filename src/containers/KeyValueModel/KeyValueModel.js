@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
+import CustomEvents from '../../components/CustomEvents/CustomEvents'
 import './KeyValueModel.css'
 
 let x = 2,
   y = 2,
   z = 2
+const customEvents = new CustomEvents() //declare instance for CustomEvents
 
 class KeyValueModel extends Component {
   state = {
@@ -18,32 +20,40 @@ class KeyValueModel extends Component {
     displayTable: null
   }
 
-  handlePost = e => {
+  handleCreate = e => {
     e.preventDefault()
 
-    let todb = {
-      spotIndex: this.props.spotIndex,
-      spotName: this.props.spotName,
-      spotData: this.props.spotData
-    }
+    let spotIndex = this.props.spotIndex,
+      spotData = this.props.spotData,
+      selectedSpotIndex = this.props.spotIndex
 
-    try {
-      axios.post('http://localhost:5000/todb', { todb }).then(res => {})
-    } catch (error) {}
+    axios
+      .post('http://localhost:5000/checkdb', { selectedSpotIndex })
+      .then(res => {
+        let todb = customEvents.delDupAndOrigin([
+          ...spotData,
+          ...res.data.map(kv => kv)
+        ])
+        console.log(todb)
+        axios.post('http://localhost:5000/create', { todb }).then(res => {})
+      })
   }
 
-  handleGet = e => {
+  handleRead = e => {
     e.preventDefault()
 
     let selectedSpotIndex = this.props.spotIndex
 
     axios
-      .post('http://localhost:5000/getdb', { selectedSpotIndex })
+      .post('http://localhost:5000/read', { selectedSpotIndex })
       .then(res => {
         let kv = res.data.map(kv => (
           <tr>
             <th>{kv.key}</th>
             <th>{kv.value}</th>
+            <th>
+              <button onClick={this.handleDelete}>Delete</button>
+            </th>
           </tr>
         ))
 
@@ -63,14 +73,14 @@ class KeyValueModel extends Component {
       })
   }
 
+  handleUpdate = e => {
+    e.preventDefault()
+  }
+
   handleDelete = e => {
     e.preventDefault()
 
-    axios.delete('http://localhost:5000/deldb')
-  }
-
-  handleUpdate = e => {
-    e.preventDefault()
+    axios.delete('http://localhost:5000/delete')
   }
 
   isNewButtonClicked = () => {
@@ -175,11 +185,11 @@ class KeyValueModel extends Component {
           </div>
         </div>
 
-        <button onClick={this.handleGet}>Get</button>
+        <button onClick={this.handleRead}>Get</button>
 
         <div className="kv-body">
           <div className="new-form-kv">
-            <form onSubmit={this.handlePost}>
+            <form onSubmit={this.handleCreate}>
               <div id="grid-item">
                 <label id="key-label">Key</label>
                 <input

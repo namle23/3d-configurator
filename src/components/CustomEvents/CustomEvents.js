@@ -247,6 +247,10 @@ class CustomEvents {
     ).out
   }
 
+  delDupAndOrigin(arr) {
+    return arr.filter((a, _, aa) => aa.indexOf(a) === aa.lastIndexOf(a))
+  }
+
   checkRemainIndex(arr1, arr2) {
     arr1 = arr1.filter(val => !arr2.includes(val))
 

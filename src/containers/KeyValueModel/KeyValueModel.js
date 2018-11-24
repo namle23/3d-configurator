@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 
 import CustomEvents from '../../components/CustomEvents/CustomEvents'
+
 import './KeyValueModel.css'
 
 let x = 2,
@@ -16,7 +17,6 @@ class KeyValueModel extends Component {
     keyValuePair: null,
     keyHolder: '',
     valueHolder: '',
-    showBtnToDb: false,
     displayTable: null
   }
 
@@ -93,12 +93,8 @@ class KeyValueModel extends Component {
     this.setState({
       keyValuePair: this.props.spotData.map((pair, pairIndex) => {
         let id = 'pair ' + pairIndex
-        let index = this.props.spotData.indexOf('')
-
-        if (index > -1) this.props.spotData.splice(index, 1)
-
         return (
-          <div id={id} key={id} className="pair-kv-row-displayTable">
+          <div id={id} key={id} className="pair-kv-row-display">
             <div className="pair-key-kv">
               <p>{pair.key}</p>
             </div>
@@ -133,6 +129,7 @@ class KeyValueModel extends Component {
 
   deleteKeyValuePair = pairIndex => {
     this.props.handleDeletePair(this.props.spotIndex, pairIndex)
+
     this.displayPairs()
   }
 
@@ -157,15 +154,6 @@ class KeyValueModel extends Component {
     this.setState({
       valueHolder: e.target.value
     })
-  }
-
-  resizeButton(x, y, z) {
-    let a = this.props.spotArrayObject.map(b => {
-      if (b.name === this.props.spotName) return b
-      else return null
-    })
-
-    a.filter(e => e !== null)[0].scale.set(x, y, z)
   }
 
   render() {
@@ -235,7 +223,13 @@ class KeyValueModel extends Component {
                   x++
                   y++
                   z++
-                  this.resizeButton(x, y, z)
+
+                  let a = this.props.spotArrayObject.map(b => {
+                    if (b.name === this.props.spotName) return b
+                    else return null
+                  })
+
+                  a.filter(e => e !== null)[0].scale.set(x, y, z)
                 }}
               >
                 +
@@ -246,14 +240,20 @@ class KeyValueModel extends Component {
                   x--
                   y--
                   z--
-                  this.resizeButton(x, y, z)
+
+                  let a = this.props.spotArrayObject.map(b => {
+                    if (b.name === this.props.spotName) return b
+                    else return null
+                  })
+
+                  a.filter(e => e !== null)[0].scale.set(x, y, z)
                 }}
               >
                 -
               </button>
             </div>
           </div>
-          <div className="pair-displayTable-holder">
+          <div className="pair-display-holder">
             <div>
               <div className="pair-key-title">
                 <p>Key</p>

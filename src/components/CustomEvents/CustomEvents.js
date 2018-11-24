@@ -233,6 +233,7 @@ class CustomEvents {
     return arr
   }
 
+  //based on key only
   delDuplicateObject(arr) {
     return arr.reduce(
       (p, c) => {
@@ -247,13 +248,34 @@ class CustomEvents {
     ).out
   }
 
+  //based on key and value
+  delDupObj(arr) {
+    return arr.reduce(
+      (p, c) => {
+        let key = [c.key].join('|')
+        let value = [c.value].join('|')
+
+        if (
+          p.tempKey.indexOf(key) === -1 ||
+          p.tempValues.indexOf(value) === -1
+        ) {
+          p.out.push(c)
+          p.tempKey.push(key)
+          p.tempValues.push(value)
+        }
+
+        return p
+      },
+      { tempKey: [], out: [], tempValues: [] }
+    ).out
+  }
+
   delDupAndOrigin(arr) {
-    return arr.filter((a, _, aa) => aa.indexOf(a) === aa.lastIndexOf(a))
+    return arr.filter((a, empty, b) => b.indexOf(a) === b.lastIndexOf(a))
   }
 
   checkRemainIndex(arr1, arr2) {
     arr1 = arr1.filter(val => !arr2.includes(val))
-
     return arr1
   }
 }

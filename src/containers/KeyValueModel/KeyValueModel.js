@@ -30,7 +30,7 @@ class KeyValueModel extends Component {
     axios
       .post('http://localhost:5000/checkdb', { selectedSpotIndex })
       .then(res => {
-        let todb = customEvents.delDupAndOrigin([
+        let todb = customEvents.delDupObj([
           ...spotData,
           ...res.data.map(kv => kv)
         ])

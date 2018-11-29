@@ -2,14 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import CustomEvents from '../../components/CustomEvents/CustomEvents'
-
 import './KeyValueModel.css'
 
 let x = 2,
   y = 2,
   z = 2
-const customEvents = new CustomEvents() //declare instance for CustomEvents
 
 class KeyValueModel extends Component {
   state = {
@@ -30,29 +27,46 @@ class KeyValueModel extends Component {
     axios
       .post('http://localhost:5000/checkdb', { selectedSpotIndex })
       .then(res => {
-        let todb = customEvents.delDupObj([
-          ...spotData,
-          ...res.data.map(kv => kv)
-        ])
-        console.log(todb)
+        for (let i = 0; i < res.data.length; i++)
+          for (let j = 0; j < spotData.length; j++)
+            if (
+              res.data[i].key === spotData[j].key &&
+              res.data[i].value === spotData[j].value
+            )
+              spotData.splice(j, 1)
+
+        let todb = {
+          spotIndex: spotIndex,
+          spotData: spotData
+        }
+
         axios.post('http://localhost:5000/create', { todb }).then(res => {})
       })
   }
 
   handleRead = e => {
-    e.preventDefault()
-
     let selectedSpotIndex = this.props.spotIndex
 
     axios
       .post('http://localhost:5000/read', { selectedSpotIndex })
       .then(res => {
         let kv = res.data.map(kv => (
-          <tr>
-            <th>{kv.key}</th>
-            <th>{kv.value}</th>
+          <tr key={kv.ID}>
             <th>
-              <button onClick={this.handleDelete}>Delete</button>
+              {kv.key}
+              <input type="text" id={'key' + kv.ID} />
+            </th>
+            <th>
+              {kv.value}
+              <input type="text" id={'value' + kv.ID} />
+            </th>
+            <th>
+              <button onClick={() => this.handleDelete(kv.ID)}>Delete</button>
+              <button
+                onClick={() => this.handleUpdate(kv.ID, kv.key, kv.value)}
+              >
+                Edit
+              </button>
             </th>
           </tr>
         ))
@@ -73,14 +87,52 @@ class KeyValueModel extends Component {
       })
   }
 
-  handleUpdate = e => {
-    e.preventDefault()
+  handleUpdate = (entryID, kvKey, kvValue) => {
+    let editedKey = document.getElementById('key' + entryID).value,
+      editedValue = document.getElementById('value' + entryID).value,
+      todb
+
+    if (editedKey === '' && editedValue !== '')
+      todb = {
+        editedKey: kvKey,
+        editedValue: editedValue,
+        entryID: entryID
+      }
+    else if (editedKey !== '' && editedValue === '')
+      todb = {
+        editedKey: editedKey,
+        editedValue: kvValue,
+        entryID: entryID
+      }
+    else if (editedKey === '' && editedValue === '')
+      todb = {
+        editedKey: kvKey,
+        editedValue: kvValue,
+        entryID: entryID
+      }
+    else
+      todb = {
+        editedKey: editedKey,
+        editedValue: editedValue,
+        entryID: entryID
+      }
+
+    axios.post('http://localhost:5000/update', { todb }).then(res => {
+      if (res.status >= 400) throw new Error('Bad response')
+      this.handleRead()
+    })
   }
 
-  handleDelete = e => {
-    e.preventDefault()
+  handleDelete = entryID => {
+    let todb = {
+      selectedSpotIndex: this.props.spotIndex,
+      entryID: entryID
+    }
 
-    axios.delete('http://localhost:5000/delete')
+    axios.post('http://localhost:5000/delete', { todb }).then(res => {
+      if (res.status >= 400) throw new Error('Bad response')
+      this.handleRead()
+    })
   }
 
   isNewButtonClicked = () => {
@@ -129,7 +181,6 @@ class KeyValueModel extends Component {
 
   deleteKeyValuePair = pairIndex => {
     this.props.handleDeletePair(this.props.spotIndex, pairIndex)
-
     this.displayPairs()
   }
 

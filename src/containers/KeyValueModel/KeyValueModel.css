@@ -5,9 +5,9 @@
 
 .destroy-button-kv {
   font-size: 53%;
-  position: absolute;
-  right: 0px;
-  top: 20%;
+  position: relative;
+  float: right;
+  top: 0%;
 }
 
 .pair-display-holder {

@@ -354,12 +354,12 @@ class DisplayModel extends Component {
         if (this.state.sphereSelected) {
           addSpot = new THREE.Mesh(
             new THREE.SphereGeometry(2, 50, 50),
-            new THREE.MeshPhongMaterial({ color: 0xcccccc })
+            new THREE.MeshPhongMaterial({ color: 0xffffff })
           )
         } else {
           addSpot = new THREE.Mesh(
             new THREE.CubeGeometry(3, 3, 3),
-            new THREE.MeshPhongMaterial({ color: 0xcccccc })
+            new THREE.MeshPhongMaterial({ color: 0xffffff })
           )
         }
 

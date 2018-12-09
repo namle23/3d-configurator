@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import * as THREE from 'three'
 import { connect } from 'react-redux'
+import DragControls from 'three-dragcontrols'
+import firebase from 'firebase'
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 
 import Footer from '../../containers/FooterContainer/Footer/Footer'
 import KeyValueModel from '../../containers/KeyValueModel/KeyValueModel'
@@ -12,9 +15,12 @@ import CustomEvents from '../../components/CustomEvents/CustomEvents'
 
 import './DisplayModel.css'
 
-import DragControls from 'three-dragcontrols'
-const OrbitControls = require('three-orbit-controls')(THREE)
+firebase.initializeApp({
+  apiKey: 'AIzaSyAJHmMamysmQARUgXzmM-EGJ5eP0RHhQ3E',
+  authDomain: 'https://conf-server.firebaseapp.com'
+})
 
+const OrbitControls = require('three-orbit-controls')(THREE)
 const customEvents = new CustomEvents() //declare instance for CustomEvents
 const path =
   window.location.protocol +
@@ -98,12 +104,24 @@ class DisplayModel extends Component {
       spotArrayData: [],
       spotArrayModel: [],
       enableAddingSpot: false,
-      sphereSelected: true
+      sphereSelected: true,
+      isSignedIn: false
     }
 
     this.enableEditState = this.enableEditState.bind(this)
     this.FindIdTempInstance_index = this.FindIdTempInstance_index.bind(this)
     this.create3d = this.create3d.bind(this)
+  }
+
+  uiConfig = {
+    signInFlow: 'popup',
+    signInOptions: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID
+      // firebase.auth.FacebookAuthProvider.PROVIDER_ID
+    ],
+    callbacks: {
+      signInSuccessWithAuthResult: () => false
+    }
   }
 
   enableEditState(val) {
@@ -893,6 +911,12 @@ class DisplayModel extends Component {
 
   componentDidMount() {
     this.create3d(index)
+
+    firebase.auth().onAuthStateChanged(user => {
+      this.setState({ isSignedIn: !!user })
+      console.log('user', user)
+    })
+
     window.addEventListener(
       'resize',
       () => {
@@ -939,6 +963,20 @@ class DisplayModel extends Component {
     return (
       <div id="cover">
         <div id="waiting-screen" />
+
+        {this.state.isSignedIn ? (
+          <span>
+            <p>Signed in!</p>
+            <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
+            <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
+          </span>
+        ) : (
+          <StyledFirebaseAuth
+            uiConfig={this.uiConfig}
+            firebaseAuth={firebase.auth()}
+          />
+        )}
+
         <div id="display" />
 
         <i

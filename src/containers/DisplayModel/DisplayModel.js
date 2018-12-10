@@ -9,15 +9,19 @@ import Footer from '../../containers/FooterContainer/Footer/Footer'
 import KeyValueModel from '../../containers/KeyValueModel/KeyValueModel'
 
 import * as configuratorAction from '../../store/actions/index'
-// import separateObject from '../../components/CustomEvents/SeparateObject'
 
 import CustomEvents from '../../components/CustomEvents/CustomEvents'
 
 import './DisplayModel.css'
 
+// firebase.initializeApp({
+//   apiKey: 'AIzaSyAJHmMamysmQARUgXzmM-EGJ5eP0RHhQ3E',
+//   authDomain: 'https://conf-server.firebaseapp.com'
+// })
+
 firebase.initializeApp({
-  apiKey: 'AIzaSyAJHmMamysmQARUgXzmM-EGJ5eP0RHhQ3E',
-  authDomain: 'https://conf-server.firebaseapp.com'
+  apiKey: 'AIzaSyDLoqcbTDMFuurtAyDgVEKZ6qwo0j0Osjk',
+  authDomain: 'fir-auth-tutorial-ed11f.firebaseapp.com'
 })
 
 const OrbitControls = require('three-orbit-controls')(THREE)

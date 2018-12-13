@@ -61,8 +61,14 @@ class KeyValueModel extends Component {
               <input type="text" id={'value' + kv.ID} />
             </th>
             <th>
-              <button onClick={() => this.handleDelete(kv.ID)}>Delete</button>
               <button
+                className="btn btn-default"
+                onClick={() => this.handleDelete(kv.ID)}
+              >
+                Delete
+              </button>
+              <button
+                className="btn btn-default"
                 onClick={() => this.handleUpdate(kv.ID, kv.key, kv.value)}
               >
                 Edit
@@ -155,7 +161,7 @@ class KeyValueModel extends Component {
             </div>
             <div>
               <button
-                className="pair-delete-kv"
+                className="pair-delete-kv btn btn-default"
                 onClick={this.deleteKeyValuePair.bind(this, pairIndex)}
               >
                 Delete
@@ -213,7 +219,10 @@ class KeyValueModel extends Component {
       <div id={kvContainerId} className="kv-container">
         <div className="kv-title">
           <p className="object-title">{this.props.spotName}</p>
-          <button className="exit-kv-container" onClick={this.props.handleExit}>
+          <button
+            className="exit-kv-container btn btn-danger"
+            onClick={this.props.handleExit}
+          >
             &times;
           </button>
         </div>
@@ -224,14 +233,17 @@ class KeyValueModel extends Component {
           </div>
         </div>
 
-        <button onClick={this.handleRead}>Get</button>
+        <button className="btn btn-default" onClick={this.handleRead}>
+          Get
+        </button>
 
         <div className="kv-body">
           <div className="new-form-kv">
             <form onSubmit={this.handleCreate}>
               <div id="grid-item">
-                <label id="key-label">Key</label>
                 <input
+                  className="form-control"
+                  placeholder="Key"
                   type="text"
                   id="key-holder"
                   name="keyHolder"
@@ -241,8 +253,9 @@ class KeyValueModel extends Component {
               </div>
 
               <div id="grid-item">
-                <label id="value-label">Value</label>
                 <input
+                  className="form-control"
+                  placeholder="Value"
                   type="text"
                   id="value-holder"
                   name="valueHolder"
@@ -251,15 +264,21 @@ class KeyValueModel extends Component {
                 />
               </div>
 
-              <button type="submit">Add to db</button>
+              <button className="submit btn btn-default " type="submit">
+                Add to db
+              </button>
             </form>
 
             <div id="grid-item">
-              <button className="new-button-kv" onClick={this.addNewPair}>
+              <button
+                className="new-button-kv btn btn-default"
+                onClick={this.addNewPair}
+              >
                 New
               </button>
+
               <button
-                className="destroy-button-kv"
+                className="destroy-button-kv btn btn-danger"
                 onClick={this.props.handleDestroy.bind(
                   this,
                   this.props.spotName,
@@ -268,8 +287,9 @@ class KeyValueModel extends Component {
               >
                 Destroy
               </button>
+
               <button
-                className="plus-kv"
+                className="plus-kv btn btn-default"
                 onClick={() => {
                   x++
                   y++
@@ -285,8 +305,9 @@ class KeyValueModel extends Component {
               >
                 +
               </button>
+
               <button
-                className="minus-kv"
+                className="minus-kv btn btn-default"
                 onClick={() => {
                   x--
                   y--

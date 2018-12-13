@@ -76,18 +76,16 @@
 
 .switch-to-cube {
   position: relative;
+  float: left;
 }
 
 .switch-to-sphere {
   position: relative;
-}
-
-.switch-to-sphere {
-  position: relative;
+  top: 5px;
 }
 
 .switches-container {
   position: absolute;
   top: 0%;
-  left: 11%;
+  left: 8%;
 }

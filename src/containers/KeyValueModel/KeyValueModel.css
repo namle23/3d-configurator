@@ -4,10 +4,24 @@
 }
 
 .destroy-button-kv {
-  font-size: 53%;
   position: relative;
-  float: right;
-  top: 0%;
+  left: 4px;
+}
+
+.plus-kv,
+.minus-kv {
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+
+.minus-kv {
+  left: 4px;
+}
+
+.submit {
+  position: relative;
+  top: 2px;
 }
 
 .pair-display-holder {
@@ -85,6 +99,8 @@
 
 .new-button-kv {
   font-size: 90%;
+  position: relative;
+  left: 2px;
 }
 
 .new-form-kv {

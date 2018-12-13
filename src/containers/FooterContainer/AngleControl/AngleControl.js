@@ -81,6 +81,7 @@ class AngleControl extends Component {
             <div className="switches-container">
               <div className="switch-to-cube">
                 <button
+                  className="btn btn-default"
                   id="switch-to-cube-bttn"
                   onClick={this.switchBetweenCubeAndSphere}
                 >
@@ -89,6 +90,7 @@ class AngleControl extends Component {
               </div>
               <div className="switch-to-sphere">
                 <button
+                  className="btn btn-default"
                   id="switch-to-sphere-bttn"
                   onClick={this.switchBetweenCubeAndSphere}
                   disabled
@@ -101,6 +103,7 @@ class AngleControl extends Component {
             <div className="switches-container">
               <div className="switch-to-cube">
                 <button
+                  className="btn btn-default"
                   id="switch-to-cube-bttn"
                   onClick={this.switchBetweenCubeAndSphere}
                   disabled
@@ -110,6 +113,7 @@ class AngleControl extends Component {
               </div>
               <div className="switch-to-sphere">
                 <button
+                  className="btn btn-default"
                   id="switch-to-sphere-bttn"
                   onClick={this.switchBetweenCubeAndSphere}
                 >

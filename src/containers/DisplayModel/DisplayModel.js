@@ -968,18 +968,21 @@ class DisplayModel extends Component {
       <div id="cover">
         <div id="waiting-screen" />
 
-        {this.state.isSignedIn ? (
-          <span>
-            <p>Signed in!</p>
-            <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
-            <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
-          </span>
-        ) : (
-          <StyledFirebaseAuth
-            uiConfig={this.uiConfig}
-            firebaseAuth={firebase.auth()}
-          />
-        )}
+        <div className="login">
+          {this.state.isSignedIn ? (
+            <span>
+              <button onClick={() => firebase.auth().signOut()}>
+                Sign out!
+              </button>
+              <p>Welcome {firebase.auth().currentUser.displayName}</p>
+            </span>
+          ) : (
+            <StyledFirebaseAuth
+              uiConfig={this.uiConfig}
+              firebaseAuth={firebase.auth()}
+            />
+          )}
+        </div>
 
         <div id="display" />
 

@@ -195,3 +195,10 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+/*Login*/
+.login {
+  position: fixed;
+  top: 2px;
+  right: 1px;
+}

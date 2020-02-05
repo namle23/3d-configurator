@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import { connect } from 'react-redux'
 import DragControls from 'three-dragcontrols'
-import firebase from 'firebase'
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
+// import firebase from 'firebase'
+// import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 
 import Footer from '../../containers/FooterContainer/Footer/Footer'
 import KeyValueModel from '../../containers/KeyValueModel/KeyValueModel'
@@ -19,10 +19,10 @@ import './DisplayModel.css'
 //   authDomain: 'https://conf-server.firebaseapp.com'
 // })
 
-firebase.initializeApp({
-  apiKey: 'AIzaSyDLoqcbTDMFuurtAyDgVEKZ6qwo0j0Osjk',
-  authDomain: 'fir-auth-tutorial-ed11f.firebaseapp.com'
-})
+// firebase.initializeApp({
+//   apiKey: 'AIzaSyDLoqcbTDMFuurtAyDgVEKZ6qwo0j0Osjk',
+//   authDomain: 'fir-auth-tutorial-ed11f.firebaseapp.com'
+// })
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 const customEvents = new CustomEvents() //declare instance for CustomEvents
@@ -119,10 +119,10 @@ class DisplayModel extends Component {
 
   uiConfig = {
     signInFlow: 'popup',
-    signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID
-      // firebase.auth.FacebookAuthProvider.PROVIDER_ID
-    ],
+    // signInOptions: [
+    //   firebase.auth.GoogleAuthProvider.PROVIDER_ID
+    //   // firebase.auth.FacebookAuthProvider.PROVIDER_ID
+    // ],
     callbacks: {
       signInSuccessWithAuthResult: () => false
     }
@@ -916,10 +916,10 @@ class DisplayModel extends Component {
   componentDidMount() {
     this.create3d(index)
 
-    firebase.auth().onAuthStateChanged(user => {
-      this.setState({ isSignedIn: !!user })
-      console.log('user', user)
-    })
+    // firebase.auth().onAuthStateChanged(user => {
+    //   this.setState({ isSignedIn: !!user })
+    //   console.log('user', user)
+    // })
 
     window.addEventListener(
       'resize',
@@ -968,7 +968,7 @@ class DisplayModel extends Component {
       <div id="cover">
         <div id="waiting-screen" />
 
-        <div className="login">
+        {/* <div className="login">
           {this.state.isSignedIn ? (
             <span>
               <button onClick={() => firebase.auth().signOut()}>
@@ -982,7 +982,7 @@ class DisplayModel extends Component {
               firebaseAuth={firebase.auth()}
             />
           )}
-        </div>
+        </div> */}
 
         <div id="display" />
 

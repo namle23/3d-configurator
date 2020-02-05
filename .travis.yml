@@ -1,0 +1,21 @@
+sudo: required
+services:
+  - docker
+
+before-install:
+  - docker build -t 3d-configurator -f Dockerfile.dev .
+
+script:
+  - docker run 3d-configurator npm run test -- --coverage
+
+deploy:
+    provider: elasticbeanstalk
+    region: "eu-north-1"
+    app: "3d-configurator"
+    env: "3dConfigurator-env"
+    bucket_name: "elasticbeanstalk-eu-north-1-828547367616"
+    bucket_path: "3d-configurator"
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
